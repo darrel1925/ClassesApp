@@ -1,0 +1,6 @@
+framework module Pods_ClassesApp {
+  umbrella header "Pods-ClassesApp-umbrella.h"
+
+  export *
+  module * { export * }
+}
