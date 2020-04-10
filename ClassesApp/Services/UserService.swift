@@ -24,6 +24,7 @@ final class _UserService {
         // if user is logged in
 
         let userRef = db.collection("User").document(email)
+        userRef.updateData(["is_logged_in" : true])
         // if user changes something in document, it will always be up to date in our app
         userListener = userRef.addSnapshotListener({ (snap, error) in
 
@@ -45,7 +46,25 @@ final class _UserService {
     }
     
     
-    func logoutUser() {
+    func logoutUser(disaptchGroup dg: DispatchGroup) {
+        print(user.email)
+        print(user.isLoggedIn)
+        print("trying")
+        
+        let userRef = db.collection("User").document(user.email)
+        userRef.updateData(["is_logged_in" : false]) { (err) in
+            print("entered")
+            if let _ = err {
+                print("Error setting is_logged_in")
+                dg.customLeave()
+                
+            }
+            else {
+                print("is_log_in_set")
+                dg.customLeave()
+            }
+        }
+        print("here")
         userListener?.remove()
         userListener = nil
         user = nil

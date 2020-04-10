@@ -56,6 +56,14 @@ extension String {
         return(self.rangeOfCharacter(from: .whitespacesAndNewlines) != nil)
     }
     
+    func capitalizingFirstLetter() -> String {
+      return prefix(1).uppercased() + self.lowercased().dropFirst()
+    }
+
+    mutating func capitalizeFirstLetter() {
+      self = self.capitalizingFirstLetter()
+    }
+    
     var isValidUCIEmail: Bool {
         let trimmedEmail = self.trimmingCharacters(in: .whitespacesAndNewlines)
         let emailArray = trimmedEmail.components(separatedBy: "@")
@@ -104,6 +112,8 @@ extension String {
     
     func toDate() -> Date {
         let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(abbreviation: "PST")
+
         
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return dateFormatter.date(from: self)!
@@ -116,13 +126,16 @@ extension Date {
     
     func toString() -> String {
         let dateFormatter = DateFormatter()
-        
+        dateFormatter.timeZone = TimeZone(abbreviation: "PST")
+
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return dateFormatter.string(from: self)
     }
     
     func toStringInWords() -> String {
         let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(abbreviation: "PST")
+
         dateFormatter.dateStyle = .full
         
         let dateStr = dateFormatter.string(from: self)
@@ -133,15 +146,15 @@ extension Date {
     private func formatMyDate(dateStr: String) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "h:mm a" // "4:44 pm
+        formatter.dateFormat = "h:mma" // "4:44 pm
         formatter.amSymbol = "am"
         formatter.pmSymbol = "pm"
         
-        let dateStr2 = formatter.string(from: self) // "4:44 PM on June 23, 2016\n"
+        let dateStr2 = formatter.string(from: self) // "4:44pm on June 23, 2016\n"
         
         let dateArr = dateStr.components(separatedBy: ", ") // Wednesday, January 10, 2018
 
-        return "\(dateArr[0]) • \(dateStr2)" // Wednesday • 4:44 pm
+        return "\(dateArr[0]) • \(dateStr2)" // Wednesday • 4:44pm
     }
     
     var recivedUnderFiveMinutesAgo: Bool  {
@@ -240,3 +253,37 @@ extension Int {
     
 }
 
+extension UIPanGestureRecognizer {
+
+    enum GestureDirection {
+        case Up
+        case Down
+        case Left
+        case Right
+    }
+
+    /// Get current vertical direction
+    ///
+    /// - Parameter target: view target
+    /// - Returns: current direction
+    func verticalDirection(target: UIView) -> GestureDirection {
+        return self.velocity(in: target).y > 0 ? .Down : .Up
+    }
+
+    /// Get current horizontal direction
+    ///
+    /// - Parameter target: view target
+    /// - Returns: current direction
+    func horizontalDirection(target: UIView) -> GestureDirection {
+        return self.velocity(in: target).x > 0 ? .Right : .Left
+    }
+
+    /// Get a tuple for current horizontal/vertical direction
+    ///
+    /// - Parameter target: view target
+    /// - Returns: current direction
+    func versus(target target: UIView) -> (horizontal: GestureDirection, vertical: GestureDirection) {
+        return (self.horizontalDirection(target: target), self.verticalDirection(target: target))
+    }
+
+}

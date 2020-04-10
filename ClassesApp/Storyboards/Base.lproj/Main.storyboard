@@ -255,7 +255,7 @@
                                                     <constraint firstAttribute="height" constant="40" id="OUd-CD-v4g"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits" keyboardType="emailAddress" textContentType="email"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="emailAddress"/>
                                             </textField>
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0zE-CI-i3s">
                                                 <rect key="frame" x="0.0" y="86.5" width="374" height="40"/>
@@ -810,11 +810,11 @@
                                 </state>
                                 <connections>
                                     <action selector="addClassClicked:" destination="ive-Uu-Aj9" eventType="touchUpInside" id="e6R-II-WJZ"/>
-                                    <segue destination="nlR-Fb-1GH" kind="show" id="IkR-V5-n4E"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="0.79534757595795846" green="0.79534757595795846" blue="0.79534757595795846" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="Ynu-gN-pjc" firstAttribute="leading" secondItem="FPL-JF-57T" secondAttribute="leading" id="7Kq-ZZ-275"/>
                             <constraint firstItem="nRr-7t-Trf" firstAttribute="leading" secondItem="FPL-JF-57T" secondAttribute="leading" id="BWu-98-sQx"/>
@@ -844,6 +844,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="backgroundView" destination="nRr-7t-Trf" id="A7V-Jb-5Jv"/>
+                        <outlet property="quarterLabel" destination="aUn-c8-Gks" id="ygo-Uu-PBa"/>
                         <outlet property="tableView" destination="jtb-Xp-g2T" id="Ymr-kx-g0E"/>
                     </connections>
                 </viewController>
@@ -854,36 +855,36 @@
         <!--Add Classes-->
         <scene sceneID="Llu-Gm-iei">
             <objects>
-                <viewController id="nlR-Fb-1GH" customClass="AddClassController" customModule="ClassesApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddClassController" id="nlR-Fb-1GH" customClass="AddClassController" customModule="ClassesApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="etd-a2-YFB">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NTD-YJ-o15" customClass="RoundedView" customModule="ClassesApp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="140" width="414" height="756"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ebX-Lj-lko" customClass="RoundedView" customModule="ClassesApp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="140" width="414" height="756"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="center" spacing="9" translatesAutoresizingMaskIntoConstraints="NO" id="uh2-TT-BiF">
-                                <rect key="frame" x="20" y="156" width="374" height="204"/>
+                                <rect key="frame" x="20" y="60" width="374" height="179.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter the 5 digit course code for the class you would like tracked" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CjN-eL-3PS">
-                                        <rect key="frame" x="5.5" y="0.0" width="363" height="49.5"/>
+                                        <rect key="frame" x="5.5" y="0.0" width="363" height="25"/>
                                         <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="19"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quarter" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bor-oo-AQC">
-                                        <rect key="frame" x="148.5" y="58.5" width="77" height="27.5"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quarter" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bor-oo-AQC">
+                                        <rect key="frame" x="16" y="34" width="342" height="27.5"/>
                                         <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="21"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Ex. 34250" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UZe-CQ-lf6">
-                                        <rect key="frame" x="99.5" y="95" width="175" height="34"/>
+                                        <rect key="frame" x="99.5" y="70.5" width="175" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="175" id="jtd-h6-b7n"/>
                                         </constraints>
@@ -891,13 +892,13 @@
                                         <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                     </textField>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Szy-O3-bQQ">
-                                        <rect key="frame" x="185" y="138" width="4.5" height="17"/>
+                                        <rect key="frame" x="185" y="113.5" width="4.5" height="17"/>
                                         <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="13"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <stackView opaque="NO" contentMode="scaleAspectFill" distribution="fillEqually" spacing="60" translatesAutoresizingMaskIntoConstraints="NO" id="06H-w4-Vc8">
-                                        <rect key="frame" x="0.0" y="164" width="374" height="40"/>
+                                        <rect key="frame" x="0.0" y="139.5" width="374" height="40"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jRP-n2-x0t">
                                                 <rect key="frame" x="0.0" y="0.0" width="157" height="40"/>
@@ -931,12 +932,14 @@
                                     </stackView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="bor-oo-AQC" secondAttribute="trailing" constant="16" id="EcO-Zi-K1I"/>
                                     <constraint firstItem="06H-w4-Vc8" firstAttribute="leading" secondItem="uh2-TT-BiF" secondAttribute="leading" id="LxL-Az-qnG"/>
                                     <constraint firstAttribute="trailing" secondItem="06H-w4-Vc8" secondAttribute="trailing" id="ld3-iS-rqK"/>
+                                    <constraint firstItem="bor-oo-AQC" firstAttribute="leading" secondItem="uh2-TT-BiF" secondAttribute="leading" constant="16" id="ybe-sq-yXZ"/>
                                 </constraints>
                             </stackView>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="zn1-qM-rLW">
-                                <rect key="frame" x="187" y="286" width="40" height="40"/>
+                                <rect key="frame" x="187" y="165.5" width="40" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="Oww-69-BZm"/>
                                     <constraint firstAttribute="width" constant="40" id="Srq-75-GdG"/>
@@ -944,7 +947,7 @@
                                 <color key="color" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="lqP-aa-1cg">
-                                <rect key="frame" x="0.0" y="376" width="414" height="436"/>
+                                <rect key="frame" x="0.0" y="255.5" width="414" height="556.5"/>
                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="TrackedCell" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="TrackedCell" rowHeight="53" id="o4n-bp-q2O" customClass="TrackedCell" customModule="ClassesApp" customModuleProvider="target">
@@ -1060,6 +1063,7 @@
                         <outlet property="backgroundView" destination="ebX-Lj-lko" id="1WY-gr-97P"/>
                         <outlet property="checkAvailabilityButton" destination="jRP-n2-x0t" id="bVc-82-Ojg"/>
                         <outlet property="courseCodeField" destination="UZe-CQ-lf6" id="chW-Mt-Mua"/>
+                        <outlet property="quarterLabel" destination="bor-oo-AQC" id="hUB-mg-Ock"/>
                         <outlet property="stackView" destination="uh2-TT-BiF" id="f7C-tb-mUH"/>
                         <outlet property="statusTitle" destination="bor-oo-AQC" id="YGx-dA-aht"/>
                         <outlet property="tableView" destination="lqP-aa-1cg" id="ujQ-B1-K3O"/>
@@ -1103,6 +1107,9 @@
                                         <rect key="frame" x="351" y="16" width="47" height="36"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Clear"/>
+                                        <connections>
+                                            <action selector="clearButtonClicked:" destination="BmB-aO-Bkw" eventType="touchUpInside" id="dro-S7-eOh"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1168,6 +1175,7 @@
                                             <outlet property="conatinerView" destination="3Pe-Nd-fIh" id="lnu-gi-UeJ"/>
                                             <outlet property="courseDescriptionLabel" destination="YyH-OA-UWd" id="CsZ-x2-BEg"/>
                                             <outlet property="courseNumberLabel" destination="guV-x9-sAt" id="iru-I8-M1S"/>
+                                            <outlet property="timeLabel" destination="q27-1o-ofG" id="7Ph-rn-Ov6"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -1197,6 +1205,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="backgroundView" destination="NMQ-Gv-na5" id="6FY-Uy-R1E"/>
                         <outlet property="tableView" destination="inB-tc-msI" id="ZG2-qh-QLs"/>
                     </connections>
                 </viewController>
@@ -1344,7 +1353,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WBY-e7-NAi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4771.0144927536239" y="1646.6517857142856"/>
+            <point key="canvasLocation" x="4758" y="1645"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="edU-eL-iTL">
@@ -1365,22 +1374,22 @@
             <point key="canvasLocation" x="3862" y="901"/>
         </scene>
         <!--Navigation Controller-->
-        <scene sceneID="h4E-Rc-eRX">
+        <scene sceneID="TPj-9w-KzC">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bAH-xp-9j8" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="3t4-3F-GLn" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="5ha-Ms-SWp">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="6Qe-k6-JhM">
                         <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="o0C-B6-OHV" kind="relationship" relationship="rootViewController" id="I4O-zL-GK8"/>
+                        <segue destination="o0C-B6-OHV" kind="relationship" relationship="rootViewController" id="UPf-CG-93U"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Hxn-6q-sGb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ctk-gr-Olo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3860.8695652173915" y="1646.6517857142856"/>
+            <point key="canvasLocation" x="3848" y="1645"/>
         </scene>
     </scenes>
     <resources>

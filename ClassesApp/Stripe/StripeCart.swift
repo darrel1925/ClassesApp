@@ -15,7 +15,7 @@ final class _StripeCart {
     var cartItems = [String]()
     private let stripeCreditCardCut = 0.029 // 0.29%
     private let stripeFlatFee = 30 // 30 cents
-    private let pricePerClass = 149 // $1.49 per class
+    private let pricePerClass = AppConstants.price_per_class // $1.49 per class
     
     var discount = 0
     

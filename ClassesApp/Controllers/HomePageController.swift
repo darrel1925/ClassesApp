@@ -12,6 +12,7 @@ import FirebaseFirestore
 
 class HomePageController: UIViewController, UITextFieldDelegate {
     
+    @IBOutlet weak var quarterLabel: UILabel!
     @IBOutlet weak var backgroundView: RoundedView!
     @IBOutlet weak var tableView: UITableView!
     
@@ -19,6 +20,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     let transition = SlideInTransition()
     
     var noClassLabel: UILabel!
+    var addClassesisPresented = false
     var labelHasBeenPresented = false
     var refreshControl: UIRefreshControl?
     var courseCodes = [String]()
@@ -26,82 +28,23 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("headerText has been updated")
-        print("Classes are \(UserService.user.classes)")
+        
+        quarterLabel.text = AppConstants.quarter.capitalizingFirstLetter()
         addLabel()
         setUpNavController()
         setUpTableView()
+        setUpGestures()
     }
     
-    func addLabel() {
-        guard let window = UIApplication.shared.keyWindow else { return }
-
-        noClassLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 250, height: 350))
-        noClassLabel.font = UIFont(name: "Futura", size: 20.0)
-        noClassLabel.center = window.center
-        noClassLabel.textAlignment = .center
-        noClassLabel.text = "You aren't tracking any classes yet. Click below to get started!"
-        noClassLabel.numberOfLines = 3
-        
-        noClassLabel.center = self.view.center
-        noClassLabel.center.x = self.view.center.x
-        noClassLabel.center.y = self.view.center.y
-        
-        labelHasBeenPresented = true
-
-        self.view.addSubview(noClassLabel)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        refreshTableView()
+        addClassesisPresented = false
     }
     
-    func getClassStatus(withGroup dispatchGroup: DispatchGroup) {
-        let db = Firestore.firestore()
-        courseCodes.removeAll()
-        courseStatus.removeAll()
-        for cls in UserService.user.classArr {
-            dispatchGroup.enter()
-            let docRef = db.collection("Class").document("\(cls) spring")
-            
-            docRef.getDocument { (document, error) in
-                if let document = document, document.exists {
-                    guard let data = document.data() else { print("couldn't do it"); return }
-                    let status = data["curr_status"] as! String
-                    self.courseCodes.append(cls)
-                    self.courseStatus.append(status)
-                    
-                    print("Found course: \(cls) status: \(data["curr_status"])")
-                    dispatchGroup.leave()
-                    
-                } else {
-                    print("Document does not exist")
-                    dispatchGroup.leave()
-                }
-            }
-        }
-    }
-    @objc func refreshTableView() {
-        let dispatchGroup = DispatchGroup()
-        getClassStatus(withGroup: dispatchGroup)
-        
-        dispatchGroup.notify(queue: .main) {
-            print("reloading")
-            self.refreshControl?.endRefreshing()
-            self.tableView.reloadData()
-            
-            self.toggleNoClassLabel()
-            
-        }
-    }
-    
-    func toggleNoClassLabel(){
-        
-        if self.courseCodes.count > 0 {
-
-            self.noClassLabel.isHidden = true
-        }
-        else {
-            
-            if !self.labelHasBeenPresented { self.addLabel() }
-            self.noClassLabel.isHidden = false
-        }
+    func setUpGestures() {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didSwipeOnView))
+        self.view.addGestureRecognizer(panGesture)
     }
     
     func setUpTableView() {
@@ -112,17 +55,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         refreshControl?.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
         tableView.addSubview(refreshControl!)
         
-        let dispatchGroup = DispatchGroup()
-        
-        getClassStatus(withGroup: dispatchGroup)
-        
-        dispatchGroup.notify(queue: .main) {
-            print("reloading")
-            print("course codes \(self.courseCodes)")
-            self.tableView.reloadData()
-            
-            self.toggleNoClassLabel()
-        }
+        toggleNoClassLabel()
     }
     
     func setUpNavController() {
@@ -132,13 +65,11 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    
     func presentSplashScreen() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "SplashScreenController") as! SplashScreenController
         vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
         self.present(vc, animated: true, completion: nil)
     }
-    
     
     func presentLogoutAlert() {
         let message = "Are you sure you would like to log out?"
@@ -168,9 +99,71 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         self.present(navController, animated: true, completion: nil)
     }
     
+    func presentAddClassesController() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "AddClassController") as! AddClassController
+         navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
+    }
+    
+    func toggleNoClassLabel(){
+        if self.courseCodes.count > 0 {
+            self.noClassLabel.isHidden = true
+        }
+        else {
+            if !self.labelHasBeenPresented { self.addLabel() }
+            self.noClassLabel.isHidden = false
+        }
+    }
+    
+    
+    func addLabel() {
+        guard let window = UIApplication.shared.keyWindow else { return }
+        
+        noClassLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 250, height: 350))
+        noClassLabel.font = UIFont(name: "Futura", size: 20.0)
+        noClassLabel.center = window.center
+        noClassLabel.textAlignment = .center
+        noClassLabel.text = "You aren't tracking any classes yet. Click below to get started!"
+        noClassLabel.numberOfLines = 3
+        
+        noClassLabel.center = self.view.center
+        noClassLabel.center.x = self.view.center.x
+        noClassLabel.center.y = self.view.center.y
+        
+        labelHasBeenPresented = true
+        
+        self.view.addSubview(noClassLabel)
+    }
+    
+    func getClassStatus(withGroup dispatchGroup: DispatchGroup) {
+        let db = Firestore.firestore()
+        courseCodes.removeAll()
+        courseStatus.removeAll()
+        for cls in UserService.user.classArr {
+            dispatchGroup.enter()
+            let docRef = db.collection("Class").document("\(cls) \(AppConstants.quarter)")
+            
+            docRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    guard let data = document.data() else { print("couldn't do it"); return }
+                    let status = data["curr_status"] as! String
+                    self.courseCodes.append(cls)
+                    self.courseStatus.append(status)
+                    
+                    print("Found course: \(cls) status: \(data["curr_status"])")
+                    dispatchGroup.leave()
+                    
+                } else {
+                    print("Document does not exist")
+                    dispatchGroup.leave()
+                }
+            }
+        }
     }
     
     func logOut() {
@@ -178,17 +171,19 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         if let _ = Auth.auth().currentUser {
             do {
                 try Auth.auth().signOut()
-                UserService.logoutUser()
+                let dg = DispatchGroup()
+                UserService.logoutUser(disaptchGroup: dg)
                 print("sign out successful")
-                presentSplashScreen()
+                dg.notify(queue: .main) {
+                    self.presentSplashScreen()
+                }
             }
             catch let signOutError as NSError {
                 print ("Error signing out: %@", signOutError)
                 return
             }
         }
-            // if user is not signed in
-        else {
+        else { // if user is not signed in
             print("user not signed in")
             presentSplashScreen()
         }
@@ -206,7 +201,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
                 
             case "Notifications":
                 self.presentNotifications()
-            
+                
             case "Settings":
                 self.presentSettings()
             default:
@@ -218,14 +213,40 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         present(menuVC, animated: true, completion: nil)
     }
     
+    @objc func refreshTableView() {
+        let dispatchGroup = DispatchGroup()
+        getClassStatus(withGroup: dispatchGroup)
+        
+        dispatchGroup.notify(queue: .main) {
+            print("reloading")
+            self.refreshControl?.endRefreshing()
+            self.tableView.reloadData()
+            self.toggleNoClassLabel()
+        }
+    }
+    
+    @objc func didSwipeOnView(gestureRecognizer: UIPanGestureRecognizer) {
+        // Swiping from left to right
+        if case .Right = gestureRecognizer.horizontalDirection(target: self.view)  {
+            slideInMenu()
+        }
+        else { // Swiping from right to left
+            if addClassesisPresented { return }
+            
+            presentAddClassesController()
+            addClassesisPresented = true
+        }
+        
+        
+    }
+    
     @IBAction func addClassClicked(_ sender: Any) {
+        presentAddClassesController()
     }
     
     
     @IBAction func menuClicked(_ sender: Any) {
         slideInMenu()
-        return
-        
     }
 }
 
@@ -249,6 +270,7 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
         print("type = \(type(of: self.courseCodes[index])) \(self.courseCodes[index])")
         cell.courseCodeLabel.text = self.courseCodes[index]
         cell.statusLabel.text = self.courseStatus[index]
+        cell.cellView.layer.cornerRadius = 5
         updateUI(withCell: cell, withResponce: self.courseStatus[index])
         return cell
     }

@@ -13,7 +13,6 @@ class AddClassController: UIViewController {
     
     @IBOutlet weak var checkAvailabilityButton: RoundedButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var addClassButton: RoundedButton!
     @IBOutlet weak var addClassLabel: UILabel!
     @IBOutlet weak var trackClassesButton: RoundedButton!
     @IBOutlet weak var statusTitle: UILabel!
@@ -21,7 +20,7 @@ class AddClassController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var backgroundView: UIView!
     @IBOutlet weak var stackView: UIStackView!
-    @IBOutlet weak var cartContentView: UIView!
+    @IBOutlet weak var quarterLabel: UILabel!
     
     var courseCodes = [String]()
     var courseStatus = [String]()
@@ -33,6 +32,7 @@ class AddClassController: UIViewController {
      */
     override func viewDidLoad() {
         super.viewDidLoad()
+        quarterLabel.text = AppConstants.quarter.capitalizingFirstLetter()
         setUpButtons()
         setUpTableView()
         setUpGestures()
@@ -147,7 +147,9 @@ class AddClassController: UIViewController {
             mySocket.readBufferSize = 32768
             print("created")
             do {
-                try mySocket.connect(to: "52.32.147.139", port: 5000)
+                let server_ip = AppConstants.server_ip
+                let server_port = AppConstants.server_port
+                try mySocket.connect(to: server_ip, port: Int32(server_port))
                 
                 
                 do {
@@ -216,11 +218,13 @@ class AddClassController: UIViewController {
             self.displayError(title: "Invalid Entry.", message: message)
             return }
         
+        dismissKeyboard()
         let email = UserService.user.email
         let quarter = "spring"
         let year = "2020"
         let courseCode = courseCodeField.text!
-        let input = "\(action)\(email),\(quarter),\(year),\(courseCode),,"
+        let school = UserService.user.school
+        let input = "\(action)\(email),\(quarter),\(year),\(courseCode),\(school),"
         
         makeConnection(withCourseCode: courseCode, withAction: action, withString: input)
     }
@@ -243,6 +247,7 @@ class AddClassController: UIViewController {
             self.displayError(title: "Whoops.", message: message)
             return }
         
+//        sendRequest(withAction: "add") // <-- remove later
         
         courseCodes.append(currentClass)
         courseStatus.append(currentResponse)
@@ -306,7 +311,7 @@ extension AddClassController: UITableViewDelegate, UITableViewDataSource {
         cell.courseCodeLabel.text = self.courseCodes[row]
         updateCellColor(withCell: cell, withResponce: courseStatus[row], atRow: row)
         updateCellContentViewColor(withCell: cell, withResponce: courseStatus.last ?? "")
-//        cell.cellView.layer.cornerRadius = 5
+        cell.cellView.layer.cornerRadius = 5
 //        cell.contentView.layer.cornerRadius = 5
         return cell
     }

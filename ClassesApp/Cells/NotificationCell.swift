@@ -13,16 +13,19 @@ class NotificationCell: UITableViewCell {
     @IBOutlet weak var conatinerView: UIView!
     @IBOutlet weak var courseNumberLabel: UILabel!
     @IBOutlet weak var courseDescriptionLabel: UILabel!
+    @IBOutlet weak var timeLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
 
         conatinerView.layer.cornerRadius = 5
-        conatinerView.layer.shadowColor = UIColor.black.cgColor
-        conatinerView.layer.shadowOpacity = 0.4
+        conatinerView.layer.shadowColor = UIColor.lightGray.cgColor
+        conatinerView.layer.shadowOpacity = 0.2
         conatinerView.layer.shadowOffset = CGSize.zero
-        conatinerView.layer.shadowRadius = 2
-
+        conatinerView.layer.shadowRadius = 1
+        
+        conatinerView.layer.borderWidth = 0.5
+        conatinerView.layer.borderColor = UIColor.lightGray.cgColor
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

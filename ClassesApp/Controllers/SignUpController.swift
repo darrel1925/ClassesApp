@@ -81,14 +81,15 @@ class SignUpController: UIViewController {
                                  email: email,
                                  firstName: firstName,
                                  lastName: lastName,
-                                 stripeId: "",
                                  webReg: false,
                                  webRegPswd: "",
+                                 stripeId: "",
                                  
                                  school: "UCI",
                                  fcm_token: "",
-                                 purchaseHistory: [[ : ]],
+                                 freeClasses: 2,
                                  receiveEmails: true,
+                                 purchaseHistory: [[ : ]],
                                  notifications: [[ : ]]
                                  )
             
