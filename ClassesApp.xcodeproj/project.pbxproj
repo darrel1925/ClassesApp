@@ -13,6 +13,9 @@
 		9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */; };
 		9A40E7F2243857B90070A410 /* StripeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A40E7F1243857B90070A410 /* StripeAPI.swift */; };
 		9A445419242D959300089389 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A445418242D959300089389 /* UserService.swift */; };
+		9A7E051A244131D2002E9803 /* ToggleEmailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7E0518244131D2002E9803 /* ToggleEmailsController.swift */; };
+		9A7E051B244131D2002E9803 /* ToggleEmailsController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A7E0519244131D2002E9803 /* ToggleEmailsController.xib */; };
+		9A7E051D244189E8002E9803 /* ServerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7E051C244189E8002E9803 /* ServerService.swift */; };
 		9A8533F6243D6BF300F7197F /* ForgotPasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8533F4243D6BE100F7197F /* ForgotPasswordController.swift */; };
 		9A8533F7243D6BF300F7197F /* ForgotPasswordController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A8533F5243D6BF300F7197F /* ForgotPasswordController.xib */; };
 		9A8533FB243D6CB200F7197F /* SettingsLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8533FA243D6CB200F7197F /* SettingsLabelCell.swift */; };
@@ -75,6 +78,9 @@
 		9A40E7F1243857B90070A410 /* StripeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeAPI.swift; sourceTree = "<group>"; };
 		9A445418242D959300089389 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		9A77D7AC243BF15600D7963F /* ClassesApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ClassesApp.entitlements; sourceTree = "<group>"; };
+		9A7E0518244131D2002E9803 /* ToggleEmailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleEmailsController.swift; sourceTree = "<group>"; };
+		9A7E0519244131D2002E9803 /* ToggleEmailsController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ToggleEmailsController.xib; sourceTree = "<group>"; };
+		9A7E051C244189E8002E9803 /* ServerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerService.swift; sourceTree = "<group>"; };
 		9A8533F4243D6BE100F7197F /* ForgotPasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordController.swift; sourceTree = "<group>"; };
 		9A8533F5243D6BF300F7197F /* ForgotPasswordController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ForgotPasswordController.xib; sourceTree = "<group>"; };
 		9A8533FA243D6CB200F7197F /* SettingsLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLabelCell.swift; sourceTree = "<group>"; };
@@ -169,6 +175,7 @@
 			isa = PBXGroup;
 			children = (
 				9A445418242D959300089389 /* UserService.swift */,
+				9A7E051C244189E8002E9803 /* ServerService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -178,6 +185,8 @@
 			children = (
 				9A8533F4243D6BE100F7197F /* ForgotPasswordController.swift */,
 				9A8533F5243D6BF300F7197F /* ForgotPasswordController.xib */,
+				9A7E0518244131D2002E9803 /* ToggleEmailsController.swift */,
+				9A7E0519244131D2002E9803 /* ToggleEmailsController.xib */,
 			);
 			path = Xibs;
 			sourceTree = "<group>";
@@ -454,6 +463,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A7E051B244131D2002E9803 /* ToggleEmailsController.xib in Resources */,
 				9A9472B7242C1E7C004927DD /* LaunchScreen.storyboard in Resources */,
 				9A8533F7243D6BF300F7197F /* ForgotPasswordController.xib in Resources */,
 				9A9472B4242C1E7C004927DD /* Assets.xcassets in Resources */,
@@ -590,10 +600,12 @@
 				9A9FD2FC24380E240011F8A4 /* CheckOutController.swift in Sources */,
 				9AEEB595243C515900F5E6FE /* NotificationCell.swift in Sources */,
 				9AAD828D2431B41600C66838 /* TrackedCell.swift in Sources */,
+				9A7E051A244131D2002E9803 /* ToggleEmailsController.swift in Sources */,
 				9A8CF97C242C58C7008D0DC6 /* Extensions.swift in Sources */,
 				9A445419242D959300089389 /* UserService.swift in Sources */,
 				9A8CF973242C3F43008D0DC6 /* SplashScreenController.swift in Sources */,
 				9A8CF975242C48FA008D0DC6 /* LogInController.swift in Sources */,
+				9A7E051D244189E8002E9803 /* ServerService.swift in Sources */,
 				9A8533FD243D7F2700F7197F /* PurchaseHistoryCell.swift in Sources */,
 				9A9472AB242C1E76004927DD /* AppDelegate.swift in Sources */,
 				9A8533F6243D6BF300F7197F /* ForgotPasswordController.swift in Sources */,

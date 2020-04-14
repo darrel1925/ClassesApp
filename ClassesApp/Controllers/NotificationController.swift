@@ -42,7 +42,7 @@ class NotificationController: UIViewController {
         swipe1.direction = .down
         swipe2.direction = .down
         backgroundView.addGestureRecognizer(swipe1)
-        view.addGestureRecognizer(swipe2)
+        navigationController?.navigationBar.addGestureRecognizer(swipe2)
     }
     
     func displayClearNotificationsAlert() {
@@ -113,7 +113,8 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
         let row = indexPath.row
         let notification = UserService.user.revNotifications[row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell") as! NotificationCell
-        
+        cell.selectionStyle = .none
+
         cell.courseNumberLabel.text = notification["course_code"]
         cell.courseDescriptionLabel.text = "Status changed from \(notification["old_status"] ?? "") to \(notification["new_status"] ?? "")"
         

@@ -26,6 +26,7 @@ class NotificationCell: UITableViewCell {
         
         conatinerView.layer.borderWidth = 0.5
         conatinerView.layer.borderColor = UIColor.lightGray.cgColor
+        selectionStyle = .none
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

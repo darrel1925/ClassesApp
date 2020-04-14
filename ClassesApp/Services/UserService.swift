@@ -37,8 +37,7 @@ final class _UserService {
             // if we can get user infor from db
             guard let data = snap?.data() else { return }
             // add it to out user so we can access it globally
-            print("Data is \(data)")
-            print("Type is \(type(of: data["classes"]))")
+//            print("Data is \(data)")
             self.user = User.init(data: data)
             print("user info has been updated")
             self.dispatchGroup.customLeave()

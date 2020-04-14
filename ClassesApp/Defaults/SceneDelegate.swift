@@ -45,23 +45,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         else {
             print("user is NOT already logged in\n\n")
-//            guard let _ = (scene as? UIWindowScene) else { return }
-//
-//            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//
-//            guard let rootVC = storyboard.instantiateViewController(identifier: "SplashScreenController") as? SplashScreenController else {
-//                print("ViewController not found")
-//                return
-//            }
-//
-//            let rootNC = UINavigationController(rootViewController: rootVC)
-//            self.window?.rootViewController = rootNC
-//            self.window?.makeKeyAndVisible()
         }
-        
-        
-        
-        
     }
     
     

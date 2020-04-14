@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseFirestore
+import FirebaseAuth
 
 extension UIViewController {
     
@@ -57,20 +58,20 @@ extension String {
     }
     
     func capitalizingFirstLetter() -> String {
-      return prefix(1).uppercased() + self.lowercased().dropFirst()
+        return prefix(1).uppercased() + self.lowercased().dropFirst()
     }
-
+    
     mutating func capitalizeFirstLetter() {
-      self = self.capitalizingFirstLetter()
+        self = self.capitalizingFirstLetter()
     }
     
     var isValidUCIEmail: Bool {
         let trimmedEmail = self.trimmingCharacters(in: .whitespacesAndNewlines)
         let emailArray = trimmedEmail.components(separatedBy: "@")
-
+        
         if emailArray.count < 2 { return false }
         print("email1 \(emailArray[0]) email2 \(emailArray[1])")
-
+        
         if emailArray[1] != "uci.edu" { return false }
         
         return true
@@ -81,7 +82,7 @@ extension String {
         let fullName = trimmedString.components(separatedBy: " ")
         
         if fullName.count != 2 { return false }
-
+        
         let firstName = fullName[0]
         let lastName = fullName[1]
         
@@ -96,24 +97,24 @@ extension String {
     
     
     func separateAndFormatName() -> [String] {
-            let name =  self
-            let nameFormatter = PersonNameComponentsFormatter()
-            if let nameComps  = nameFormatter.personNameComponents(from: name),
-                let firstLetter = nameComps.givenName?.first?.uppercased(),
-                let lastLetter = nameComps.familyName?.first?.uppercased(),
-                let firstName = nameComps.givenName?.lowercased(),
-                let lastName = nameComps.familyName?.lowercased() {
-                
-                let sortedName = ["\(firstLetter)\(firstName[1 ..< lastName.count])", "\(lastLetter)\(lastName[1 ..< lastName.count])"]  // J. Singh
-                return sortedName
-            }
-            return self.components(separatedBy: " ")
+        let name =  self
+        let nameFormatter = PersonNameComponentsFormatter()
+        if let nameComps  = nameFormatter.personNameComponents(from: name),
+            let firstLetter = nameComps.givenName?.first?.uppercased(),
+            let lastLetter = nameComps.familyName?.first?.uppercased(),
+            let firstName = nameComps.givenName?.lowercased(),
+            let lastName = nameComps.familyName?.lowercased() {
+            
+            let sortedName = ["\(firstLetter)\(firstName[1 ..< lastName.count])", "\(lastLetter)\(lastName[1 ..< lastName.count])"]  // J. Singh
+            return sortedName
+        }
+        return self.components(separatedBy: " ")
     }
     
     func toDate() -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(abbreviation: "PST")
-
+        
         
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return dateFormatter.date(from: self)!
@@ -127,7 +128,7 @@ extension Date {
     func toString() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(abbreviation: "PST")
-
+        
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return dateFormatter.string(from: self)
     }
@@ -135,7 +136,7 @@ extension Date {
     func toStringInWords() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(abbreviation: "PST")
-
+        
         dateFormatter.dateStyle = .full
         
         let dateStr = dateFormatter.string(from: self)
@@ -153,7 +154,7 @@ extension Date {
         let dateStr2 = formatter.string(from: self) // "4:44pm on June 23, 2016\n"
         
         let dateArr = dateStr.components(separatedBy: ", ") // Wednesday, January 10, 2018
-
+        
         return "\(dateArr[0]) • \(dateStr2)" // Wednesday • 4:44pm
     }
     
@@ -177,7 +178,7 @@ extension Date {
                 }
                 else {
                     if (dateString.count > 4) { return false } // 12:22, 13:32, 1:23:23
-
+                    
                 }
                 dateString = dateString.replacingOccurrences(of: ":", with: ".") //  4.04
                 let minutesPassed = Double(dateString) ?? 5
@@ -239,7 +240,7 @@ extension String {
 
 extension Int {
     func penniesToFormattedDollars() -> String {
-    
+        
         let dollars = Double(self) / 100
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
@@ -254,30 +255,38 @@ extension Int {
 }
 
 extension UIPanGestureRecognizer {
-
+    
     enum GestureDirection {
         case Up
         case Down
         case Left
         case Right
     }
-
+    
     /// Get current vertical direction
     ///
     /// - Parameter target: view target
     /// - Returns: current direction
     func verticalDirection(target: UIView) -> GestureDirection {
-        return self.velocity(in: target).y > 0 ? .Down : .Up
+        return self.velocity(in: target).y > 600 ? .Down : .Up
     }
-
+    
     /// Get current horizontal direction
     ///
     /// - Parameter target: view target
     /// - Returns: current direction
     func horizontalDirection(target: UIView) -> GestureDirection {
-        return self.velocity(in: target).x > 0 ? .Right : .Left
+        print(self.velocity(in: target).x)
+        if self.velocity(in: target).x < -1000 {
+            return .Left
+        }
+        if self.velocity(in: target).x > 1000 {
+            return .Right
+        }
+        return .Down
+        //          return self.velocity(in: target).x > 600 ? .Right : .Left
     }
-
+    
     /// Get a tuple for current horizontal/vertical direction
     ///
     /// - Parameter target: view target
@@ -285,5 +294,23 @@ extension UIPanGestureRecognizer {
     func versus(target target: UIView) -> (horizontal: GestureDirection, vertical: GestureDirection) {
         return (self.horizontalDirection(target: target), self.verticalDirection(target: target))
     }
+}
 
+extension AuthErrorCode {
+    var errorMessage: String {
+        switch self {
+        case .emailAlreadyInUse:
+            return "This email is already in use with another account. Pick another email!"
+        case .userNotFound:
+            return "Account not found for this email address. Please check and try again!"
+        case .userDisabled:
+            return "Your account has been disabled. Please contact support."
+        case .networkError:
+            return "Network error. Please try again."
+        case .wrongPassword:
+            return "Your password or email in incorrect."
+        default:
+            return "Sorry, looks like something went wrong. Please try again later."
+        }
+    }
 }

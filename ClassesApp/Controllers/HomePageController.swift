@@ -15,6 +15,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var quarterLabel: UILabel!
     @IBOutlet weak var backgroundView: RoundedView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var leftForegroundView: UIView!
     
     let addClassLauncher = AddClassLauncher()
     let transition = SlideInTransition()
@@ -34,6 +35,11 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         setUpNavController()
         setUpTableView()
         setUpGestures()
+        
+        print(UserService.user.email)
+        print(UserService.user.email)
+        print(UserService.user.email)
+        print(UserService.user.email)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -44,7 +50,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     
     func setUpGestures() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didSwipeOnView))
-        self.view.addGestureRecognizer(panGesture)
+        leftForegroundView.addGestureRecognizer(panGesture)
     }
     
     func setUpTableView() {
@@ -119,7 +125,6 @@ class HomePageController: UIViewController, UITextFieldDelegate {
             self.noClassLabel.isHidden = false
         }
     }
-    
     
     func addLabel() {
         guard let window = UIApplication.shared.keyWindow else { return }
@@ -204,6 +209,11 @@ class HomePageController: UIViewController, UITextFieldDelegate {
                 
             case "Settings":
                 self.presentSettings()
+                
+            case "Share":
+                let shareStr = "this is my sharing string"
+                let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
+                self.present(sharingController, animated: true, completion: nil)
             default:
                 return
             }
@@ -233,11 +243,9 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         else { // Swiping from right to left
             if addClassesisPresented { return }
             
-            presentAddClassesController()
+//            presentAddClassesController()
             addClassesisPresented = true
         }
-        
-        
     }
     
     @IBAction func addClassClicked(_ sender: Any) {
@@ -253,26 +261,34 @@ class HomePageController: UIViewController, UITextFieldDelegate {
 
 extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.courseCodes.count + 1
+        return self.courseCodes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
-        let index = row - 1
         let cell = tableView.dequeueReusableCell(withIdentifier: "TrackedCell") as! TrackedCell
-        
-        if row == 0 {
-            cell.courseCodeLabel.text = "Course Code"
-            cell.statusLabel.text = "Status"
-            return cell
-        }
-        
-        print("type = \(type(of: self.courseCodes[index])) \(self.courseCodes[index])")
-        cell.courseCodeLabel.text = self.courseCodes[index]
-        cell.statusLabel.text = self.courseStatus[index]
+
+        cell.courseCodeLabel.text = self.courseCodes[row]
+        cell.statusLabel.text = self.courseStatus[row]
         cell.cellView.layer.cornerRadius = 5
-        updateUI(withCell: cell, withResponce: self.courseStatus[index])
+        updateUI(withCell: cell, withResponce: self.courseStatus[row])
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        print("hi1")
+        if editingStyle == .delete {
+            print("Deleted")
+            
+            ServerService.removeClassesFromFirebase(withClasses: [courseCodes[indexPath.row]])
+            self.courseCodes.remove(at: indexPath.row)
+            self.courseStatus.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
     }
     
     func updateUI(withCell cell: TrackedCell, withResponce response: String) {
@@ -306,5 +322,17 @@ extension HomePageController: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         transition.isPresenting = false
         return transition
+    }
+}
+
+extension HomePageController: UIGestureRecognizerDelegate {
+
+    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+        if touch.view?.isDescendant(of: self.tableView) == true {
+            print("table")
+        return false
+    }
+        print("NOT table")
+    return true
     }
 }

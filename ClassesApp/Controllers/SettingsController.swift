@@ -11,21 +11,32 @@ import UIKit
 class SettingsController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var backgroundView: RoundedView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
         
         setUpTableView()
+        setUpGestures()
     }
     
-    /*
-     TURN OFF EMAIL NOTIFICAITONS
-     VIEW PURCHASE HISTORY
-     */
     func setUpTableView(){
         tableView.delegate = self
         tableView.dataSource = self
+    }
+    
+    func setUpGestures() {
+        let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
+        let swipe2: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
+        swipe1.direction = .down
+        swipe2.direction = .down
+        backgroundView.addGestureRecognizer(swipe1)
+        navigationController?.navigationBar.addGestureRecognizer(swipe2)
+    }
+
+    @objc func handleDismiss() {
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction func exitButtonClicked(_ sender: Any) {
@@ -44,16 +55,14 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         case 0:
             return 1
         case 1:
-            return 3
+            return 1
         case 2:
             return 1
         case 3:
-            return 5
+            return UserService.user.purchaseHistory.count
         default:
             return 0
-        }
-        return 1 
-        
+        }        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -76,18 +85,18 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             default:
                 return cell
             }
-            
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
             cell.titleLabel.text = "Purchase History"
             return cell
-        
+            
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "PurchaseHistoryCell") as! PurchaseHistoryCell
+            let purchase = UserService.user.purchaseHistory.reversed()[row]
             
-            cell.courseTitleCell.text = "34250"
-            cell.timeLabel.text = "Tues • 9:15pm"
-            cell.priceLabel.text = "$1.49"
+            cell.courseTitleCell.text = purchase["course_code"]
+            cell.timeLabel.text = purchase["date"]?.toDate().toStringInWords()
+            cell.priceLabel.text = Int(purchase["price"] ?? "0")?.penniesToFormattedDollars()
             return cell
             
         default:
@@ -97,9 +106,21 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = indexPath.row
-        
-        switch row {
-        case 2:
+        let section = indexPath.section
+        print("\(row) \(section)")
+
+        switch section {
+        case 1:
+            switch row {
+            case 0:
+                print("clicked")
+                let toggleEmailsVC = ToggleEmailsController()
+                toggleEmailsVC.modalPresentationStyle = .overFullScreen
+                self.present(toggleEmailsVC, animated: true, completion: nil)
+                
+            default:
+                return
+            }
             return
         default:
             return

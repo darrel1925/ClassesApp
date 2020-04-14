@@ -27,7 +27,7 @@ class User {
     var freeClasses: Int
     var receiveEmails: Bool
     var classes: [String: [Any]]
-    var purchaseHistory: [ [String: String] ] // [ [course_code: '34250', date: Date] ]
+    var purchaseHistory: [ [String: String] ] // [ [course_code: '34250', date: Date, price: 149] ]
     var notifications: [ [String: String] ] // [ [course_code: '34250', status: 'FULL OPEN', date: Date] ]?
     
     var revNotifications: [ [String: String] ] { return notifications.reversed()}
@@ -68,7 +68,7 @@ class User {
     // User is Logging In
     init(data: [String: Any]) {
         self.id = data["id"] as? String ?? ""
-        self.email = data["email"] as? String ?? ""
+        self.email = data["email"] as? String ?? "-.-"
         self.stripeId = data["stripeId"] as? String ?? ""
         self.firstName = data["first_name"] as? String ?? ""
         self.lastName = data["last_name"] as? String ?? ""

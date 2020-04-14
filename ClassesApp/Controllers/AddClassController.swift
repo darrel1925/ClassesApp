@@ -139,70 +139,61 @@ class AddClassController: UIViewController {
     }
     
     func makeConnection(withCourseCode code: String, withAction action: String, withString input: String) {
-        var mySocket: Socket
         
-        do {
-            print("will create")
-            mySocket = try Socket.create()
-            mySocket.readBufferSize = 32768
-            print("created")
-            do {
-                let server_ip = AppConstants.server_ip
-                let server_port = AppConstants.server_port
-                try mySocket.connect(to: server_ip, port: Int32(server_port))
-                
-                
-                do {
-                    try mySocket.write(from: input)
-                    
-                    
-                    if action == "get"{
-                        do {
-                            var data: Data = Data()
-                            _ = try mySocket.read(into: &data)
-                            let response = String(data: data, encoding: .utf8)
-                            self.addClassLabel.text = "Add \(code)"
-                            updateUI(withResponce: response!)
-                            currentResponse = response!
-                            currentClass = code
-                            activityIndicator.stopAnimating()
-                            print("updated vals \(currentResponse) | \(currentClass)")
-                            tableView.reloadData()
-                            
-                            return
-                        }
-                        catch {
-                            let message = "Looks like there was an issue. If this continues, try opening and closing the app!"
-                            self.displayError(title: "Connection Error", message: message)
-                            activityIndicator.stopAnimating()
-                            mySocket.close()
-                        }
-                    }
-                    activityIndicator.stopAnimating()
-                    mySocket.close()
-                }
-                catch { // problem with code writing data back
-                    let message = "This isn't your fault this one's on us. We're probably taking this time to make TrackMy a better app for you! Try again later while we work to get this fixed!"
-                    self.displayError(title: "Connection Error", message: message)
-                    activityIndicator.stopAnimating()
-                    mySocket.close()}
-            }
-            catch { // server is not up and runnung
-                let message = "This isn't your fault this one's on us. We're probably taking this time to make TrackMy a better app for you! Try again later while we work to get this fixed!"
-                self.displayError(title: "Network Error", message: message)
-                activityIndicator.stopAnimating()
-                mySocket.close()}
+        let response = ServerService.makeConnection(withAction: action, withInput: input)
+        print(response)
+        if ["Waitl", "OPEN", "FULL", "NewOnly", "Error"].contains(response) {
+            self.addClassLabel.text = "Add \(code)"
+            updateUI(withResponce: response)
+            currentResponse = response
+            currentClass = code
+            activityIndicator.stopAnimating()
+            print("updated vals \(currentResponse) | \(currentClass)")
+            tableView.reloadData()
+            return
         }
-        catch { // problem with users internet connection
-            let message = "Looks like there is an issue. Try checking your internet connection and try again."
-            self.displayError(title: "Connection Error", message: message)
-            activityIndicator.stopAnimating()}
         
+        switch response {
+        case "ConnectionError1": // could not read what was returned from server
+            let message = "Looks like there was an issue. If this continues, try opening and closing the app!"
+            self.displayError(title: "Connection Error", message: message)
+            activityIndicator.stopAnimating()
+            break
+        case "ConnectionError2": // problem with code writing data back
+            let message = "This isn't your fault this one's on us. We're probably taking this time to make TrackMy a better app for you! Try again later while we work to get this fixed!"
+            self.displayError(title: "Connection Error", message: message)
+            activityIndicator.stopAnimating()
+            break
+        case "NetworkError1": // server is not up and runnung | <-- might be user's interner connection
+            let message = "This isn't your fault this one's on us. We're probably taking this time to make TrackMy a better app for you! Try again later while we work to get this fixed!"
+            self.displayError(title: "Network Error", message: message)
+            activityIndicator.stopAnimating()
+            break
+        case "NetworkError2": // problem with users internet connection
+            let message = "Looks like there is an issue. Try checking your internet connection and try again."
+            self.displayError(title: "Network Error", message: message)
+            activityIndicator.stopAnimating()
+            break
+        default:
+            print("SHOULD NOT HAVE EXECUTED: AddclassController. resposne = \(response)")
+            return
+        }
+        
+        currentResponse = ""
+        currentClass = ""
         activityIndicator.stopAnimating()
-        self.currentResponse = ""
-        self.currentClass = ""
-        print("vals reset")
         tableView.reloadData()
+    }
+    
+    func alreadyTrackingClasses() -> Bool {
+        for code in courseCodes {
+            if UserService.user.classArr.contains(code){
+                let message = "You are already tracking course \(code). Remove this course from the list before continuing."
+                displayError(title: "Duplicate Class", message: message)
+                return true
+            }
+        }
+        return false
     }
     
     func sendRequest(withAction action: String) {
@@ -219,18 +210,13 @@ class AddClassController: UIViewController {
             return }
         
         dismissKeyboard()
-        let email = UserService.user.email
-        let quarter = "spring"
-        let year = "2020"
         let courseCode = courseCodeField.text!
-        let school = UserService.user.school
-        let input = "\(action)\(email),\(quarter),\(year),\(courseCode),\(school),"
+        let input = ServerService.constuctInput(withAction: action, withCode: courseCode)
         
         makeConnection(withCourseCode: courseCode, withAction: action, withString: input)
     }
     
     @IBAction func checkAvailabilityClicked(_ sender: Any) {
-        print("starting monitor")
         activityIndicator.startAnimating()
         sendRequest(withAction: "get")
     }
@@ -243,8 +229,8 @@ class AddClassController: UIViewController {
         
         if courseCodes.contains(currentClass) {
             print("current responce is \(currentClass)")
-            let message = "You've already added this course!"
-            self.displayError(title: "Whoops.", message: message)
+            let message = "You've already added this course! Check the availibility of a different class before adding again."
+            self.displayError(title: "Course Already Added.", message: message)
             return }
         
 //        sendRequest(withAction: "add") // <-- remove later
@@ -257,36 +243,33 @@ class AddClassController: UIViewController {
     }
     
     @IBAction func trackClassesClicked(_ sender: Any) {
-        
         if courseCodes.count == 0 {
             let message = "It looks like you haven't added any classes yet. Check the availibility of your class and the click 'Add Class' before you begin tracking"
             self.displayError(title: "No Classes Added.", message: message)
+            return
         }
+        
+        if alreadyTrackingClasses() { return }
         
         StripeCart.clearCart()
         for courseCode in courseCodes {
             StripeCart.addItemToCart(item: courseCode)
         }
         
+        var courseDict: [String: String] = [:]
+        for i in stride(from: 0, to: courseCodes.count, by: 1) {
+            courseDict.updateValue(courseStatus[i], forKey: courseCodes[i])
+        }
+        
         let checkOutVC = storyboard?.instantiateViewController(withIdentifier: "CheckOutController") as! CheckOutController
         checkOutVC.modalPresentationStyle = .overFullScreen
+        checkOutVC.courseDict = courseDict
+        checkOutVC.addClassesVC = self
         self.present(checkOutVC, animated: true, completion: nil)
-        
-        // present cart
-        // once their info in is
-        
-        // 1. track the courses
-        // 2. process payment
-        // 3.  if payment goes through
-        // 3.1 dismiss
-        // 4. if payment method fails
-        // 4.1 remove courses from being tracked
-        
-        // sendRequest(withAction: "add")
     }
 }
 
-extension AddClassLauncher: UITextFieldDelegate {
+extension AddClassController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
@@ -303,10 +286,6 @@ extension AddClassController: UITableViewDelegate, UITableViewDataSource {
         let row = indexPath.row
         let cell = tableView.dequeueReusableCell(withIdentifier: "TrackedCell") as! TrackedCell
         
-        print(row)
-        print(self.courseStatus)
-        print(self.courseCodes)
-        
         cell.statusLabel.text = self.courseStatus[row]
         cell.courseCodeLabel.text = self.courseCodes[row]
         updateCellColor(withCell: cell, withResponce: courseStatus[row], atRow: row)
@@ -321,10 +300,8 @@ extension AddClassController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        print("hi1")
         if editingStyle == .delete {
-            print("Deleted")
-            
+
             self.courseCodes.remove(at: indexPath.row)
             self.courseStatus.remove(at: indexPath.row)
             updateTrackClassLabel()
@@ -341,16 +318,16 @@ extension AddClassController: UITableViewDelegate, UITableViewDataSource {
         if response == "" { return }
         switch response {
         case "OPEN":
-            cell.cellView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.3437749601)
+            cell.cellView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.42)
             
         case "Waitl":
-            cell.cellView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.3)
+            cell.cellView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.42)
         case "FULL":
-            cell.cellView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.3432383187)
+            cell.cellView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.42)
         case "NewOnly":
-            cell.cellView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.3187150559)
+            cell.cellView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.42)
         default:
-            cell.cellView.backgroundColor = #colorLiteral(red: 0.505957987, green: 0.01517132679, blue: 0.8248519059, alpha: 0.3333166933)
+            cell.cellView.backgroundColor = #colorLiteral(red: 0.505957987, green: 0.01517132679, blue: 0.8248519059, alpha: 0.4243959665)
         }
     }
     

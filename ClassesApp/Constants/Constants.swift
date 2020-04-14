@@ -14,6 +14,7 @@ let AppConstants = _AppConstants()
 class _AppConstants {
     var quarter = ""
     var server_ip = "52.32.147.139"
+    var year = "2020"
     var server_port = 5000
     var price_per_class = 149
     var appConstantListener: ListenerRegistration? = nil
@@ -31,6 +32,7 @@ class _AppConstants {
             guard let data = snap?.data() else { return }
             
             // add it to out self so we can access it globally
+            self.quarter = data["year"] as? String ?? "2020"
             self.quarter = data["quarter"] as? String ?? ""
             self.server_ip = data["server_ip"] as? String ?? "52.32.147.139"
             self.server_port = data["server_port"] as? Int ?? 5000
