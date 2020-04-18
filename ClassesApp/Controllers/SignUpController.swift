@@ -99,6 +99,7 @@ class SignUpController: UIViewController {
                 school: "UCI",
                 //                                 fcm_token: "",
                 freeClasses: 2,
+                credits: 2,
                 receiveEmails: true)
             //                                 purchaseHistory: [],
             //                                 notifications: []

@@ -36,12 +36,6 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ulY-Uc-mCD">
-                            <rect key="frame" x="16" y="185" width="104" height="40"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="40" id="Nrb-wm-ZK4"/>
-                            </constraints>
-                        </stackView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email Notifications On" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6xH-dx-Xb6">
                             <rect key="frame" x="90" y="16" width="234.5" height="30"/>
                             <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="23"/>

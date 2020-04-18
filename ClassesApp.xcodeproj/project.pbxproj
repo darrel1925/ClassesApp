@@ -9,10 +9,14 @@
 /* Begin PBXBuildFile section */
 		4F9DA298F76640B44C53BFF7 /* Pods_ClassesApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 268680EBD918781D59B584D9 /* Pods_ClassesApp.framework */; };
 		5414FC51020CD8B3B7044AFF /* Pods_ClassesAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9085724106233CBFE6E54B /* Pods_ClassesAppTests.framework */; };
+		9A08BCA22446102C00DC4B40 /* StorePopUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A08BCA02446102C00DC4B40 /* StorePopUpController.swift */; };
+		9A08BCA32446102C00DC4B40 /* StorePopUpController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A08BCA12446102C00DC4B40 /* StorePopUpController.xib */; };
 		9A1BA9EB243420400087622D /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1BA9EA243420400087622D /* SettingsController.swift */; };
 		9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */; };
 		9A40E7F2243857B90070A410 /* StripeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A40E7F1243857B90070A410 /* StripeAPI.swift */; };
 		9A445419242D959300089389 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A445418242D959300089389 /* UserService.swift */; };
+		9A73F1CD2445A4980004AF54 /* StoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A73F1CC2445A4980004AF54 /* StoreController.swift */; };
+		9A73F1CF2445A5580004AF54 /* StoreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A73F1CE2445A5580004AF54 /* StoreCell.swift */; };
 		9A7E051A244131D2002E9803 /* ToggleEmailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7E0518244131D2002E9803 /* ToggleEmailsController.swift */; };
 		9A7E051B244131D2002E9803 /* ToggleEmailsController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A7E0519244131D2002E9803 /* ToggleEmailsController.xib */; };
 		9A7E051D244189E8002E9803 /* ServerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7E051C244189E8002E9803 /* ServerService.swift */; };
@@ -73,10 +77,14 @@
 		5CD4EA122B044382653A4FA8 /* Pods_ClassesApp_ClassesAppUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClassesApp_ClassesAppUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		602BCBF2B37A0AC0FA02C385 /* Pods-ClassesApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesApp.release.xcconfig"; path = "Target Support Files/Pods-ClassesApp/Pods-ClassesApp.release.xcconfig"; sourceTree = "<group>"; };
 		80C1A2D8345491CE6A1B8CF3 /* Pods-ClassesAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesAppTests.release.xcconfig"; path = "Target Support Files/Pods-ClassesAppTests/Pods-ClassesAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		9A08BCA02446102C00DC4B40 /* StorePopUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePopUpController.swift; sourceTree = "<group>"; };
+		9A08BCA12446102C00DC4B40 /* StorePopUpController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StorePopUpController.xib; sourceTree = "<group>"; };
 		9A1BA9EA243420400087622D /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenAnimation.swift; sourceTree = "<group>"; };
 		9A40E7F1243857B90070A410 /* StripeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeAPI.swift; sourceTree = "<group>"; };
 		9A445418242D959300089389 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		9A73F1CC2445A4980004AF54 /* StoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreController.swift; sourceTree = "<group>"; };
+		9A73F1CE2445A5580004AF54 /* StoreCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCell.swift; sourceTree = "<group>"; };
 		9A77D7AC243BF15600D7963F /* ClassesApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ClassesApp.entitlements; sourceTree = "<group>"; };
 		9A7E0518244131D2002E9803 /* ToggleEmailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleEmailsController.swift; sourceTree = "<group>"; };
 		9A7E0519244131D2002E9803 /* ToggleEmailsController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ToggleEmailsController.xib; sourceTree = "<group>"; };
@@ -187,6 +195,8 @@
 				9A8533F5243D6BF300F7197F /* ForgotPasswordController.xib */,
 				9A7E0518244131D2002E9803 /* ToggleEmailsController.swift */,
 				9A7E0519244131D2002E9803 /* ToggleEmailsController.xib */,
+				9A08BCA02446102C00DC4B40 /* StorePopUpController.swift */,
+				9A08BCA12446102C00DC4B40 /* StorePopUpController.xib */,
 			);
 			path = Xibs;
 			sourceTree = "<group>";
@@ -310,6 +320,7 @@
 				9A1BA9EA243420400087622D /* SettingsController.swift */,
 				9A9FD2FB24380E240011F8A4 /* CheckOutController.swift */,
 				9AEEB596243C527E00F5E6FE /* NotificationController.swift */,
+				9A73F1CC2445A4980004AF54 /* StoreController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -331,6 +342,7 @@
 				9A8533FA243D6CB200F7197F /* SettingsLabelCell.swift */,
 				9A8533FC243D7F2700F7197F /* PurchaseHistoryCell.swift */,
 				9A8533FE243D81D100F7197F /* TitleCell.swift */,
+				9A73F1CE2445A5580004AF54 /* StoreCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -465,6 +477,7 @@
 			files = (
 				9A7E051B244131D2002E9803 /* ToggleEmailsController.xib in Resources */,
 				9A9472B7242C1E7C004927DD /* LaunchScreen.storyboard in Resources */,
+				9A08BCA32446102C00DC4B40 /* StorePopUpController.xib in Resources */,
 				9A8533F7243D6BF300F7197F /* ForgotPasswordController.xib in Resources */,
 				9A9472B4242C1E7C004927DD /* Assets.xcassets in Resources */,
 				9A8CF979242C4BEA008D0DC6 /* GoogleService-Info.plist in Resources */,
@@ -607,6 +620,7 @@
 				9A8CF975242C48FA008D0DC6 /* LogInController.swift in Sources */,
 				9A7E051D244189E8002E9803 /* ServerService.swift in Sources */,
 				9A8533FD243D7F2700F7197F /* PurchaseHistoryCell.swift in Sources */,
+				9A73F1CF2445A5580004AF54 /* StoreCell.swift in Sources */,
 				9A9472AB242C1E76004927DD /* AppDelegate.swift in Sources */,
 				9A8533F6243D6BF300F7197F /* ForgotPasswordController.swift in Sources */,
 				9A1BA9EB243420400087622D /* SettingsController.swift in Sources */,
@@ -615,11 +629,13 @@
 				9AAD829E24329E4D00C66838 /* MenuController.swift in Sources */,
 				9A8CF981242C78FE008D0DC6 /* HomePageController.swift in Sources */,
 				9A8533FF243D81D100F7197F /* TitleCell.swift in Sources */,
+				9A73F1CD2445A4980004AF54 /* StoreController.swift in Sources */,
 				9AAD82A12432A47300C66838 /* SlideInTransition.swift in Sources */,
 				9AAD82982432901F00C66838 /* Styles.swift in Sources */,
 				9AEEB597243C527E00F5E6FE /* NotificationController.swift in Sources */,
 				9A9472AD242C1E76004927DD /* SceneDelegate.swift in Sources */,
 				9A9FD2FF243815650011F8A4 /* StripeCart.swift in Sources */,
+				9A08BCA22446102C00DC4B40 /* StorePopUpController.swift in Sources */,
 				9AAD828F2431C66C00C66838 /* AddClassLauncher.swift in Sources */,
 				9A8CF97F242C6CCB008D0DC6 /* User.swift in Sources */,
 				9A8533FB243D6CB200F7197F /* SettingsLabelCell.swift in Sources */,

@@ -18,6 +18,7 @@ class _AppConstants {
     var server_port = 5000
     var price_per_class = 149
     var appConstantListener: ListenerRegistration? = nil
+    var merchant_id = "merchant.com.darrelmuonekwu.ClassesApp"
     
     func initalizeConstants() {
         let db = Firestore.firestore()
@@ -37,7 +38,8 @@ class _AppConstants {
             self.server_ip = data["server_ip"] as? String ?? "52.32.147.139"
             self.server_port = data["server_port"] as? Int ?? 5000
             self.price_per_class = data["price_per_class"] as? Int ?? 149
-            print("quarter: \(self.quarter)\n server_ip: \(self.server_ip)\n server_port: \(self.server_port)\n price_per_class: \(self.price_per_class)")
+            self.merchant_id = data["merchant_id"] as? String ?? "merchant.com.darrelmuonekwu.ClassesApp"
+            print(data)
         })
     }
 }

@@ -24,6 +24,7 @@ class User {
     
     var school: String
     var fcm_token: String
+    var credits: Int
     var freeClasses: Int
     var receiveEmails: Bool
     var classes: [String: [Any]]
@@ -40,7 +41,7 @@ class User {
     init(id: String = "", email: String = "", firstName: String = "",
          lastName: String = "", webReg: Bool = false, webRegPswd: String = "",
          stripeId: String = "", classes: [String: [Any]] = [:], school: String = "",
-         fcm_token: String = "", freeClasses: Int = 0, receiveEmails: Bool = true,
+         fcm_token: String = "", freeClasses: Int = 0, credits: Int = 0, receiveEmails: Bool = true,
          isLoggedIn: Bool = true, purchaseHistory: [[String: String]] = [],
          notifications: [[String: String]] = [] ){
         
@@ -56,6 +57,7 @@ class User {
         self.school = school
         self.fcm_token = fcm_token
         self.receiveEmails = receiveEmails
+        self.credits = credits
         self.freeClasses = freeClasses
         self.classes = classes
         self.purchaseHistory = purchaseHistory
@@ -74,6 +76,7 @@ class User {
         self.lastName = data["last_name"] as? String ?? ""
         self.webReg = data["web_reg"] as? Bool ?? false
         self.webRegPswd = data["web_reg_pswd"] as? String ?? ""
+        self.credits = data["credits"] as? Int ?? 0
         self.freeClasses = data["free_classes"] as? Int ?? 0
         self.isLoggedIn = data["is_logged_in"] as? Bool ?? true
         if let classes = data["classes"] as? [String : [Any]] {
@@ -118,6 +121,7 @@ class User {
             "is_logged_in": user.isLoggedIn,
             "free_classes": user.freeClasses,
             "school": user.school,
+            "credits": user.credits,
             "fcm_token": user.fcm_token,
             "purchase_history": user.purchaseHistory,
             "receive_emails": user.receiveEmails,

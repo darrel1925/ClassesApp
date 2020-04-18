@@ -8,8 +8,19 @@
 
 import UIKit
 
+protocol StoreCellDelegate {
+    func didTapGetCredits(row: Int?)
+}
+
 class StoreCell: UITableViewCell {
 
+    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var getCreditsLabel: UILabel!
+    @IBOutlet weak var priceLabel: UILabel!
+    @IBOutlet weak var purchaseButton: RoundedButton!
+    
+    var delegate: StoreCellDelegate?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -17,8 +28,21 @@ class StoreCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+    
         // Configure the view for the selected state
     }
 
+    @IBAction func getCreditsTapped(_ sender: Any) {
+        delegate?.didTapGetCredits(row: getRow())
+        print("tapped")
+    }
+    
+    func getRow() -> Int? {
+        guard let superView = self.superview as? UITableView else {
+            print("superview is not a UITableView - getIndexPath")
+            return nil
+        }
+        let row = superView.indexPath(for: self)?.row
+        return row
+    }
 }

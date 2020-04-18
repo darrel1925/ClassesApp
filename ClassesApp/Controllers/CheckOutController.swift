@@ -320,7 +320,6 @@ extension CheckOutController: STPPaymentContextDelegate {
     // called if there was an error getting payment info from customer
     func paymentContext(_ paymentContext: STPPaymentContext, didFailToLoadWithError error: Error) {
         activityIndicator.stopAnimating()
-        
         let alertContoller = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         
         let retry = UIAlertAction(title: "Retry", style: .default, handler: {(action) in
@@ -339,6 +338,7 @@ extension CheckOutController: STPPaymentContextDelegate {
     // did begin a stripe payment
     func paymentContext(_ paymentContext: STPPaymentContext, didCreatePaymentResult paymentResult: STPPaymentResult, completion: @escaping STPErrorBlock) {
         
+        print("payment amy is \(paymentResult.description)")
         print("stripe id= \(UserService.user.stripeId)")
         print(paymentResult.source.stripeID)
         // unique string to add to payment to ensure no payment request is made twice

@@ -30,16 +30,12 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        quarterLabel.text = AppConstants.quarter.capitalizingFirstLetter()
+        quarterLabel.text = "\(AppConstants.quarter.capitalizingFirstLetter()) \(AppConstants.year.capitalizingFirstLetter())"
+        
         addLabel()
         setUpNavController()
         setUpTableView()
         setUpGestures()
-        
-        print(UserService.user.email)
-        print(UserService.user.email)
-        print(UserService.user.email)
-        print(UserService.user.email)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -100,6 +96,13 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     
     func presentSettings() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "SettingsController") as! SettingsController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
+    }
+    
+    func presentStore() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "StoreController") as! StoreController
         let navController = UINavigationController(rootViewController: vc)
         navController.modalPresentationStyle = .fullScreen
         self.present(navController, animated: true, completion: nil)
@@ -209,9 +212,12 @@ class HomePageController: UIViewController, UITextFieldDelegate {
                 
             case "Settings":
                 self.presentSettings()
+                    
+            case "Store":
+                self.presentStore()
                 
             case "Share":
-                let shareStr = "this is my sharing string"
+                let shareStr = "URL for appl download goes here :p"
                 let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
                 self.present(sharingController, animated: true, completion: nil)
             default:

@@ -7,24 +7,127 @@
 //
 
 import UIKit
+import Stripe
+import FirebaseFunctions
+import FirebaseFirestore
+
 
 class StoreController: UIViewController {
-
+    
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var creditsLabel: UILabel!
+    @IBOutlet weak var backgroundView: RoundedView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        setUpTableView()
+        setUpGestures()
+        setCreditsLabel()
+        
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        setCreditsLabel()
     }
-    */
+    
+    func setUpTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+    }
+    
+    func setCreditsLabel() {
+        if UserService.user.credits <= 1 {
+            creditsLabel.text = "You have \(UserService.user.credits) Credit!"
+        }
+        else {
+            creditsLabel.text = "You have \(UserService.user.credits) Credits!"
+        }
+    }
+    
+    func setUpGestures() {
+        let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
+        let swipe2: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
+        swipe1.direction = .down
+        swipe2.direction = .down
+        backgroundView.addGestureRecognizer(swipe1)
+        navigationController?.navigationBar.addGestureRecognizer(swipe2)
+    }
+    
+    func presentStorePopUpVC(row: Int) {
+        let storePopUpVC = StorePopUpController()
+        storePopUpVC.modalPresentationStyle = .overFullScreen
+        storePopUpVC.storeController = self
+        switch row {
+        case 0:
+            storePopUpVC.purchasingCredits = 1
+        case 1:
+            storePopUpVC.purchasingCredits = 3
+        case 2:
+            storePopUpVC.purchasingCredits = 10
+        default:
+            return
+        }
+        
+        self.present(storePopUpVC, animated: true, completion: nil)
+        
+    }
+    
+    @objc func handleDismiss() {
+        dismiss(animated: true, completion: nil )
+    }
+    @IBAction func exitButtonClicked(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+}
 
+extension StoreController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let row = indexPath.row
+        let cell = tableView.dequeueReusableCell(withIdentifier: "StoreCell") as! StoreCell
+        cell.delegate = self
+        cell.containerView.layer.cornerRadius = 10
+        cell.purchaseButton.layer.cornerRadius = 10
+        
+        switch row {
+        case 0:
+            cell.getCreditsLabel.text = "Get 1 Credit"
+            cell.priceLabel.text = "$1.99"
+            cell.purchaseButton.setTitle("Get Credit", for: .normal)
+            return cell
+        case 1:
+            cell.getCreditsLabel.text = "Get 3 Credits"
+            cell.priceLabel.text = "$3.49"
+            return cell
+        case 2:
+            cell.getCreditsLabel.text = "Get 10 Credits"
+            cell.priceLabel.text = "$12.49"
+            return cell
+        default:
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row = indexPath.row
+        presentStorePopUpVC(row: row)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 95
+    }
+}
+
+extension StoreController: StoreCellDelegate {
+    func didTapGetCredits(row: Int?) {
+        if let row = row {
+            self.presentStorePopUpVC(row: row)
+        }
+    }
 }
