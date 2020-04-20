@@ -94,9 +94,14 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             let cell = tableView.dequeueReusableCell(withIdentifier: "PurchaseHistoryCell") as! PurchaseHistoryCell
             let purchase = UserService.user.purchaseHistory.reversed()[row]
             
-            cell.courseTitleCell.text = purchase["course_code"]
-            cell.timeLabel.text = purchase["date"]?.toDate().toStringInWords()
-            cell.priceLabel.text = Int(purchase["price"] ?? "0")?.penniesToFormattedDollars()
+            if purchase[DataBase.num_credits] == "1" {
+                cell.numCreditsLabel.text = "\(purchase[DataBase.num_credits] ?? "Error") Credit"
+            }
+            else {
+                cell.numCreditsLabel.text = "\(purchase[DataBase.num_credits] ?? "Error") Credits"
+            }
+            cell.timeLabel.text = purchase[DataBase.date]?.toDate().toStringInWords()
+            cell.priceLabel.text = Int(purchase[DataBase.price] ?? "Error")?.penniesToFormattedDollars()
             return cell
             
         default:

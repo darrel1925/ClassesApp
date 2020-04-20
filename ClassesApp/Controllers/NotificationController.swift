@@ -22,6 +22,7 @@ class NotificationController: UIViewController {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
         
+        addLabel()
         setUpTableView()
         setUpGestures()
     }
@@ -113,12 +114,12 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
         let row = indexPath.row
         let notification = UserService.user.revNotifications[row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell") as! NotificationCell
-        cell.selectionStyle = .none
 
-        cell.courseNumberLabel.text = notification["course_code"]
-        cell.courseDescriptionLabel.text = "Status changed from \(notification["old_status"] ?? "") to \(notification["new_status"] ?? "")"
+        cell.selectionStyle = .none
+        cell.courseNumberLabel.text = notification[DataBase.course_code]
+        cell.courseDescriptionLabel.text = "Status changed from \(notification[DataBase.old_status] ?? "") to \(notification[DataBase.new_status] ?? "")"
         
-        cell.timeLabel.text = notification["date"]?.toDate().toStringInWords()
+        cell.timeLabel.text = notification[DataBase.date]?.toDate().toStringInWords()
         
         return cell
     }
@@ -137,13 +138,13 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
         let db = Firestore.firestore()
         dispatchGroup.enter()
         
-        let docRef = db.collection("User").document(UserService.user.email)
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
         
         var updatedNotifications = UserService.user.notifications
         updatedNotifications.remove(at: index)
         UserService.user.notifications = updatedNotifications
         
-        docRef.updateData(["notifications" : updatedNotifications]) { (error) in
+        docRef.updateData([DataBase.notifications : updatedNotifications]) { (error) in
             if let _ = error {
                 print("could not update notificaitons")
                 dispatchGroup.customLeave()
@@ -159,9 +160,9 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
         let db = Firestore.firestore()
         dispatchGroup.enter()
         
-        let docRef = db.collection("User").document(UserService.user.email)
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
                 
-        docRef.updateData(["notifications" : []]) { (error) in
+        docRef.updateData([DataBase.notifications : []]) { (error) in
             if let _ = error {
                 dispatchGroup.customLeave()
                 return

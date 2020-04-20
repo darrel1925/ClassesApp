@@ -89,22 +89,22 @@ class AddClassController: UIViewController {
         print("got response \(response) and currClassIs \(currentClass)")
         let chosenClass = courseCodeField.text ?? "no Text"
         switch response {
-        case "OPEN":
+        case Response.OPEN:
             animateAddButtonIn()
             backgroundView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.2520467252)
             statusTitle.text = "\(chosenClass) is Open"
             break
-        case "Waitl":
+        case Response.Waitl:
             animateAddButtonIn()
             backgroundView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.248053115)
             statusTitle.text = "\(chosenClass) is on Waitlist"
             break
-        case "FULL":
+        case Response.FULL:
             animateAddButtonIn()
             backgroundView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.2456195088)
             statusTitle.text = "\(chosenClass) is on Full"
             break
-        case "NewOnly":
+        case Response.NewOnly:
             animateAddButtonIn()
             backgroundView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.2466803115)
             statusTitle.text = "\(chosenClass) is New Only"
@@ -142,7 +142,7 @@ class AddClassController: UIViewController {
         
         let response = ServerService.makeConnection(withAction: action, withInput: input)
         print(response)
-        if ["Waitl", "OPEN", "FULL", "NewOnly", "Error"].contains(response) {
+        if [Response.Waitl, Response.OPEN, Response.FULL, Response.NewOnly, Response.Error].contains(response) {
             self.addClassLabel.text = "Add \(code)"
             updateUI(withResponce: response)
             currentResponse = response
@@ -223,7 +223,7 @@ class AddClassController: UIViewController {
     
     @objc func addClassClicked() {
         if currentResponse == "" { return }
-        if currentResponse == "Error" {
+        if currentResponse == Response.Error {
             tableView.reloadData()
             return }
         
@@ -232,8 +232,6 @@ class AddClassController: UIViewController {
             let message = "You've already added this course! Check the availibility of a different class before adding again."
             self.displayError(title: "Course Already Added.", message: message)
             return }
-        
-//        sendRequest(withAction: "add") // <-- remove later
         
         courseCodes.append(currentClass)
         courseStatus.append(currentResponse)
@@ -317,14 +315,14 @@ extension AddClassController: UITableViewDelegate, UITableViewDataSource {
         print("got response \(response)")
         if response == "" { return }
         switch response {
-        case "OPEN":
+        case Response.OPEN:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.42)
             
-        case "Waitl":
+        case Response.Waitl:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.42)
-        case "FULL":
+        case Response.FULL:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.42)
-        case "NewOnly":
+        case Response.NewOnly:
             cell.cellView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.42)
         default:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.505957987, green: 0.01517132679, blue: 0.8248519059, alpha: 0.4243959665)
@@ -338,13 +336,13 @@ extension AddClassController: UITableViewDelegate, UITableViewDataSource {
         if currentResponse == "" { return }
         
         switch currentResponse {
-        case "OPEN":
+        case Response.OPEN:
             cell.contentView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.2520467252)
-        case "Waitl":
+        case Response.Waitl:
             cell.contentView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.248053115)
-        case "FULL":
+        case Response.FULL:
             cell.contentView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.2456195088)
-        case "NewOnly":
+        case Response.NewOnly:
             cell.contentView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.2466803115)
         default:
             cell.contentView.backgroundColor = #colorLiteral(red: 0.505957987, green: 0.01517132679, blue: 0.8248519059, alpha: 0.2461187101)

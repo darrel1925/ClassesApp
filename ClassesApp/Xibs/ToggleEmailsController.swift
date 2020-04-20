@@ -66,12 +66,12 @@ class ToggleEmailsController: UIViewController {
     func getEmailPreference(dispatchGroup dg: DispatchGroup) {
         dg.enter()
         let db = Firestore.firestore()
-        let docRef = db.collection("User").document(UserService.user.email)
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
         activityIndicator.startAnimating()
         
         
         if self.willRecieveEmails {
-            docRef.updateData(["receive_emails" : false]) { (err) in
+            docRef.updateData([DataBase.receive_emails : false]) { (err) in
                 if let _ = err {
                     print("couldnt set to falase!")
                     self.activityIndicator.stopAnimating()
@@ -85,7 +85,7 @@ class ToggleEmailsController: UIViewController {
             }
         }
         else {
-            docRef.updateData(["receive_emails" : true]) { (err) in
+            docRef.updateData([DataBase.receive_emails : true]) { (err) in
                 if let _ = err {
                     print("couldnt set to true!")
                     self.activityIndicator.stopAnimating()

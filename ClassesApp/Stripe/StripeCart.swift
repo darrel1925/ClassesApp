@@ -24,8 +24,7 @@ final class _StripeCart {
     }
     
     var total: Int {
-        let freeClassDiscount = pricePerClass * UserService.user.freeClasses
-        let totalAmt = subtotal - freeClassDiscount - discount
+        let totalAmt = subtotal - discount
         
         if totalAmt < 0{
             return 0

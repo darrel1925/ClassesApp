@@ -9,6 +9,8 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import AudioToolbox
+
 
 class HomePageController: UIViewController, UITextFieldDelegate {
     
@@ -82,8 +84,28 @@ class HomePageController: UIViewController, UITextFieldDelegate {
             self.logOut()
         })
         
-        alert.addAction(logoutAction)
         alert.addAction(cancelAction)
+        alert.addAction(logoutAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func presentDeleteAlert(atIndexPath indexPath: IndexPath) {
+        let message = "Are you sure you would like to remove \(courseCodes[indexPath.row])? \n\nYou will be able to track this course again for the rest of the term for no additional cost."
+        
+        let alert = UIAlertController(title: "Delete \(self.courseCodes[indexPath.row])", message: message, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        let deleteAction = UIAlertAction(title: "Delete", style: .default, handler: {_ in
+            print("Deleted")
+            ServerService.removeClassesFromFirebase(withClasses: [self.courseCodes[indexPath.row]])
+            self.courseCodes.remove(at: indexPath.row)
+            self.courseStatus.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+        })
+        
+        alert.addAction(cancelAction)
+        alert.addAction(deleteAction)
+
         self.present(alert, animated: true, completion: nil)
     }
     
@@ -148,32 +170,6 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         self.view.addSubview(noClassLabel)
     }
     
-    func getClassStatus(withGroup dispatchGroup: DispatchGroup) {
-        let db = Firestore.firestore()
-        courseCodes.removeAll()
-        courseStatus.removeAll()
-        for cls in UserService.user.classArr {
-            dispatchGroup.enter()
-            let docRef = db.collection("Class").document("\(cls) \(AppConstants.quarter)")
-            
-            docRef.getDocument { (document, error) in
-                if let document = document, document.exists {
-                    guard let data = document.data() else { print("couldn't do it"); return }
-                    let status = data["curr_status"] as! String
-                    self.courseCodes.append(cls)
-                    self.courseStatus.append(status)
-                    
-                    print("Found course: \(cls) status: \(data["curr_status"])")
-                    dispatchGroup.leave()
-                    
-                } else {
-                    print("Document does not exist")
-                    dispatchGroup.leave()
-                }
-            }
-        }
-    }
-    
     func logOut() {
         // if user is signed in
         if let _ = Auth.auth().currentUser {
@@ -231,7 +227,10 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     
     @objc func refreshTableView() {
         let dispatchGroup = DispatchGroup()
-        getClassStatus(withGroup: dispatchGroup)
+        courseCodes.removeAll()
+        courseStatus.removeAll()
+        ServerService.getClassStatus(withGroup:dispatchGroup, homeVC: self)
+
         
         dispatchGroup.notify(queue: .main) {
             print("reloading")
@@ -286,30 +285,24 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        print("hi1")
         if editingStyle == .delete {
-            print("Deleted")
-            
-            ServerService.removeClassesFromFirebase(withClasses: [courseCodes[indexPath.row]])
-            self.courseCodes.remove(at: indexPath.row)
-            self.courseStatus.remove(at: indexPath.row)
-            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            self.presentDeleteAlert(atIndexPath: indexPath)
         }
     }
     
     func updateUI(withCell cell: TrackedCell, withResponce response: String) {
         print("got response \(response)")
         switch response {
-        case "OPEN":
+        case Response.OPEN:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.2520467252)
             return
-        case "Waitl":
+        case Response.Waitl:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.248053115)
             return
-        case "FULL":
+        case Response.FULL:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.2456195088)
             return
-        case "NewOnly":
+        case Response.NewOnly:
             cell.cellView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.2466803115)
             return
         default:

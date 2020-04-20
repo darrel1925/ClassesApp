@@ -20,12 +20,10 @@ class StoreController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
-        
+        navigationController?.navigationBar.prefersLargeTitles = true        
         setUpTableView()
         setUpGestures()
         setCreditsLabel()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -39,7 +37,10 @@ class StoreController: UIViewController {
     }
     
     func setCreditsLabel() {
-        if UserService.user.credits <= 1 {
+        if UserService.user.credits == 0 {
+         creditsLabel.text = "You have \(UserService.user.credits) Credits."
+        }
+        else if UserService.user.credits == 1 {
             creditsLabel.text = "You have \(UserService.user.credits) Credit!"
         }
         else {
@@ -70,14 +71,13 @@ class StoreController: UIViewController {
         default:
             return
         }
-        
         self.present(storePopUpVC, animated: true, completion: nil)
-        
     }
     
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil )
     }
+    
     @IBAction func exitButtonClicked(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
@@ -98,16 +98,16 @@ extension StoreController: UITableViewDelegate, UITableViewDataSource {
         switch row {
         case 0:
             cell.getCreditsLabel.text = "Get 1 Credit"
-            cell.priceLabel.text = "$1.99"
+            cell.priceLabel.text = AppConstants.price_map["1"]?.penniesToFormattedDollars()
             cell.purchaseButton.setTitle("Get Credit", for: .normal)
             return cell
         case 1:
             cell.getCreditsLabel.text = "Get 3 Credits"
-            cell.priceLabel.text = "$3.49"
+            cell.priceLabel.text = AppConstants.price_map["3"]?.penniesToFormattedDollars()
             return cell
         case 2:
             cell.getCreditsLabel.text = "Get 10 Credits"
-            cell.priceLabel.text = "$12.49"
+            cell.priceLabel.text = AppConstants.price_map["10"]?.penniesToFormattedDollars()
             return cell
         default:
             return cell

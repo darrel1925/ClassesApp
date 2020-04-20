@@ -28,18 +28,18 @@ class StorePopUpController: UIViewController {
     var applePayPresented = false
     
     var storeController: StoreController!
-    var purchasingCredits: Int!
+    var purchasingCredits: Int! // 8624 
     var purchaseAmountInPennies: Int {
         switch purchasingCredits {
         case 1:
             print("Have \(purchasingCredits) credits :)")
-            return 199
+            return AppConstants.price_map["1"]!
         case 3:
             print("Have \(purchasingCredits) credits :)")
-            return 350
+            return AppConstants.price_map["3"]!
         case 10:
             print("Have \(purchasingCredits) credits :)")
-            return 1250
+            return AppConstants.price_map["10"]!
         default:
             print("Have \(purchasingCredits) credits :)")
             return -1
@@ -129,7 +129,7 @@ class StorePopUpController: UIViewController {
         config.requiredShippingAddressFields = .none
         if Stripe.deviceSupportsApplePay() {
             config.additionalPaymentOptions = .applePay
-            config.appleMerchantIdentifier = "merchant.com.darrelmuonekwu.ClassesApp"
+            config.appleMerchantIdentifier = AppConstants.merchant_id
         }
         
         // invokes cloud function to get ephemeral key and customers stripe paymemt info
@@ -153,18 +153,8 @@ class StorePopUpController: UIViewController {
     }
     
     func presentSuccessAlert() {
-//        ServerService.updatePurchaseHistory(withClasses: StripeCart.cartItems)
-        
-//        let db = Firestore.firestore()
-//        let docRef = db.collection("User").document(UserService.user.email)
-//
-//        var free_classes = UserService.user.freeClasses - StripeCart.cartItems.count
-//        if free_classes < 0 {
-//            free_classes = 0
-//        }
-//        docRef.setData(["free_classes": free_classes], merge: true)
-        
-        let message = "Thank you for your purchase.\nNote: It may take up to 2 minutes to begin tracking your class."
+        ServerService.updatePurchaseHistory(numCreditsBought: purchasingCredits, totalPrice: purchaseAmountInPennies)
+        let message = "Thank you for your support!"
         let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
         let okay = UIAlertAction(title: "Okay", style: .default, handler: {(action) in
             self.storeController.setCreditsLabel()
@@ -212,25 +202,25 @@ class StorePopUpController: UIViewController {
     
     func removeCredits() {
         let db = Firestore.firestore()
-        let docRef = db.collection("User").document(UserService.user.email)
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
 
         let credits = UserService.user.credits
         let newTotalCredits = credits - purchasingCredits
 
-        docRef.setData(["credits": newTotalCredits], merge: true)
+        docRef.setData([DataBase.credits: newTotalCredits], merge: true)
     }
     
     func successfullyAddCredits(dispatchGroup dg: DispatchGroup) -> Bool {
         dg.enter()
         let db = Firestore.firestore()
-        let docRef = db.collection("User").document(UserService.user.email)
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
 
         let credits = UserService.user.credits
         let newTotalCredits = credits + purchasingCredits
         
         var returnValue = true
 
-        docRef.setData(["credits": newTotalCredits], merge: true) { (error) in
+        docRef.setData([DataBase.credits: newTotalCredits], merge: true) { (error) in
             if let _ = error {
                 returnValue = false
                 let message = "Unable to add credits. Your car was not charged."

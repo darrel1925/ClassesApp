@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FirebaseFirestore
 import FirebaseAuth
 
 extension UIViewController {
@@ -33,8 +32,8 @@ extension UIViewController {
         let okAction = UIAlertAction(title: "Okay", style: .default, handler: completion)
         let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
         
-        alert.addAction(okAction)
         alert.addAction(cancelAction)
+        alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
     }
 }
@@ -65,14 +64,19 @@ extension String {
         self = self.capitalizingFirstLetter()
     }
     
-    var isValidUCIEmail: Bool {
+    var isValidSchoolEmail: Bool {
         let trimmedEmail = self.trimmingCharacters(in: .whitespacesAndNewlines)
         let emailArray = trimmedEmail.components(separatedBy: "@")
+        if emailArray.count < 2 { return false } // ['pname', 'uci.edu']
+        let extensionArray = emailArray[1].components(separatedBy: ".")
         
-        if emailArray.count < 2 { return false }
-        print("email1 \(emailArray[0]) email2 \(emailArray[1])")
+        if extensionArray.count < 2 { return false } // ['uci', 'edu']
+        if extensionArray[0] == "" { return false } // pmane@.edu
+        if extensionArray[1] != "edu" { return false } // pname@uci.abc
         
-        if emailArray[1] != "uci.edu" { return false }
+        print("emailExtension", extensionArray)
+
+
         
         return true
     }
@@ -97,18 +101,16 @@ extension String {
     
     
     func separateAndFormatName() -> [String] {
-        let name =  self
-        let nameFormatter = PersonNameComponentsFormatter()
-        if let nameComps  = nameFormatter.personNameComponents(from: name),
-            let firstLetter = nameComps.givenName?.first?.uppercased(),
-            let lastLetter = nameComps.familyName?.first?.uppercased(),
-            let firstName = nameComps.givenName?.lowercased(),
-            let lastName = nameComps.familyName?.lowercased() {
-            
-            let sortedName = ["\(firstLetter)\(firstName[1 ..< lastName.count])", "\(lastLetter)\(lastName[1 ..< lastName.count])"]  // J. Singh
-            return sortedName
-        }
-        return self.components(separatedBy: " ")
+        let trimmedString = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        let fullName = trimmedString.components(separatedBy: " ")
+
+        let firstName = fullName[0]
+        let lastName = fullName[1]
+        
+        let capFirstLetterFirstName = firstName[0].uppercased()
+        let capFirstLetterLastName = lastName[0].uppercased()
+                
+        return ["\(capFirstLetterFirstName.uppercased())\(firstName[1 ..< firstName.count])", "\(capFirstLetterLastName)\(lastName[1 ..< lastName.count])"]
     }
     
     func toDate() -> Date {
@@ -291,7 +293,7 @@ extension UIPanGestureRecognizer {
     ///
     /// - Parameter target: view target
     /// - Returns: current direction
-    func versus(target target: UIView) -> (horizontal: GestureDirection, vertical: GestureDirection) {
+    func versus(target: UIView) -> (horizontal: GestureDirection, vertical: GestureDirection) {
         return (self.horizontalDirection(target: target), self.verticalDirection(target: target))
     }
 }
@@ -309,6 +311,8 @@ extension AuthErrorCode {
             return "Network error. Please try again."
         case .wrongPassword:
             return "Your password or email in incorrect."
+        case .invalidEmail:
+            return "Email address not accepted. Please enter a valid email address."
         default:
             return "Sorry, looks like something went wrong. Please try again later."
         }

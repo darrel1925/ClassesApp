@@ -8,6 +8,7 @@
 
 import UIKit
 import Stripe
+import AudioToolbox
 import FirebaseFunctions
 import FirebaseFirestore
 
@@ -16,28 +17,24 @@ class CheckOutController: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var paymentMethodButton: UIButton!
     @IBOutlet weak var backgroundView: UIView!
-    @IBOutlet weak var totalLabel: UILabel!
+    @IBOutlet weak var currentBalanceLabel: UILabel!
+    @IBOutlet weak var newBalanceLabel: UILabel!
+    @IBOutlet weak var costLabel: UILabel!
+    @IBOutlet weak var repeatCourseLabel: UILabel!
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var trackClassesLabel: UILabel!
     @IBOutlet weak var confirmPurchaseButton: RoundedButton!
+    @IBOutlet weak var repeatStackView: UIStackView!
     
-    var paymentContext: STPPaymentContext!
+    var repreatTrackedCourses: Int = 0
     var addClassesVC: AddClassController!
     var courseDict: [String: String]!
-    var applePayPresented = false
-    
-    let applePayButton: PKPaymentButton = PKPaymentButton(paymentButtonType: .plain, paymentButtonStyle: .black)
-
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
-        applePayButton.isEnabled = Stripe.deviceSupportsApplePay()
-        
-        
-        setUpStripeConfig()
+        setRepeatTrackedCourses()
         animateViewDownward()
-        setTrackClassesLabel()
-        setPaymentInfo()
+        setLabels()
         setUpGestures()
     }
     
@@ -46,26 +43,21 @@ class CheckOutController: UIViewController {
         animateViewUpwards()
     }
     
-    func showApplePay() {
-        // Pay
-        let merchantId = "merchant.com.darrelmuonekwu.ClassesApp"
-        let paymentRequest = Stripe.paymentRequest(withMerchantIdentifier: merchantId, country: "US", currency: "USD")
-        paymentRequest.paymentSummaryItems = [
-            PKPaymentSummaryItem(label: "Rubber duck", amount: 1.5)
-        ]
-        guard Stripe.canSubmitPaymentRequest(paymentRequest) else {
-            assertionFailure()
-            return
+    func setRepeatTrackedCourses(){
+        for course in Array(courseDict.keys) {
+            if UserService.user.trackedClasses.contains(course) {
+                repreatTrackedCourses += 1
+            }
         }
-        guard let authorizationViewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest) else {
-            assertionFailure()
-            return
+        
+        repeatCourseLabel.text = "+ \(repreatTrackedCourses) credits"
+        
+        if repreatTrackedCourses == 0 {
+            repeatStackView.isHidden = true
         }
-        authorizationViewController.delegate = self
-        self.present(authorizationViewController, animated: true, completion: nil)
     }
     
-    func setTrackClassesLabel() {
+    func setLabels() {
         let numClasses = StripeCart.cartItems.count
         
         if numClasses == 1 {
@@ -73,6 +65,15 @@ class CheckOutController: UIViewController {
         }
         else {
             trackClassesLabel.text = "Track \(numClasses) Classes!"
+        }
+        
+        currentBalanceLabel.text = "\(UserService.user.credits) credits"
+        costLabel.text = "\(getTotalCost()) credits"
+        let newBalance = UserService.user.credits - getTotalCost()
+        newBalanceLabel.text = "\(newBalance) credits"
+        
+        if newBalance < 0 {
+            newBalanceLabel.textColor = #colorLiteral(red: 0.762566535, green: 0.3093850772, blue: 0.2170317457, alpha: 1)
         }
     }
     
@@ -103,31 +104,6 @@ class CheckOutController: UIViewController {
         swipe.direction = .down
         backgroundView.addGestureRecognizer(swipe)
     }
-    
-    func setUpStripeConfig() {
-        let config = STPPaymentConfiguration.shared()
-        config.createCardSources = true // user card info is save after user enters it in
-        config.requiredBillingAddressFields = .none
-        config.requiredShippingAddressFields = .none
-        if Stripe.deviceSupportsApplePay() {
-            config.additionalPaymentOptions = .applePay
-            config.appleMerchantIdentifier = "merchant.com.darrelmuonekwu.ClassesApp"
-        }
-            
-        // invokes cloud function to get ephemeral key and customers stripe paymemt info
-        let customerContext = STPCustomerContext(keyProvider: StripeAPI)
-        paymentContext = STPPaymentContext(customerContext: customerContext, configuration: config, theme: .default())
-        paymentContext.paymentAmount = StripeCart.total
-        paymentContext.delegate = self
-        paymentContext.hostViewController = self
-        
-    }
-    
-    func setPaymentInfo() {
-        print("\(StripeCart.cartItems)")
-        totalLabel.text = StripeCart.total.penniesToFormattedDollars()
-        paymentContext.paymentAmount = StripeCart.total // <-- reset amount being charged
-    }
 
     func presentHomePage() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "HomePageController") as! HomePageController
@@ -137,19 +113,10 @@ class CheckOutController: UIViewController {
     }
     
     func presentSuccessAlert() {
-        ServerService.updatePurchaseHistory(withClasses: StripeCart.cartItems)
-
-        let db = Firestore.firestore()
-        let docRef = db.collection("User").document(UserService.user.email)
+        ServerService.addToTrackedClasses(classes: Array(courseDict.keys))
         
-        var free_classes = UserService.user.freeClasses - StripeCart.cartItems.count
-        if free_classes < 0 {
-            free_classes = 0
-        }
-            
-        docRef.setData(["free_classes": free_classes], merge: true)
-
-        let message = "Thank you for your purchase.\nNote: It may take up to 2 minutes to begin tracking your class."
+        AudioServicesPlaySystemSound(1519) // Actuate "Peek" feedback (weak boom)
+        let message = "You're all set.\n\nNote: It may take up to 2 minutes to begin tracking your class."
 
         let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
         let okay = UIAlertAction(title: "Okay", style: .default, handler: {(action) in
@@ -161,10 +128,9 @@ class CheckOutController: UIViewController {
         self.present(alertController, animated: true)
     }
     
-    func presentPaymentErrorAlert(error: Error?) {
-        ServerService.removeClassesFromFirebase(withClasses: StripeCart.cartItems)
-        let message = "There was an error completing you payment. Your card was not charged"
-//        let message = error?.localizedDescription ?? "unable to get error message in cart"
+    func presentPaymentErrorAlert() {
+        print("error alert presenting")
+        let message = "There was an error while attempting to track your classes. Your credits have not been affected."
         
         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let okay = UIAlertAction(title: "Okay", style: .default, handler: nil)
@@ -174,19 +140,15 @@ class CheckOutController: UIViewController {
 
     }
     
+    func getTotalCost() -> Int {
+        return StripeCart.cartItems.count - repreatTrackedCourses
+    }
+    
     func enablePaymentButton() {
         UIView.animate(withDuration: 0.6) {
-            if self.paymentContext.selectedPaymentOption?.label == "Apple Pay" {
-                self.confirmPurchaseButton.setTitle("Pay", for: .normal)
-                self.confirmPurchaseButton.titleLabel?.font = UIFont(name: "System", size: 47.0)
-                self.confirmPurchaseButton.backgroundColor = #colorLiteral(red: 0.1212944761, green: 0.1292245686, blue: 0.141699791, alpha: 1)
-            }
-            else
-            {
-                self.confirmPurchaseButton.setTitle("Confirm Purchase", for: .normal)
-                self.confirmPurchaseButton.titleLabel?.font = UIFont(name: "Futura", size: 17.0)
-                self.confirmPurchaseButton.backgroundColor = #colorLiteral(red: 0.3260789019, green: 0.5961753091, blue: 0.1608898185, alpha: 1)
-            }
+            self.confirmPurchaseButton.setTitle("Confirm", for: .normal)
+            self.confirmPurchaseButton.titleLabel?.font = UIFont(name: "Futura", size: 17.0)
+            self.confirmPurchaseButton.backgroundColor = #colorLiteral(red: 0.3260789019, green: 0.5961753091, blue: 0.1608898185, alpha: 1)
         }
     }
     
@@ -198,37 +160,58 @@ class CheckOutController: UIViewController {
         }
     }
     
-    func successfullyAddedClasses(dispatchGroup dg: DispatchGroup) -> Bool {
+    func addClasses(dispatchGroup dg: DispatchGroup) -> Bool {
         dg.enter()
+        print("entering in addClass")
         for code in StripeCart.cartItems {
             if !ServerService.addClassToFirebase(withCode: code, withStatus: courseDict[code] ?? "FULL", viewController: self) {
-                // error occured | remove classes
-                ServerService.removeClassesFromFirebase(withClasses: StripeCart.cartItems)
-                dg.leave()
-                return false
+                ServerService.dispatchGroup.notify(queue: .main) {
+                    print("is false")
+                    // error occured | remove classes
+                    ServerService.removeClassesFromFirebase(withClasses: StripeCart.cartItems)
+                    self.activityIndicator.stopAnimating()
+                    self.presentPaymentErrorAlert()
+                    dg.leave()
+                }
             }
         }
         dg.leave()
         return true
     }
     
+    func subtractCredits() -> Bool {
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
+        var returnValue = true
+        
+        let newBalance = UserService.user.credits - getTotalCost()
+        
+        
+        docRef.setData(["credits": newBalance], merge: true) { (error) in
+            if error != nil {
+                // error occured | remove classes
+                ServerService.removeClassesFromFirebase(withClasses: StripeCart.cartItems)
+                self.activityIndicator.stopAnimating()
+                self.presentPaymentErrorAlert()
+                returnValue = false
+            }
+        }
+        
+        activityIndicator.stopAnimating()
+        return returnValue
+    }
     
-    func processPayment(paymentContext: STPPaymentContext) {
+    func trackClasses() {
         let dg = DispatchGroup()
-        if !successfullyAddedClasses(dispatchGroup: dg) { return }
+        if !addClasses(dispatchGroup: dg) { return }
         
         dg.notify(queue: .main) {
-            // process payment
+            print("dispatched finished")
+
+            if !self.subtractCredits() { return }
             
-            if paymentContext.paymentAmount > 0 {
-                paymentContext.theme.translucentNavigationBar = true
-                paymentContext.requestPayment()
-            }
-            else
-            {
-                self.presentSuccessAlert()
-                self.activityIndicator.stopAnimating()
-            }
+            self.presentSuccessAlert()
+            
         }
     }
     
@@ -246,19 +229,15 @@ class CheckOutController: UIViewController {
         })
     }
     
-    @IBAction func paymentMethodClicked(_ sender: Any) {
-        paymentContext.theme.translucentNavigationBar = true
-        paymentContext.presentPaymentOptionsViewController()
-    }
-    
     @IBAction func confirmPurchaseClicked(_ sender: Any) {
-        // if no payment method is selected
-        if paymentContext.selectedPaymentOption == nil {
-            paymentContext.theme.translucentNavigationBar = true
-            paymentContext.presentPaymentOptionsViewController()
+        
+        // if user does not have enough credits
+        if UserService.user.credits < getTotalCost() {
+            let message = "You do not have enough credits. Go to the Store to get more credits"
+            displayError(title: "Not Enough Credits", message: message)
             return
         }
-        
+
         // if button stil says continue
         if confirmPurchaseButton.titleLabel?.text == "Continue" {
             enablePaymentButton()
@@ -266,139 +245,10 @@ class CheckOutController: UIViewController {
         }
         
         // user confirms credit card purchase
-        if confirmPurchaseButton.titleLabel?.text == "Confirm Purchase" {
+        if confirmPurchaseButton.titleLabel?.text == "Confirm" {
             self.activityIndicator.startAnimating()
-            processPayment(paymentContext: paymentContext)
+            trackClasses()
             return
         }
-        
-        if confirmPurchaseButton.titleLabel?.text == "Pay" {
-            
-            paymentContext.requestPayment()
-        }
-
-    }
-}
-
-extension CheckOutController: STPPaymentContextDelegate {
-    func paymentContextDidChange(_ paymentContext: STPPaymentContext) {
-        print("Did update \(paymentContext.selectedPaymentOption?.label ?? "")")
-        print("self.applePayPresented2 = \(self.applePayPresented)")
-        
-        // If there is a selected payment option
-        if  paymentContext.selectedPaymentOption?.label != nil {
-            print("found \(paymentContext.selectedPaymentOption?.label ?? "")")
-            paymentMethodButton.setTitle(paymentContext.selectedPaymentOption?.label, for: .normal)
-            
-            let label = paymentContext.selectedPaymentOption?.label
-            // If user selected apply pay
-            if label == "Apple Pay" {
-                // If apple payment screen is currently being shown
-                if applePayPresented {
-                    processPayment(paymentContext: self.paymentContext)
-                    return
-                }
-                else // If user seleted apple pay for payment (apple payment screen is not being shown)
-                {
-                    applePayPresented = true
-                    self.disablePaymentButton()
-                    return
-                }
-            }
-            // User updated payment method to anything thats not apple pay
-            applePayPresented = false
-            self.disablePaymentButton()
-        }
-        else // User removed all payment options
-        {
-            applePayPresented = false
-            self.disablePaymentButton()
-            paymentMethodButton.setTitle("Select Method", for: .normal)
-        }
-    }
-    
-    // called if there was an error getting payment info from customer
-    func paymentContext(_ paymentContext: STPPaymentContext, didFailToLoadWithError error: Error) {
-        activityIndicator.stopAnimating()
-        let alertContoller = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-        
-        let retry = UIAlertAction(title: "Retry", style: .default, handler: {(action) in
-            self.paymentContext.retryLoading()
-        })
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: {(action) in
-            self.dismiss(animated: true, completion: nil)
-        })
-        
-        alertContoller.addAction(cancel)
-        alertContoller.addAction(retry)
-        present(alertContoller, animated: true, completion: nil)
-        
-    }
-    
-    // did begin a stripe payment
-    func paymentContext(_ paymentContext: STPPaymentContext, didCreatePaymentResult paymentResult: STPPaymentResult, completion: @escaping STPErrorBlock) {
-        
-        print("payment amy is \(paymentResult.description)")
-        print("stripe id= \(UserService.user.stripeId)")
-        print(paymentResult.source.stripeID)
-        // unique string to add to payment to ensure no payment request is made twice
-        let idempotency = UUID().uuidString.replacingOccurrences(of: "-", with: "")
-        let data: [String: Any] = [
-            "email": UserService.user.email,
-            "total": StripeCart.total,
-            "customer_id": UserService.user.stripeId,
-            "idempotency": idempotency,
-            "source": paymentResult.source.stripeID
-        ]
-        
-        Functions.functions().httpsCallable("createCharge").call(data) { (result, error) in
-            if let error = error {
-                print("Error makeing charge: \(error.localizedDescription)")
-                self.displayError(title: "Error", message: "Unable to make charge")
-                completion(error)
-                return
-            }
-            completion(nil)
-        }
-    }
-    // called whether the payment was successful or not
-    func paymentContext(_ paymentContext: STPPaymentContext, didFinishWith status: STPPaymentStatus, error: Error?) {
-        activityIndicator.stopAnimating()
-        
-        switch status {
-        case .error:
-            presentPaymentErrorAlert(error: error)
-            return
-        case .success:
-            presentSuccessAlert()
-            return
-        case .userCancellation:
-            return
-        @unknown default:
-            print("ERROR: Unknown error after finishing payment")
-            return
-        }
-    }
-}
-
-
-extension CheckOutController: PKPaymentAuthorizationViewControllerDelegate  {
-    func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        print("paymentAuthorizationViewControllerDidFinish")
-        controller.dismiss(animated: true, completion: nil)
-    }
-    
-    func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
-        self.activityIndicator.startAnimating()
-        print("payment authorized by user")
-
-        self.activityIndicator.startAnimating()
-        processPayment(paymentContext: paymentContext)
-        completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
-    }
-    
-    func paymentAuthorizationViewControllerWillAuthorizePayment(_ controller: PKPaymentAuthorizationViewController) {
-        print("payment authorized by user2")
-        
     }
 }

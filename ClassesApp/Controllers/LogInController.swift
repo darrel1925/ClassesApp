@@ -32,8 +32,8 @@ class LogInController: UIViewController {
     }
     
     func credentialsAreValid() -> Bool {
-        if !(emailField.text!.isValidUCIEmail) {
-            let message = "Email must be a valid UCI email address. Ex. panteatr@uci.edu"
+        if !(emailField.text!.isValidSchoolEmail) {
+            let message = "Email must be a valid school email address ending in 'edu' Ex. panteatr@uci.edu, bbears@ucla.edu"
             self.displayError(title: "Whoops.", message: message)
             return false
         }

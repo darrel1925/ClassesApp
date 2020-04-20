@@ -34,12 +34,10 @@ class StoreCell: UITableViewCell {
 
     @IBAction func getCreditsTapped(_ sender: Any) {
         delegate?.didTapGetCredits(row: getRow())
-        print("tapped")
     }
     
     func getRow() -> Int? {
         guard let superView = self.superview as? UITableView else {
-            print("superview is not a UITableView - getIndexPath")
             return nil
         }
         let row = superView.indexPath(for: self)?.row

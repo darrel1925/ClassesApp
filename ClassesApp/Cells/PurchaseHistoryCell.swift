@@ -12,7 +12,7 @@ class PurchaseHistoryCell: UITableViewCell {
 
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var priceLabel: UILabel!
-    @IBOutlet weak var courseTitleCell: UILabel!
+    @IBOutlet weak var numCreditsLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

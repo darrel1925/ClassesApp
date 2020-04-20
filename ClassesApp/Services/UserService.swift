@@ -23,8 +23,8 @@ final class _UserService {
     func getCurrentUser(email: String) {
         // if user is logged in
 
-        let userRef = db.collection("User").document(email)
-        userRef.updateData(["is_logged_in" : true])
+        let userRef = db.collection(DataBase.User).document(email)
+        userRef.updateData([DataBase.is_logged_in : true])
         // if user changes something in document, it will always be up to date in our app
         userListener = userRef.addSnapshotListener({ (snap, error) in
 
@@ -37,7 +37,7 @@ final class _UserService {
             // if we can get user infor from db
             guard let data = snap?.data() else { return }
             // add it to out user so we can access it globally
-//            print("Data is \(data)")
+            print("Data is \(data)")
             self.user = User.init(data: data)
             print("user info has been updated")
             self.dispatchGroup.customLeave()
@@ -50,8 +50,8 @@ final class _UserService {
         print(user.isLoggedIn)
         print("trying")
         
-        let userRef = db.collection("User").document(user.email)
-        userRef.updateData(["is_logged_in" : false]) { (err) in
+        let userRef = db.collection(DataBase.User).document(user.email)
+        userRef.updateData([DataBase.is_logged_in : false]) { (err) in
             print("entered")
             if let _ = err {
                 print("Error setting is_logged_in")
