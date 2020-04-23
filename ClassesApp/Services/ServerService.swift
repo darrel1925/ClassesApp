@@ -13,14 +13,7 @@ import Socket
 let ServerService = _ServerService()
 
 final class _ServerService {
-    /*
-     response
-     ""
-     ConnectionError1
-     ConnectionError2
-     NetworkError1
-     NetworkError2
-     */
+
     let dispatchGroup = DispatchGroup()
     
     var schoolParam : String {
@@ -48,8 +41,8 @@ final class _ServerService {
         let quarter = AppConstants.quarter
         let year = AppConstants.year
         let school = UserService.user.school
-        
-        return "\(action)\(email),\(quarter),\(year),\(course_code),\(school),,,"
+        print("SENDING -> \(AppConstants.connect_pswd) \(action)\(email),\(quarter),\(year),\(course_code),\(school),,,")
+        return "\(AppConstants.connect_pswd) \(action)\(email),\(quarter),\(year),\(course_code),\(school),,,"
     }
     
     func getClassStatus(withGroup dispatchGroup: DispatchGroup, homeVC: HomePageController){

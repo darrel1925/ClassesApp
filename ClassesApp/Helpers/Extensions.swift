@@ -313,6 +313,8 @@ extension AuthErrorCode {
             return "Your password or email in incorrect."
         case .invalidEmail:
             return "Email address not accepted. Please enter a valid email address."
+        case.tooManyRequests:
+            return "Too many requests, please wait and try again later."
         default:
             return "Sorry, looks like something went wrong. Please try again later."
         }

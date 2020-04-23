@@ -102,7 +102,7 @@ class AddClassController: UIViewController {
         case Response.FULL:
             animateAddButtonIn()
             backgroundView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.2456195088)
-            statusTitle.text = "\(chosenClass) is on Full"
+            statusTitle.text = "\(chosenClass) is Full"
             break
         case Response.NewOnly:
             animateAddButtonIn()
@@ -175,6 +175,7 @@ class AddClassController: UIViewController {
             activityIndicator.stopAnimating()
             break
         default:
+            activityIndicator.stopAnimating()
             print("SHOULD NOT HAVE EXECUTED: AddclassController. resposne = \(response)")
             return
         }

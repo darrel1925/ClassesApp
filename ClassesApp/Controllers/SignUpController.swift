@@ -117,7 +117,33 @@ class SignUpController: UIViewController {
         return true
     }
     
-    func createFireStoreUser(user: User) {
+    func presentVerificationSentAlert(user: FirebaseAuth.User) {
+        let message = "A verification email has been send to \(user.email!). Please verifiy your account then log in."
+        let alert = UIAlertController(title: "Verification Email Sent", message: message, preferredStyle: .alert)
+        
+        let okayAction = UIAlertAction(title: "Okay", style: .default, handler: {_ in
+            let logInVC = self.storyboard?.instantiateViewController(identifier: "LogInController") as! LogInController
+            logInVC.emailText = user.email!
+            self.present(logInVC, animated: true, completion: nil)
+        })
+        
+        alert.addAction(okayAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func sendVerificationEmail(user: FirebaseAuth.User) {
+        user.sendEmailVerification { err in
+             if let _ = err {
+                 let message = "Error sending your verification email. Head over to the login screen to log in."
+                 self.displayError(title: "Verification Email Error", message: message)
+                 return
+             }
+            print("verification email sent")
+            self.presentVerificationSentAlert(user: user)
+         }
+    }
+    
+    func createFireStoreUser(user: User, fireUser: FirebaseAuth.User) {
         // Add a new document with a generated ID
         let ref = db.collection(DataBase.User).document(user.email)
         let user_dict = User.modelToData(user: user)
@@ -136,7 +162,7 @@ class SignUpController: UIViewController {
             UserService.getCurrentUser(email: user.email) // <--- calls dispatchGroup.leave()
             
             UserService.dispatchGroup.notify(queue: .main) {
-                self.presentHomePage()
+                self.sendVerificationEmail(user: fireUser)
             }
         }
     }
@@ -184,7 +210,6 @@ class SignUpController: UIViewController {
             
             guard let fireUser = result?.user else { return }
             
-            
             let user = User.init(id: fireUser.uid,
                                  email: email,
                                  firstName: firstName,
@@ -194,7 +219,7 @@ class SignUpController: UIViewController {
                                  credits: 2,
                                  receiveEmails: true)
             
-            self.createFireStoreUser(user: user)
+            self.createFireStoreUser(user: user, fireUser: fireUser)
         }
     }
 }

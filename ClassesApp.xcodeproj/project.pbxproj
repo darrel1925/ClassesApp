@@ -15,6 +15,7 @@
 		9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */; };
 		9A40E7F2243857B90070A410 /* StripeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A40E7F1243857B90070A410 /* StripeAPI.swift */; };
 		9A445419242D959300089389 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A445418242D959300089389 /* UserService.swift */; };
+		9A652A31244CCA6200366229 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A652A30244CCA6200366229 /* AppConstants.swift */; };
 		9A73F1CD2445A4980004AF54 /* StoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A73F1CC2445A4980004AF54 /* StoreController.swift */; };
 		9A73F1CF2445A5580004AF54 /* StoreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A73F1CE2445A5580004AF54 /* StoreCell.swift */; };
 		9A7E051A244131D2002E9803 /* ToggleEmailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7E0518244131D2002E9803 /* ToggleEmailsController.swift */; };
@@ -47,9 +48,14 @@
 		9AAD829A243295E700C66838 /* AddClassController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD8299243295E700C66838 /* AddClassController.swift */; };
 		9AAD829E24329E4D00C66838 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD829D24329E4D00C66838 /* MenuController.swift */; };
 		9AAD82A12432A47300C66838 /* SlideInTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD82A02432A47300C66838 /* SlideInTransition.swift */; };
+		9AC4A953244B92360019921F /* WelcomeScreen1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4A952244B92360019921F /* WelcomeScreen1.swift */; };
+		9AC4A955244B92410019921F /* WelcomeScreen2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4A954244B92410019921F /* WelcomeScreen2.swift */; };
+		9AC4A957244B92540019921F /* WelcomeScreen3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4A956244B92540019921F /* WelcomeScreen3.swift */; };
+		9AC4A959244B92620019921F /* WelcomeScreen4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4A958244B92620019921F /* WelcomeScreen4.swift */; };
 		9AE8D758243E7D050049B090 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE8D757243E7D050049B090 /* Constants.swift */; };
 		9AEEB595243C515900F5E6FE /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEEB594243C515900F5E6FE /* NotificationCell.swift */; };
 		9AEEB597243C527E00F5E6FE /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEEB596243C527E00F5E6FE /* NotificationController.swift */; };
+		9AFCD2B5244B987E009D2081 /* PageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFCD2B4244B987E009D2081 /* PageController.swift */; };
 		E9D32E7712A011C846EE53FD /* Pods_ClassesApp_ClassesAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD4EA122B044382653A4FA8 /* Pods_ClassesApp_ClassesAppUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +89,7 @@
 		9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenAnimation.swift; sourceTree = "<group>"; };
 		9A40E7F1243857B90070A410 /* StripeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeAPI.swift; sourceTree = "<group>"; };
 		9A445418242D959300089389 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		9A652A30244CCA6200366229 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		9A73F1CC2445A4980004AF54 /* StoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreController.swift; sourceTree = "<group>"; };
 		9A73F1CE2445A5580004AF54 /* StoreCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCell.swift; sourceTree = "<group>"; };
 		9A77D7AC243BF15600D7963F /* ClassesApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ClassesApp.entitlements; sourceTree = "<group>"; };
@@ -101,7 +108,7 @@
 		9A8CF97B242C58C7008D0DC6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		9A8CF97E242C6CCB008D0DC6 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		9A8CF980242C78FE008D0DC6 /* HomePageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageController.swift; sourceTree = "<group>"; };
-		9A9472A7242C1E76004927DD /* ClassesApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClassesApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A9472A7242C1E76004927DD /* TrackMy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrackMy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9472AA242C1E76004927DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A9472AC242C1E76004927DD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		9A9472B1242C1E76004927DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -122,9 +129,14 @@
 		9AAD8299243295E700C66838 /* AddClassController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddClassController.swift; sourceTree = "<group>"; };
 		9AAD829D24329E4D00C66838 /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
 		9AAD82A02432A47300C66838 /* SlideInTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInTransition.swift; sourceTree = "<group>"; };
+		9AC4A952244B92360019921F /* WelcomeScreen1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen1.swift; sourceTree = "<group>"; };
+		9AC4A954244B92410019921F /* WelcomeScreen2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen2.swift; sourceTree = "<group>"; };
+		9AC4A956244B92540019921F /* WelcomeScreen3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen3.swift; sourceTree = "<group>"; };
+		9AC4A958244B92620019921F /* WelcomeScreen4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen4.swift; sourceTree = "<group>"; };
 		9AE8D757243E7D050049B090 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9AEEB594243C515900F5E6FE /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		9AEEB596243C527E00F5E6FE /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
+		9AFCD2B4244B987E009D2081 /* PageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageController.swift; sourceTree = "<group>"; };
 		A5515D101F0F03629E34EF13 /* Pods-ClassesApp-ClassesAppUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesApp-ClassesAppUITests.release.xcconfig"; path = "Target Support Files/Pods-ClassesApp-ClassesAppUITests/Pods-ClassesApp-ClassesAppUITests.release.xcconfig"; sourceTree = "<group>"; };
 		EE9085724106233CBFE6E54B /* Pods_ClassesAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClassesAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1790FDE23BBC871E5E7E1FB /* Pods-ClassesAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesAppTests.debug.xcconfig"; path = "Target Support Files/Pods-ClassesAppTests/Pods-ClassesAppTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -224,6 +236,7 @@
 			isa = PBXGroup;
 			children = (
 				9A8CF97E242C6CCB008D0DC6 /* User.swift */,
+				9A652A30244CCA6200366229 /* AppConstants.swift */,
 			);
 			path = Modles;
 			sourceTree = "<group>";
@@ -243,7 +256,7 @@
 		9A9472A8242C1E76004927DD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9A9472A7242C1E76004927DD /* ClassesApp.app */,
+				9A9472A7242C1E76004927DD /* TrackMy.app */,
 				9A9472BD242C1E7C004927DD /* ClassesAppTests.xctest */,
 				9A9472C8242C1E7C004927DD /* ClassesAppUITests.xctest */,
 			);
@@ -311,16 +324,18 @@
 		9A9472DD242C2BB1004927DD /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				9AC4A951244B92060019921F /* WelcomeScreens */,
 				9AAD829F2432A44100C66838 /* SlideInMenu */,
 				9A8CF972242C3F43008D0DC6 /* SplashScreenController.swift */,
 				9A8CF974242C48FA008D0DC6 /* LogInController.swift */,
 				9A8CF976242C490F008D0DC6 /* SignUpController.swift */,
 				9A8CF980242C78FE008D0DC6 /* HomePageController.swift */,
 				9AAD8299243295E700C66838 /* AddClassController.swift */,
-				9A1BA9EA243420400087622D /* SettingsController.swift */,
 				9A9FD2FB24380E240011F8A4 /* CheckOutController.swift */,
+				9A1BA9EA243420400087622D /* SettingsController.swift */,
 				9AEEB596243C527E00F5E6FE /* NotificationController.swift */,
 				9A73F1CC2445A4980004AF54 /* StoreController.swift */,
+				9AFCD2B4244B987E009D2081 /* PageController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -356,6 +371,17 @@
 			path = SlideInMenu;
 			sourceTree = "<group>";
 		};
+		9AC4A951244B92060019921F /* WelcomeScreens */ = {
+			isa = PBXGroup;
+			children = (
+				9AC4A952244B92360019921F /* WelcomeScreen1.swift */,
+				9AC4A954244B92410019921F /* WelcomeScreen2.swift */,
+				9AC4A956244B92540019921F /* WelcomeScreen3.swift */,
+				9AC4A958244B92620019921F /* WelcomeScreen4.swift */,
+			);
+			path = WelcomeScreens;
+			sourceTree = "<group>";
+		};
 		E04915AA3DC5F28C36927D5B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -385,7 +411,7 @@
 			);
 			name = ClassesApp;
 			productName = ClassesApp;
-			productReference = 9A9472A7242C1E76004927DD /* ClassesApp.app */;
+			productReference = 9A9472A7242C1E76004927DD /* TrackMy.app */;
 			productType = "com.apple.product-type.application";
 		};
 		9A9472BC242C1E7C004927DD /* ClassesAppTests */ = {
@@ -614,6 +640,7 @@
 				9AEEB595243C515900F5E6FE /* NotificationCell.swift in Sources */,
 				9AAD828D2431B41600C66838 /* TrackedCell.swift in Sources */,
 				9A7E051A244131D2002E9803 /* ToggleEmailsController.swift in Sources */,
+				9AC4A959244B92620019921F /* WelcomeScreen4.swift in Sources */,
 				9A8CF97C242C58C7008D0DC6 /* Extensions.swift in Sources */,
 				9A445419242D959300089389 /* UserService.swift in Sources */,
 				9A8CF973242C3F43008D0DC6 /* SplashScreenController.swift in Sources */,
@@ -621,20 +648,25 @@
 				9A7E051D244189E8002E9803 /* ServerService.swift in Sources */,
 				9A8533FD243D7F2700F7197F /* PurchaseHistoryCell.swift in Sources */,
 				9A73F1CF2445A5580004AF54 /* StoreCell.swift in Sources */,
+				9AC4A953244B92360019921F /* WelcomeScreen1.swift in Sources */,
 				9A9472AB242C1E76004927DD /* AppDelegate.swift in Sources */,
+				9AC4A957244B92540019921F /* WelcomeScreen3.swift in Sources */,
 				9A8533F6243D6BF300F7197F /* ForgotPasswordController.swift in Sources */,
 				9A1BA9EB243420400087622D /* SettingsController.swift in Sources */,
 				9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */,
+				9A652A31244CCA6200366229 /* AppConstants.swift in Sources */,
 				9AAD829A243295E700C66838 /* AddClassController.swift in Sources */,
 				9AAD829E24329E4D00C66838 /* MenuController.swift in Sources */,
 				9A8CF981242C78FE008D0DC6 /* HomePageController.swift in Sources */,
 				9A8533FF243D81D100F7197F /* TitleCell.swift in Sources */,
 				9A73F1CD2445A4980004AF54 /* StoreController.swift in Sources */,
 				9AAD82A12432A47300C66838 /* SlideInTransition.swift in Sources */,
+				9AFCD2B5244B987E009D2081 /* PageController.swift in Sources */,
 				9AAD82982432901F00C66838 /* Styles.swift in Sources */,
 				9AEEB597243C527E00F5E6FE /* NotificationController.swift in Sources */,
 				9A9472AD242C1E76004927DD /* SceneDelegate.swift in Sources */,
 				9A9FD2FF243815650011F8A4 /* StripeCart.swift in Sources */,
+				9AC4A955244B92410019921F /* WelcomeScreen2.swift in Sources */,
 				9A08BCA22446102C00DC4B40 /* StorePopUpController.swift in Sources */,
 				9AAD828F2431C66C00C66838 /* AddClassLauncher.swift in Sources */,
 				9A8CF97F242C6CCB008D0DC6 /* User.swift in Sources */,
@@ -823,7 +855,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = TrackMy;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -843,7 +875,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = TrackMy;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

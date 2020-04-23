@@ -9,8 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
-import AudioToolbox
-
+import MessageUI
 
 class HomePageController: UIViewController, UITextFieldDelegate {
     
@@ -136,6 +135,48 @@ class HomePageController: UIViewController, UITextFieldDelegate {
          navigationController?.pushViewController(vc, animated: true)
     }
     
+    func presentShareController() {
+        let shareStr = "URL for appl download goes here :p"
+        let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
+        self.present(sharingController, animated: true, completion: nil)
+    }
+    
+    func presentHowItWorks() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "PageController") as! PageController
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
+    
+    func presentSupportOrFeedBack(){
+        let message = "Your sending your Feeback or seeking Support?"
+        let alert = UIAlertController(title: "Feedback or Support", message: message, preferredStyle: .alert)
+        let feebackAction = UIAlertAction(title: "Feeback!", style: .default, handler: {_ in
+            self.presentSupport(emailType: "Feedback")
+        })
+        let supportAction = UIAlertAction(title: "Support!", style: .default, handler: {_ in
+            self.presentSupport(emailType: "Support")
+        })
+        
+        alert.addAction(feebackAction)
+        alert.addAction(supportAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func presentSupport(emailType: String) {
+        guard MFMailComposeViewController.canSendMail() else {
+            let message = "Email account not set in device. Head Setting -> Passwords&Accounts -> Add Account then add you email account. You can also send an email to \(AppConstants.support_email)"
+            self.displayError(title: "Cannot Send Mail", message: message)
+            return
+        }
+        
+        let composer = MFMailComposeViewController()
+        composer.mailComposeDelegate = self
+        composer.setSubject(emailType)
+        composer.setToRecipients([AppConstants.support_email])
+        
+        present(composer, animated: true)
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
@@ -212,10 +253,14 @@ class HomePageController: UIViewController, UITextFieldDelegate {
             case "Store":
                 self.presentStore()
                 
+            case "HowItWorks":
+                self.presentHowItWorks()
+                
             case "Share":
-                let shareStr = "URL for appl download goes here :p"
-                let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
-                self.present(sharingController, animated: true, completion: nil)
+                self.presentShareController()
+                
+            case "Support":
+                self.presentSupportOrFeedBack()
             default:
                 return
             }
@@ -326,12 +371,39 @@ extension HomePageController: UIViewControllerTransitioningDelegate {
 
 extension HomePageController: UIGestureRecognizerDelegate {
 
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
-        if touch.view?.isDescendant(of: self.tableView) == true {
-            print("table")
-        return false
-    }
-        print("NOT table")
-    return true
+//    private func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+//        if touch.view?.isDescendant(of: self.tableView) == true {
+//        return false
+//    }
+//    return true
+//    }
+}
+
+extension HomePageController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        
+        if error != nil {
+            print("error sending email", error?.localizedDescription)
+            return
+        }
+        
+        switch result{
+        case .cancelled:
+            break
+        case .saved:
+            print("saved")
+            self.displayError(title: "Email Saved", message: "Your email has been saved to your drafts.")
+        case .sent:
+            self.displayError(title: "Email Sent", message: "Your email has sent successfully!")
+            print("sent")
+        case .failed:
+            self.displayError(title: "Error", message: "Could not send you email. You can also send an email to \(AppConstants.support_email)")
+            print("failed")
+        @unknown default:
+            print("unkown")
+        }
+        
+        controller.dismiss(animated: true, completion: nil)
+
     }
 }

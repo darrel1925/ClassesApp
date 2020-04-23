@@ -68,7 +68,7 @@ class CheckOutController: UIViewController {
         }
         
         currentBalanceLabel.text = "\(UserService.user.credits) credits"
-        costLabel.text = "\(getTotalCost()) credits"
+        costLabel.text = "- \(StripeCart.cartItems.count) credits"
         let newBalance = UserService.user.credits - getTotalCost()
         newBalanceLabel.text = "\(newBalance) credits"
         

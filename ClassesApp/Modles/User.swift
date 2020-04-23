@@ -26,6 +26,7 @@ class User {
     var fcm_token: String
     var credits: Int
     var receiveEmails: Bool
+    var seenWelcomePage: Bool
     var classes: [String: [Any]]
     var trackedClasses: [String]
     var purchaseHistory: [ [String: String] ] // [ [num_credits: 3, date: Date, price: 149] ]
@@ -42,8 +43,9 @@ class User {
          lastName: String = "", webReg: Bool = false, webRegPswd: String = "",
          stripeId: String = "", classes: [String: [Any]] = [:], school: String = "",
          fcm_token: String = "", credits: Int = 0, receiveEmails: Bool = true,
-         isLoggedIn: Bool = true, purchaseHistory: [[String: String]] = [],
-         notifications: [[String: String]] = [], trackedClasses: [String] = []){
+         seenWelcomePage: Bool = false, isLoggedIn: Bool = true,
+         purchaseHistory: [[String: String]] = [], notifications: [[String: String]] = [],
+         trackedClasses: [String] = []){
         
         self.id = id
         self.email = email
@@ -57,6 +59,7 @@ class User {
         self.school = school
         self.fcm_token = fcm_token
         self.receiveEmails = receiveEmails
+        self.seenWelcomePage = seenWelcomePage
         self.credits = credits
         self.classes = classes
         self.purchaseHistory = purchaseHistory
@@ -91,6 +94,7 @@ class User {
         self.school = data[DataBase.school] as? String ?? ""
         self.fcm_token = data[DataBase.fcm_token] as? String ?? ""
         self.receiveEmails = data[DataBase.receive_emails] as? Bool ?? true
+        self.seenWelcomePage = data[DataBase.seen_welcome_page] as? Bool ?? false
         self.trackedClasses = data[DataBase.tracked_classes] as? [String] ?? []
         if let purchaseHistory =  data[DataBase.purchase_history] as? [[String : String]] {
             self.purchaseHistory = purchaseHistory
@@ -123,6 +127,7 @@ class User {
             DataBase.fcm_token: user.fcm_token,
             DataBase.purchase_history: user.purchaseHistory,
             DataBase.receive_emails: user.receiveEmails,
+            DataBase.seen_welcome_page: user.seenWelcomePage,
             DataBase.notifications: user.notifications,
             DataBase.tracked_classes: user.trackedClasses
         ]

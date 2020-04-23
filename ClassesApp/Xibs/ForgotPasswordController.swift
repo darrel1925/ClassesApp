@@ -48,10 +48,12 @@ class ForgotPasswordController: UIViewController {
         
         
         Auth.auth().sendPasswordReset(withEmail: email) { error in
-            if let error = error {
-                self.activityIndicator.stopAnimating()
-                self.displayError(error: error)
-                return
+            if error != nil {
+                if let error = AuthErrorCode(rawValue: error!._code) {
+                    self.displayError(title: "Error", message: error.errorMessage)
+                    self.activityIndicator.stopAnimating()
+                    return
+                }
             }
             
             self.activityIndicator.stopAnimating()
