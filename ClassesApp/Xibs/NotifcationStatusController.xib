@@ -1,22 +1,97 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13142" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12042"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NotifcationStatusController" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NotifcationStatusController" customModule="TrackMy" customModuleProvider="target">
             <connections>
+                <outlet property="activityIndicator" destination="fvG-s2-BEg" id="HMD-HN-BoR"/>
+                <outlet property="backgroundView" destination="Zcj-Ff-tE5" id="VhY-Ar-ju9"/>
+                <outlet property="containerView" destination="tLb-Ac-xt3" id="4bk-Mz-TZj"/>
+                <outlet property="descriptionLabel" destination="nrf-pH-yXy" id="VHZ-3G-t2R"/>
+                <outlet property="notificationButton" destination="KCp-Tk-fEB" id="IyT-g7-OJV"/>
+                <outlet property="titleLabel" destination="GY9-QI-N9l" id="zRg-NA-dto"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <subviews>
+                <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zcj-Ff-tE5">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tLb-Ac-xt3" customClass="RoundedView" customModule="TrackMy" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="671" width="414" height="225"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Click below to STOP revieving email notifications." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nrf-pH-yXy">
+                            <rect key="frame" x="16" y="54" width="382" height="22.5"/>
+                            <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push Notifications On" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GY9-QI-N9l">
+                            <rect key="frame" x="94.5" y="16" width="225" height="30"/>
+                            <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="23"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KCp-Tk-fEB">
+                            <rect key="frame" x="20" y="161" width="374" height="40"/>
+                            <color key="backgroundColor" red="0.72156164150000002" green="0.274757996" blue="0.1876371795" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="Vn0-t2-HLY"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="17"/>
+                            <state key="normal" title="Stop recieving emails">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </state>
+                            <connections>
+                                <action selector="notificationButton:" destination="-1" eventType="touchUpInside" id="cXg-2E-6h8"/>
+                            </connections>
+                        </button>
+                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="fvG-s2-BEg">
+                            <rect key="frame" x="188.5" y="116" width="37" height="37"/>
+                            <color key="color" cocoaTouchSystemColor="darkTextColor"/>
+                        </activityIndicatorView>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="nrf-pH-yXy" firstAttribute="top" secondItem="GY9-QI-N9l" secondAttribute="bottom" constant="8" id="22Y-oM-Tl6"/>
+                        <constraint firstItem="fvG-s2-BEg" firstAttribute="centerX" secondItem="tLb-Ac-xt3" secondAttribute="centerX" id="BiO-mK-HRZ"/>
+                        <constraint firstAttribute="bottom" secondItem="KCp-Tk-fEB" secondAttribute="bottom" constant="24" id="C9z-ke-ZyP"/>
+                        <constraint firstItem="nrf-pH-yXy" firstAttribute="centerX" secondItem="tLb-Ac-xt3" secondAttribute="centerX" id="DsG-Tw-U1f"/>
+                        <constraint firstAttribute="height" constant="225" id="Kbw-zd-fhW"/>
+                        <constraint firstItem="GY9-QI-N9l" firstAttribute="centerX" secondItem="tLb-Ac-xt3" secondAttribute="centerX" id="LdJ-Sl-ONf"/>
+                        <constraint firstItem="GY9-QI-N9l" firstAttribute="top" secondItem="tLb-Ac-xt3" secondAttribute="top" constant="16" id="Mxn-Sm-Ftj"/>
+                        <constraint firstAttribute="trailing" secondItem="KCp-Tk-fEB" secondAttribute="trailing" constant="20" id="NGS-m6-3zs"/>
+                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="GY9-QI-N9l" secondAttribute="trailing" constant="16" id="V9U-9G-lgN"/>
+                        <constraint firstItem="KCp-Tk-fEB" firstAttribute="leading" secondItem="tLb-Ac-xt3" secondAttribute="leading" constant="20" id="cbo-LI-pCR"/>
+                        <constraint firstItem="nrf-pH-yXy" firstAttribute="leading" secondItem="tLb-Ac-xt3" secondAttribute="leading" constant="16" id="jOI-sa-MtE"/>
+                        <constraint firstAttribute="trailing" secondItem="nrf-pH-yXy" secondAttribute="trailing" constant="16" id="o9v-Wt-Ug5"/>
+                        <constraint firstItem="GY9-QI-N9l" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="tLb-Ac-xt3" secondAttribute="leading" constant="16" id="qx8-4G-eXB"/>
+                        <constraint firstItem="KCp-Tk-fEB" firstAttribute="top" secondItem="fvG-s2-BEg" secondAttribute="bottom" constant="8" id="wEZ-BQ-Cei"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="Zcj-Ff-tE5" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="E2c-Xq-KFA"/>
+                <constraint firstAttribute="bottom" secondItem="tLb-Ac-xt3" secondAttribute="bottom" id="Lkh-aP-KjM"/>
+                <constraint firstItem="Zcj-Ff-tE5" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="Ob2-GS-N0Z"/>
+                <constraint firstItem="tLb-Ac-xt3" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="PQy-ja-tgH"/>
+                <constraint firstItem="Zcj-Ff-tE5" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="T5E-O7-7f0"/>
+                <constraint firstItem="tLb-Ac-xt3" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="cXz-El-0vU"/>
+                <constraint firstAttribute="bottom" secondItem="Zcj-Ff-tE5" secondAttribute="bottom" id="tfJ-0B-wY0"/>
+            </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="139" y="121"/>
         </view>
     </objects>
 </document>

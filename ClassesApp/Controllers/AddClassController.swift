@@ -26,10 +26,7 @@ class AddClassController: UIViewController {
     var courseStatus = [String]()
     var currentResponse = ""
     var currentClass = ""
-    
-    /*
-     ADD A HOW IT WORKS MENU TAB WITH VIEW CONTROLLERS AND ICONS TO SHOW WHAT THE APP IS FOR
-     */
+
     override func viewDidLoad() {
         super.viewDidLoad()
         quarterLabel.text = AppConstants.quarter.capitalizingFirstLetter()
@@ -239,6 +236,7 @@ class AddClassController: UIViewController {
         tableView.reloadData()
         
         updateTrackClassLabel()
+        animateAddButtonOut()
     }
     
     @IBAction func trackClassesClicked(_ sender: Any) {

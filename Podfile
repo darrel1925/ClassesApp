@@ -7,7 +7,6 @@ target 'ClassesApp' do
 
   # Pods for ClassesApp
 
-	pod 'Firebase/Analytics'
 	pod 'Firebase/Auth'
 	pod 'Firebase/Firestore'
 	pod 'Firebase/Functions'

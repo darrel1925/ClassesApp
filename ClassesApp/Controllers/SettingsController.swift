@@ -52,13 +52,13 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0:
+        case 0: // Preferences title
             return 1
-        case 1:
+        case 1: // Email Preferences, Notifiations
+            return 2
+        case 2: // Purchase History title
             return 1
-        case 2:
-            return 1
-        case 3:
+        case 3: // Purchase Histort list
             return UserService.user.purchaseHistory.count
         default:
             return 0
@@ -81,6 +81,9 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             switch row {
             case 0:
                 cell.titleLabel.text = "Email Preferences"
+                return cell
+            case 1:
+                cell.titleLabel.text = "Notifications"
                 return cell
             default:
                 return cell
@@ -112,16 +115,20 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = indexPath.row
         let section = indexPath.section
-        print("\(row) \(section)")
 
         switch section {
         case 1:
             switch row {
             case 0:
-                print("clicked")
+                print("clicked \(row) \(section)")
                 let toggleEmailsVC = ToggleEmailsController()
                 toggleEmailsVC.modalPresentationStyle = .overFullScreen
                 self.present(toggleEmailsVC, animated: true, completion: nil)
+            case 1:
+                print("clicked \(row) \(section)")
+                let notifStatusVC = NotifcationStatusController()
+                notifStatusVC.modalPresentationStyle = .overFullScreen
+                self.present(notifStatusVC, animated: true, completion: nil)
                 
             default:
                 return

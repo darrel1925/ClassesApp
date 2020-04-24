@@ -43,6 +43,58 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         super.viewDidAppear(animated)
         refreshTableView()
         addClassesisPresented = false
+        
+        let isRegisteredForRemoteNotifications = UIApplication.shared.isRegisteredForRemoteNotifications
+        if isRegisteredForRemoteNotifications {
+             print("is registered")
+        } else {
+             print("is NOT registered")
+        }
+        
+        let current = UNUserNotificationCenter.current()
+        current.getNotificationSettings(completionHandler: { (settings) in
+            if settings.authorizationStatus == .notDetermined {
+                print("not determined")
+            } else if settings.authorizationStatus == .denied {
+                print("registration denied")
+            } else if settings.authorizationStatus == .authorized {
+                print("registration granted")
+            } else if settings.authorizationStatus == .provisional {
+                print("registration privisional")
+            }
+        })
+        
+        // At the top, import UserNotifications
+        // to use UNUserNotificationCenter
+//        import UserNotifications
+//        if #available(iOS 10.0, *) {
+//           let current = UNUserNotificationCenter.current()
+//           current.getNotificationSettings(completionHandler: { settings in
+//
+//               switch settings.authorizationStatus {
+//
+//               case .notDetermined:
+//                   // Authorization request has not been made yet
+//               case .denied:
+//                break
+//                   // User has denied authorization.
+//                   // You could tell them to change this in Settings
+//               case .authorized:
+//                break
+//                   // User has given authorization.
+//               case .provisional:
+//                break
+//               }
+//           })
+//        } else {
+//            // Fallback on earlier versions
+//            if UIApplication.shared.isRegisteredForRemoteNotifications {
+//                print("APNS-YES")
+//            } else {
+//                print("APNS-NO")
+//            }
+//        }
+        
     }
     
     func setUpGestures() {
@@ -104,7 +156,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         
         alert.addAction(cancelAction)
         alert.addAction(deleteAction)
-
+        
         self.present(alert, animated: true, completion: nil)
     }
     
@@ -132,7 +184,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     func presentAddClassesController() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "AddClassController") as! AddClassController
-         navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func presentShareController() {
@@ -257,7 +309,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
                 
             case "Settings":
                 self.presentSettings()
-                    
+                
             case "Store":
                 self.presentStore()
                 
@@ -288,7 +340,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         courseCodes.removeAll()
         courseStatus.removeAll()
         ServerService.getClassStatus(withGroup:dispatchGroup, homeVC: self)
-
+        
         
         dispatchGroup.notify(queue: .main) {
             print("reloading")
@@ -306,7 +358,7 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         else { // Swiping from right to left
             if addClassesisPresented { return }
             
-//            presentAddClassesController()
+            //            presentAddClassesController()
             addClassesisPresented = true
         }
     }
@@ -330,7 +382,7 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
         let cell = tableView.dequeueReusableCell(withIdentifier: "TrackedCell") as! TrackedCell
-
+        
         cell.courseCodeLabel.text = self.courseCodes[row]
         cell.statusLabel.text = self.courseStatus[row]
         cell.cellView.layer.cornerRadius = 5
@@ -383,40 +435,48 @@ extension HomePageController: UIViewControllerTransitioningDelegate {
 }
 
 extension HomePageController: UIGestureRecognizerDelegate {
-
-//    private func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
-//        if touch.view?.isDescendant(of: self.tableView) == true {
-//        return false
-//    }
-//    return true
-//    }
+    
+    //    private func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+    //        if touch.view?.isDescendant(of: self.tableView) == true {
+    //        return false
+    //    }
+    //    return true
+    //    }
 }
 
 extension HomePageController: MFMailComposeViewControllerDelegate {
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         
         if error != nil {
-            print("error sending email", error?.localizedDescription)
+            controller.displaySimpleError(title: "Could Not Send Email", message: "Could not send you email. You can also send an email to \(AppConstants.support_email).", completion: {_ in
+                controller.dismiss(animated: true, completion: nil)
+            })
             return
         }
         
         switch result{
         case .cancelled:
-            break
+            controller.dismiss(animated: true, completion: nil)
         case .saved:
             print("saved")
-            self.displayError(title: "Email Saved", message: "Your email has been saved to your drafts.")
+            controller.displaySimpleError(title: "Email Saved", message: "Your email has been saved to your drafts.", completion: {_ in
+                controller.dismiss(animated: true, completion: nil)
+            })
         case .sent:
-            self.displayError(title: "Email Sent", message: "Your email has sent successfully!")
+            controller.displaySimpleError(title: "Email Sent", message: "Your email has sent successfully!", completion: {_ in
+                controller.dismiss(animated: true, completion: nil)
+            })
             print("sent")
         case .failed:
-            self.displayError(title: "Error", message: "Could not send you email. You can also send an email to \(AppConstants.support_email)")
+            controller.displaySimpleError(title: "Error", message: "Could not send you email. You can also send an email to \(AppConstants.support_email)", completion: {_ in
+                controller.dismiss(animated: true, completion: nil)
+            })
             print("failed")
         @unknown default:
+            controller.dismiss(animated: true, completion: nil)
             print("unkown")
         }
-        
-        controller.dismiss(animated: true, completion: nil)
-
     }
 }
+
+

@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import WebKit
+
 
 class TermsController: UIViewController {
     
@@ -14,8 +16,15 @@ class TermsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
         setUpGestures()
+
+        let webView = WKWebView(frame: view.frame)
+        view.addSubview(webView)
+        
+        let url = URL(string: "https://www.termsfeed.com/terms-conditions/dbbbc444ec3b39f928157c712c5f978a")!
+        let request = URLRequest(url: url)
+        webView.load(request)
+
     }
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil)

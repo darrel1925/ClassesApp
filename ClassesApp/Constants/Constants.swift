@@ -14,6 +14,7 @@ struct DataBase {
     static let User  = "User"
     static let Class = "Class"
     static let AppConstants = "AppConstants"
+    static let AppVariables = "AppVariables"
 
     // Class
     static let year    = "year"
@@ -40,6 +41,7 @@ struct DataBase {
     static let tracked_classes   = "tracked_classes"
     static let purchase_history  = "purchase_history"
     static let seen_welcome_page = "seen_welcome_page"
+    static let notifications_enabled = "notifications_enabled"
     
     // Notifications & Purchase History
     static let date   = "date"

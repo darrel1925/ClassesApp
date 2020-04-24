@@ -127,7 +127,7 @@ class ToggleEmailsController: UIViewController {
     
     func notifsOff() {
         self.emailButton.backgroundColor = #colorLiteral(red: 0.3260789019, green: 0.5961753091, blue: 0.1608898185, alpha: 1)
-        self.emailButton.setTitle("Being receiving emails", for: .normal)
+        self.emailButton.setTitle("Begin receiving emails", for: .normal)
         self.titleLabel.text = "Email Notifications Off"
         self.descriptionLabel.text = "Click below to begin receiving email notifications."
     }

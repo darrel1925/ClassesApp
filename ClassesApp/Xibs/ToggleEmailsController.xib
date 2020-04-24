@@ -7,7 +7,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ToggleEmailsController" customModule="ClassesApp" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ToggleEmailsController" customModule="TrackMy" customModuleProvider="target">
             <connections>
                 <outlet property="activityIndicator" destination="S95-hW-yLJ" id="Nqc-I5-zPg"/>
                 <outlet property="backgroundView" destination="ojM-nF-sNO" id="ZZg-cE-Wka"/>
@@ -27,7 +27,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zR9-JK-AwQ" customClass="RoundedView" customModule="ClassesApp" customModuleProvider="target">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zR9-JK-AwQ" customClass="RoundedView" customModule="TrackMy" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="671" width="414" height="225"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Click below to STOP revieving email notifications." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OpM-9i-0FF">
@@ -42,7 +42,7 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q1x-Yi-lOv" customClass="RoundedButton">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q1x-Yi-lOv">
                             <rect key="frame" x="20" y="161" width="374" height="40"/>
                             <color key="backgroundColor" red="0.72156164148351642" green="0.27475799604909174" blue="0.18763717947628683" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>

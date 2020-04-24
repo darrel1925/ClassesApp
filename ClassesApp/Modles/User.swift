@@ -27,6 +27,7 @@ class User {
     var credits: Int
     var receiveEmails: Bool
     var seenWelcomePage: Bool
+    var notificationsEnabled: Bool
     var classes: [String: [Any]]
     var trackedClasses: [String]
     var purchaseHistory: [ [String: String] ] // [ [num_credits: 3, date: Date, price: 149] ]
@@ -43,7 +44,7 @@ class User {
          lastName: String = "", webReg: Bool = false, webRegPswd: String = "",
          stripeId: String = "", classes: [String: [Any]] = [:], school: String = "",
          fcm_token: String = "", credits: Int = 0, receiveEmails: Bool = true,
-         seenWelcomePage: Bool = false, isLoggedIn: Bool = true,
+         seenWelcomePage: Bool = false, isLoggedIn: Bool = true, notificationsEnabled: Bool = true,
          purchaseHistory: [[String: String]] = [], notifications: [[String: String]] = [],
          trackedClasses: [String] = []){
         
@@ -63,6 +64,7 @@ class User {
         self.credits = credits
         self.classes = classes
         self.purchaseHistory = purchaseHistory
+        self.notificationsEnabled = notificationsEnabled
         self.notifications = notifications
         self.trackedClasses = trackedClasses
         
@@ -96,6 +98,7 @@ class User {
         self.receiveEmails = data[DataBase.receive_emails] as? Bool ?? true
         self.seenWelcomePage = data[DataBase.seen_welcome_page] as? Bool ?? false
         self.trackedClasses = data[DataBase.tracked_classes] as? [String] ?? []
+        self.notificationsEnabled = data[DataBase.notifications_enabled] as? Bool ?? true
         if let purchaseHistory =  data[DataBase.purchase_history] as? [[String : String]] {
             self.purchaseHistory = purchaseHistory
         } else { self.purchaseHistory = [] }
@@ -129,7 +132,8 @@ class User {
             DataBase.receive_emails: user.receiveEmails,
             DataBase.seen_welcome_page: user.seenWelcomePage,
             DataBase.notifications: user.notifications,
-            DataBase.tracked_classes: user.trackedClasses
+            DataBase.tracked_classes: user.trackedClasses,
+            DataBase.notifications_enabled: user.notificationsEnabled
         ]
         
         return data

@@ -6,6 +6,7 @@
 //  Copyright © 2020 Darrel Muonekwu. All rights reserved.
 //
 // https://www.termsfeed.com/privacy-policy/442d8d1d2c1816301827f97bd4302e67
+// https://www.termsfeed.com/terms-conditions/dbbbc444ec3b39f928157c712c5f978a
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
@@ -20,7 +21,6 @@ class SignUpController: UIViewController {
     @IBOutlet weak var confirmPasswordField: UITextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var textView: UITextView!
-    @IBOutlet weak var disclaimerLabel: UILabel!
     
     let db = Firestore.firestore()
     let schoolExtDict: [String: String] = [
@@ -85,25 +85,9 @@ class SignUpController: UIViewController {
         
 //        termsString.setFontFace(font: font, color: color)
         
-        disclaimerLabel.isUserInteractionEnabled = true
-        disclaimerLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapOnLabel(_:))))
-
         textView.attributedText = termsString
     }
-    
-    @objc func handleTapOnLabel(_ recognizer: UITapGestureRecognizer) {
-        guard let text = disclaimerLabel.attributedText?.string else {
-            return
-        }
 
-        if let range = text.range(of: NSLocalizedString("Terms and Conditions", comment: "terms")),
-            recognizer.didTapAttributedTextInLabel(label: disclaimerLabel, inRange: NSRange(range, in: text)) {
-            presentTermsController()
-        } else if let range = text.range(of: NSLocalizedString("_onboarding_privacy", comment: "privacy")),
-            recognizer.didTapAttributedTextInLabel(label: disclaimerLabel, inRange: NSRange(range, in: text)) {
-            presentPrivacyController()
-        }
-    }
     
     func presentTermsController() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "TermsController") as! TermsController
