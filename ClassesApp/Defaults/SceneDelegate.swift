@@ -21,14 +21,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let user = Auth.auth().currentUser
         AppConstants.initalizeConstants()
-        
-    
+//
+//
         // if user is logged in
         if ((user) != nil) {
-            
+
             // if user's email is not verified
             if !user!.isEmailVerified { print("email not verified"); return }
-            
+
             print("user:\(user?.email ?? "email not found") already logged in\n\n")
             guard let windowScene = (scene as? UIWindowScene) else { return }
             self.window = UIWindow(windowScene: windowScene)

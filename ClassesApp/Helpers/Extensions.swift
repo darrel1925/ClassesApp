@@ -320,3 +320,67 @@ extension AuthErrorCode {
         }
     }
 }
+
+extension NSMutableAttributedString {
+    func setFontFace(font: UIFont, color: UIColor? = nil) {
+        beginEditing()
+        self.enumerateAttribute(
+            .font,
+            in: NSRange(location: 0, length: self.length)
+        ) { (value, range, stop) in
+
+            if let f = value as? UIFont,
+              let newFontDescriptor = f.fontDescriptor
+                .withFamily(font.familyName)
+                .withSymbolicTraits(f.fontDescriptor.symbolicTraits) {
+
+                let newFont = UIFont(
+                    descriptor: newFontDescriptor,
+                    size: font.pointSize
+                )
+                removeAttribute(.font, range: range)
+                addAttribute(.font, value: newFont, range: range)
+                if let color = color {
+                    removeAttribute(
+                        .foregroundColor,
+                        range: range
+                    )
+                    addAttribute(
+                        .foregroundColor,
+                        value: color,
+                        range: range
+                    )
+                }
+            }
+        }
+        endEditing()
+    }
+}
+
+extension UITapGestureRecognizer {
+    func didTapAttributedTextInLabel(label: UILabel, inRange targetRange: NSRange) -> Bool {
+        guard let attrString = label.attributedText else {
+            return false
+        }
+
+        let layoutManager = NSLayoutManager()
+        let textContainer = NSTextContainer(size: .zero)
+        let textStorage = NSTextStorage(attributedString: attrString)
+
+        layoutManager.addTextContainer(textContainer)
+        textStorage.addLayoutManager(layoutManager)
+
+        textContainer.lineFragmentPadding = 0
+        textContainer.lineBreakMode = label.lineBreakMode
+        textContainer.maximumNumberOfLines = label.numberOfLines
+        let labelSize = label.bounds.size
+        textContainer.size = labelSize
+
+        let locationOfTouchInLabel = self.location(in: label)
+        let textBoundingBox = layoutManager.usedRect(for: textContainer)
+        let textContainerOffset = CGPoint(x: (labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x, y: (labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y)
+        let locationOfTouchInTextContainer = CGPoint(x: locationOfTouchInLabel.x - textContainerOffset.x, y: locationOfTouchInLabel.y - textContainerOffset.y)
+        let indexOfCharacter = layoutManager.characterIndex(for: locationOfTouchInTextContainer, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+        return NSLocationInRange(indexOfCharacter, targetRange)
+    }
+}

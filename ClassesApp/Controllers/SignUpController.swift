@@ -5,7 +5,7 @@
 //  Created by Darrel Muonekwu on 3/25/20.
 //  Copyright © 2020 Darrel Muonekwu. All rights reserved.
 //
-
+// https://www.termsfeed.com/privacy-policy/442d8d1d2c1816301827f97bd4302e67
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
@@ -19,6 +19,8 @@ class SignUpController: UIViewController {
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var confirmPasswordField: UITextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var disclaimerLabel: UILabel!
     
     let db = Firestore.firestore()
     let schoolExtDict: [String: String] = [
@@ -26,11 +28,16 @@ class SignUpController: UIViewController {
         "UCLA": "ucla"
     ]
     
+    var termsLowerBound: Int!
+    var privacyLowerBound: Int!
+    
     override func viewDidLoad(){
         super.viewDidLoad()
         setUpSchoolPicker()
         setUpToolBar()
         setDelegates()
+        setUpTextView()
+        
     }
     
     func setUpSchoolPicker() {
@@ -57,6 +64,59 @@ class SignUpController: UIViewController {
         emailField.delegate = self
         passwordField.delegate = self
         confirmPasswordField.delegate = self
+    }
+    
+    func setUpTextView() {
+        self.textView.delegate = self
+        let labelText = "By tapping Sign Up, you agree to our Terms and Conditions and Privacy Statement"
+        let termsString = NSMutableAttributedString(string: labelText)
+        
+        let termsRange = termsString.mutableString.range(of: "Terms and Conditions")
+        let privacyRange = termsString.mutableString.range(of: "Privacy Statement")
+        
+        termsLowerBound = termsRange.lowerBound
+        privacyLowerBound = privacyRange.lowerBound
+        
+        termsString.addAttribute(.link, value: "https://google.com", range: termsRange)
+        termsString.addAttribute(.link, value: "https://google.com", range: privacyRange)
+        
+//        let font  = UIFont()
+//        let color = UIColor.lightGray
+        
+//        termsString.setFontFace(font: font, color: color)
+        
+        disclaimerLabel.isUserInteractionEnabled = true
+        disclaimerLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapOnLabel(_:))))
+
+        textView.attributedText = termsString
+    }
+    
+    @objc func handleTapOnLabel(_ recognizer: UITapGestureRecognizer) {
+        guard let text = disclaimerLabel.attributedText?.string else {
+            return
+        }
+
+        if let range = text.range(of: NSLocalizedString("Terms and Conditions", comment: "terms")),
+            recognizer.didTapAttributedTextInLabel(label: disclaimerLabel, inRange: NSRange(range, in: text)) {
+            presentTermsController()
+        } else if let range = text.range(of: NSLocalizedString("_onboarding_privacy", comment: "privacy")),
+            recognizer.didTapAttributedTextInLabel(label: disclaimerLabel, inRange: NSRange(range, in: text)) {
+            presentPrivacyController()
+        }
+    }
+    
+    func presentTermsController() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "TermsController") as! TermsController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
+    }
+    
+    func presentPrivacyController() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "PrivacyController") as! PrivacyController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
     }
     
     func presentHomePage() {
@@ -133,14 +193,14 @@ class SignUpController: UIViewController {
     
     func sendVerificationEmail(user: FirebaseAuth.User) {
         user.sendEmailVerification { err in
-             if let _ = err {
-                 let message = "Error sending your verification email. Head over to the login screen to log in."
-                 self.displayError(title: "Verification Email Error", message: message)
-                 return
-             }
+            if let _ = err {
+                let message = "Error sending your verification email. Head over to the login screen to log in."
+                self.displayError(title: "Verification Email Error", message: message)
+                return
+            }
             print("verification email sent")
             self.presentVerificationSentAlert(user: user)
-         }
+        }
     }
     
     func createFireStoreUser(user: User, fireUser: FirebaseAuth.User) {
@@ -262,5 +322,20 @@ extension SignUpController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         schoolField.text = AppConstants.supported_schools[row]
+    }
+}
+
+extension SignUpController: UITextViewDelegate {
+    
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        print(characterRange.lowerBound)
+        if (characterRange.lowerBound == termsLowerBound) {// == "Terms and Conditions"
+            presentTermsController()
+        }
+        else if (characterRange.lowerBound == privacyLowerBound){ // "Privacy Statment"
+            presentPrivacyController()
+        }
+        
+        return false
     }
 }

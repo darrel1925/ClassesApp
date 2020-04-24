@@ -10,6 +10,9 @@ import UIKit
 
 class CreditCell: UITableViewCell {
 
+    @IBOutlet weak var iconImage: UIImageView!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

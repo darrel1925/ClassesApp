@@ -209,14 +209,43 @@
                                 <rect key="frame" x="188.5" y="216.5" width="37" height="37"/>
                                 <color key="color" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                             </activityIndicatorView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="By tapping Sign Up, you agree to our Terms and Conditions and Privacy Statement." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DFq-qP-8cw">
+                                <rect key="frame" x="20" y="532.5" width="374" height="80"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="Rf1-tZ-911"/>
+                                </constraints>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <dataDetectorType key="dataDetectorTypes" link="YES"/>
+                            </textView>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Vl-Pg-kag">
+                                <rect key="frame" x="20" y="628.5" width="374" height="41"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="By tapping Sign Up, you agree to our Terms and Conditions and Privacy Statement.">
+                                        <attributes>
+                                            <font key="NSFont" metaFont="system" size="17"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="nC5-OH-EXF" firstAttribute="trailing" secondItem="dlp-4h-y3M" secondAttribute="trailing" constant="20" id="3zq-ab-m60"/>
+                            <constraint firstItem="DFq-qP-8cw" firstAttribute="top" secondItem="dlp-4h-y3M" secondAttribute="bottom" constant="16" id="FHe-f3-QWr"/>
+                            <constraint firstItem="nC5-OH-EXF" firstAttribute="trailing" secondItem="DFq-qP-8cw" secondAttribute="trailing" constant="20" id="L3n-Lz-T9d"/>
+                            <constraint firstItem="DFq-qP-8cw" firstAttribute="leading" secondItem="nC5-OH-EXF" secondAttribute="leading" constant="20" id="PfE-Vp-osL"/>
                             <constraint firstItem="r9F-ne-cgN" firstAttribute="top" secondItem="dlp-4h-y3M" secondAttribute="bottom" constant="-300" id="QdZ-Pj-CMK"/>
+                            <constraint firstItem="nC5-OH-EXF" firstAttribute="trailing" secondItem="8Vl-Pg-kag" secondAttribute="trailing" constant="20" id="g1Y-O5-o0O"/>
                             <constraint firstItem="dlp-4h-y3M" firstAttribute="leading" secondItem="nC5-OH-EXF" secondAttribute="leading" constant="20" id="kib-sW-5UA"/>
                             <constraint firstItem="r9F-ne-cgN" firstAttribute="centerX" secondItem="9RP-3s-sgP" secondAttribute="centerX" id="ky5-J7-1qv"/>
+                            <constraint firstItem="8Vl-Pg-kag" firstAttribute="leading" secondItem="nC5-OH-EXF" secondAttribute="leading" constant="20" id="mvv-Ny-4Uo"/>
                             <constraint firstItem="dlp-4h-y3M" firstAttribute="top" secondItem="nC5-OH-EXF" secondAttribute="top" constant="30" id="qjG-FR-iol"/>
+                            <constraint firstItem="8Vl-Pg-kag" firstAttribute="top" secondItem="DFq-qP-8cw" secondAttribute="bottom" constant="16" id="wHu-Ec-59A"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="nC5-OH-EXF"/>
                     </view>
@@ -224,15 +253,17 @@
                     <connections>
                         <outlet property="activityIndicator" destination="r9F-ne-cgN" id="GLp-ln-Otc"/>
                         <outlet property="confirmPasswordField" destination="vDA-mf-Ldf" id="XOh-Lq-8VE"/>
+                        <outlet property="disclaimerLabel" destination="8Vl-Pg-kag" id="RJO-wS-nm5"/>
                         <outlet property="emailField" destination="XbX-uS-7le" id="1wX-hz-dlc"/>
                         <outlet property="fullNameField" destination="oxM-Jb-uop" id="bza-SQ-4jj"/>
                         <outlet property="passwordField" destination="gXw-j6-Wh7" id="jWO-Tm-pdQ"/>
                         <outlet property="schoolField" destination="UND-Me-3ng" id="4dv-5C-Ac4"/>
+                        <outlet property="textView" destination="DFq-qP-8cw" id="c7G-LZ-5uf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rme-LX-z7R" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="981" y="-241"/>
+            <point key="canvasLocation" x="979.71014492753636" y="-241.07142857142856"/>
         </scene>
         <!--Log In Controller-->
         <scene sceneID="V2q-Gw-C4X">
@@ -242,10 +273,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="B72-jW-MYT">
-                                <rect key="frame" x="188.5" y="353.33333333333331" width="37" height="37"/>
-                                <color key="color" red="0.30995897080000001" green="0.37959871830000003" blue="0.56474064089999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </activityIndicatorView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dLQ-Gg-zgU">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                                 <subviews>
@@ -345,7 +372,6 @@
                             <constraint firstItem="dLQ-Gg-zgU" firstAttribute="top" secondItem="d3W-jh-8zS" secondAttribute="top" id="HaH-XT-fW8"/>
                             <constraint firstItem="dLQ-Gg-zgU" firstAttribute="trailing" secondItem="fEo-id-Lcg" secondAttribute="trailing" id="RS7-Nh-BEZ"/>
                             <constraint firstItem="dLQ-Gg-zgU" firstAttribute="leading" secondItem="fEo-id-Lcg" secondAttribute="leading" id="eVH-Io-XaN"/>
-                            <constraint firstItem="B72-jW-MYT" firstAttribute="centerX" secondItem="d3W-jh-8zS" secondAttribute="centerX" id="sqz-X6-kXw"/>
                             <constraint firstAttribute="bottom" secondItem="dLQ-Gg-zgU" secondAttribute="bottom" id="xfc-wh-S4m"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="fEo-id-Lcg"/>
@@ -699,6 +725,29 @@
                                                 <constraint firstItem="SLe-XY-jnp" firstAttribute="leading" secondItem="L09-q7-fgX" secondAttribute="leading" constant="16" id="l2F-cC-STg"/>
                                                 <constraint firstItem="LmQ-Pv-Goq" firstAttribute="centerY" secondItem="L09-q7-fgX" secondAttribute="centerY" id="wOo-Ey-9Zv"/>
                                                 <constraint firstItem="sAu-aV-Hrd" firstAttribute="leading" secondItem="LmQ-Pv-Goq" secondAttribute="trailing" constant="16" id="x6b-br-6Pf"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="55" id="mkt-IT-2CY">
+                                        <rect key="frame" x="0.0" y="479" width="414" height="55"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mkt-IT-2CY" id="hD4-gV-Cc5">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="55"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HyZ-0v-obq">
+                                                    <rect key="frame" x="75" y="12" width="141" height="31"/>
+                                                    <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="14"/>
+                                                    <state key="normal" title="- Click to view credits -"/>
+                                                    <connections>
+                                                        <action selector="creditsButtonClicked:" destination="EPd-y8-R6g" eventType="touchUpInside" id="hys-jG-jwS"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <color key="backgroundColor" red="0.79599106310000001" green="0.79612869019999999" blue="0.7959824204" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <constraints>
+                                                <constraint firstItem="HyZ-0v-obq" firstAttribute="centerY" secondItem="hD4-gV-Cc5" secondAttribute="centerY" id="Scc-2l-5FM"/>
+                                                <constraint firstItem="HyZ-0v-obq" firstAttribute="leading" secondItem="hD4-gV-Cc5" secondAttribute="leading" constant="75" id="zkt-uY-aBA"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -1619,6 +1668,114 @@
             </objects>
             <point key="canvasLocation" x="3862" y="901"/>
         </scene>
+        <!--Privacy Statement-->
+        <scene sceneID="dbj-fC-tkD">
+            <objects>
+                <viewController storyboardIdentifier="PrivacyController" id="Psl-31-KFd" customClass="PrivacyController" customModule="TrackMy" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="uWV-Ky-3X8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KfJ-C3-B8j" customClass="RoundedView" customModule="TrackMy" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="88" width="414" height="808"/>
+                                <subviews>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q3M-Z6-dlY">
+                                        <rect key="frame" x="16" y="0.0" width="382" height="808"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                        <string key="text">(i) Privacy Policies: All apps must include a link to their privacy policy in the App Store Connect metadata field and within the app in an easily accessible manner. The privacy policy must clearly and explicitly:
+Identify what data, if any, the app/service collects, how it collects that data, and all uses of that data.
+Confirm that any third party with whom an app shares user data (in compliance with these Guidelines) — such as analytics tools, advertising networks and third-party SDKs, as well as any parent, subsidiary or other related entities that will have access to user data — will provide the same or equal protection of user data as stated in the app’s privacy policy and required by these Guidelines.
+Explain its data retention/deletion policies and describe how a user can revoke consent and/or request deletion of the user’s data.
+(ii) Permission Apps that collect user or usage data must secure user consent for the collection, even if such data is considered to be anonymous at the time of or immediately following collection. Paid functionality must not be dependent on or require a user to grant access to this data. Apps must also provide the customer with an easily accessible and understandable way to withdraw consent. Ensure your purpose strings clearly and completely describe your use of the data. Apps that collect data for a legitimate interest without consent by relying on the terms of the European Union’s General Data Protection Regulation (“GDPR”) or similar statute must comply with all terms of that law. Learn more about Requesting Permission.
+(iii) Data Minimization: Apps should only request access to data relevant to the core functionality of the app and should only collect and use data that is required to accomplish the relevant task. Where possible, use the out-of-process picker or a share sheet rather than requesting full access to protected resources like Photos or Contacts.
+(iv) Access Apps must respect the user’s permission settings and not attempt to manipulate, trick, or force people to consent to unnecessary data access. For example, apps that include the ability to post photos to a social network must not also require microphone access before allowing the user to upload photos. Where possible, provide alternative solutions for users who don’t grant consent. For example, if a user declines to share Location, offer the ability to manually enter an address.
+(v) Account Sign-In: If your app doesn’t include significant account-based features, let people use it without a log-in. Apps may not require users to enter personal information to function, except when directly relevant to the core functionality of the app or required by law. If your core app functionality is not related to a specific social network (e.g. Facebook, WeChat, Weibo, Twitter, etc.), you must provide access without a login or via another mechanism. Pulling basic profile information, sharing to the social network, or inviting friends to use the app are not considered core app functionality. The app must also include a mechanism to revoke social network credentials and disable data access between the app and social network from within the app. An app may not store credentials or tokens to social networks off of the device and may only use such credentials or tokens to directly connect to the social network from the app itself while the app is in use.
+(vi) Developers that use their apps to surreptitiously discover passwords or other private data will be removed from the Developer Program.
+(vii) SafariViewController must be used to visibly present information to users; the controller may not be hidden or obscured by other views or layers. Additionally, an app may not use SafariViewController to track users without their knowledge and consent.
+(viii) Apps that compile personal information from any source that is not directly from the user or without the user’s explicit consent, even public databases, are not permitted on the App Store.
+(ix) Apps that provide services in highly-regulated fields (such as banking and financial services, healthcare, and air travel) or that require sensitive user information should be submitted by a legal entity that provides the services, and not by an individual developer.
+5.1.2 Data Use and Sharing
+(i) Unless otherwise permitted by law, you may not use, transmit, or share someone’s personal data without first obtaining their permission. You must provide access to information about how and where the data will be used. Data collected from apps may only be shared with third parties to improve the app or serve advertising (in compliance with the Apple Developer Program License Agreement). Apps that share user data without user consent or otherwise complying with data privacy laws may be removed from sale and may result in your removal from the Apple Developer Program.
+(ii) Data collected for one purpose may not be repurposed without further consent unless otherwise explicitly permitted by law.
+(iii) Apps should not attempt to surreptitiously build a user profile based on collected data and may not attempt, facilitate, or encourage others to identify anonymous users or reconstruct user profiles based on data collected from Apple-provided APIs or any data that you say has been collected in an “anonymized,” “aggregated,” or otherwise non-identifiable way.
+(iv) Do not use information from Contacts, Photos, or other APIs that access user data to build a contact database for your own use or for sale/distribution to third parties, and don’t collect information about which other apps are installed on a user’s device for the purposes of analytics or advertising/marketing.
+(v) Do not contact people using information collected via a user’s Contacts or Photos, except at the explicit initiative of that user on an individualized basis; do not include a Select All option or default the selection of all contacts. You must provide the user with a clear description of how the message will appear to the recipient before sending it (e.g. What will the message say? Who will appear to be the sender?).
+(vi) Data gathered from the HomeKit API, HealthKit, Consumer Health Records API, MovementDisorder APIs, ClassKit or from depth and/or facial mapping tools (e.g. ARKit, Camera APIs, or Photo APIs) may not be used for marketing, advertising or use-based data mining, including by third parties. Learn more about best practices for implementing CallKit, HealthKit, ClassKit, and ARKit.
+(vii) Apps using Apple Pay may only share user data acquired via Apple Pay with third parties to facilitate or improve delivery of goods and services.
+5.1.3 Health and Health Research
+Health, fitness, and medical data are especially sensitive and apps in this space have some additional rules to make sure customer privacy is protected:
+
+(i) Apps may not use or disclose to third parties data gathered in the health, fitness, and medical research context—including from the Clinical Health Records API, HealthKit API, Motion and Fitness, MovementDisorderAPIs, or health-related human subject research—for advertising, marketing, or other use-based data mining purposes other than improving health management, or for the purpose of health research, and then only with permission. Apps may, however, use a user’s health or fitness data to provide a benefit directly to that user (such as a reduced insurance premium), provided that the app is submitted by the entity providing the benefit, and the data is not be shared with a third party. You must disclose the specific health data that you are collecting from the device.
+(ii) Apps must not write false or inaccurate data into HealthKit or any other medical research or health management apps, and may not store personal health information in iCloud.
+(iii) Apps conducting health-related human subject research must obtain consent from participants or, in the case of minors, their parent or guardian. Such consent must include the (a) nature, purpose, and duration of the research; (b) procedures, risks, and benefits to the participant; (c) information about confidentiality and handling of data (including any sharing with third parties); (d) a point of contact for participant questions; and (e) the withdrawal process.
+(iv) Apps conducting health-related human subject research must secure approval from an independent ethics review board. Proof of such approval must be provided upon request.
+5.1.4 Kids
+For many reasons, it is critical to use care when dealing with personal data from kids, and we encourage you to carefully review all the requirements for complying with laws like the Children’s Online Privacy Protection Act (“COPPA”), the European Union’s General Data Protection Regulation (“GDPR”), and any other applicable regulations or laws.
+
+Apps may ask for birthdate and parental contact information only for the purpose of complying with these statutes, but must include some useful functionality or entertainment value regardless of a person’s age.
+
+Apps intended primarily for kids should not include third-party analytics or third-party advertising. This provides a safer experience for kids. In limited cases, third-party analytics and third-party advertising may be permitted provided that the services adhere to the same terms set forth in Guideline 1.3.
+
+Moreover, apps in the Kids Category or those that collect, transmit, or have the capability to share personal information (e.g. name, address, email, location, photos, videos, drawings, the ability to chat, other personal data, or persistent identifiers used in combination with any of the above) from a minor must include a privacy policy and must comply with all applicable children’s privacy statutes. For the sake of clarity, the parental gate requirement for the Kid’s Category is generally not the same as securing parental consent to collect personal data under these privacy statutes.
+
+As a reminder, Guideline 2.3.8 requires that use of terms like “For Kids” and “For Children” in app metadata is reserved for the Kids Category. Apps not in the Kids Category cannot include any terms in app name, subtitle, icon, screenshots or description that imply the main audience for the app is children.
+
+5.1.5 Location Services
+Use Location services in your app only when it is directly relevant to the features and services provided by the app. Location-based APIs shouldn’t be used to provide emergency services or autonomous control over vehicles, aircraft, and other devices, except for small devices such as lightweight drones and toys, or remote control car alarm systems, etc. Ensure that you notify and obtain consent before collecting, transmitting, or using location data. If your app uses location services, be sure to explain the purpose in your app; refer to the Human Interface Guidelines for best practices on doing so.
+
+5.2 Intellectual Property
+Make sure your app only includes content that you created or that you have a license to use. Your app may be removed if you’ve stepped over the line and used content without permission. Of course, this also means someone else’s app may be removed if they’ve “borrowed” from your work. If you believe your intellectual property has been infringed by another developer on the App Store, submit a claim via our web form. Laws differ in different countries, but at the very least, make sure to avoid the following common errors:
+
+5.2.1 Generally: Don’t use protected third-party material such as trademarks, copyrighted works, or patented ideas in your app without permission, and don’t include misleading, false, or copycat representations, names, or metadata in your app bundle or developer name. Apps should be submitted by the person or legal entity that owns or has licensed the intellectual property and other relevant rights.
+5.2.2 Third-Party Sites/Services: If your app uses, accesses, monetizes access to, or displays content from a third-party service, ensure that you are specifically permitted to do so under the service’s terms of use. Authorization must be provided upon request.
+5.2.3 Audio/Video Downloading: Apps should not facilitate illegal file sharing or include the ability to save, convert, or download media from third-party sources (e.g. Apple Music, YouTube, SoundCloud, Vimeo, etc.) without explicit authorization from those sources. Streaming of audio/video content may also violate Terms of Use, so be sure to check before your app accesses those services. Documentation must be provided upon request.
+5.2.4 Apple Endorsements: Don’t suggest or imply that Apple is a source or supplier of the App, or that Apple endorses any particular representation regarding quality or functionality. If your app is selected as an “Editor’s Choice,” Apple will apply the badge automatically.
+5.2.5 Apple Products: Don’t create an app that appears confusingly similar to an existing Apple product, interface (e.g. Finder), app (such as the App Store, iTunes Store, or Messages) or advertising theme. Apps and extensions, including third-party keyboards and Sticker packs, may not include Apple emoji. iTunes music previews may not be used for their entertainment value (e.g. as the background music to a photo collage or the soundtrack to a game) or in any other unauthorized manner. If your app displays Activity rings, they should not visualize Move, Exercise, or Stand data in a way that resembles the Activity control. The Human Interface Guidelines have more information on how to use Activity rings.
+5.3 Gaming, Gambling, and Lotteries
+Gambling, gaming, and lotteries can be tricky to manage and tend to be one of the most regulated offerings on the App Store. Only include this functionality if you’ve fully vetted your legal obligations everywhere you make your app available and are prepared for extra time during the review process. Some things to keep in mind:
+
+5.3.1 Sweepstakes and contests must be sponsored by the developer of the app.
+5.3.2 Official rules for sweepstakes, contests, and raffles must be presented in the app and make clear that Apple is not a sponsor or involved in the activity in any manner.
+5.3.3 Apps may not use in-app purchase to purchase credit or currency for use in conjunction with</string>
+                                        <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="q3M-Z6-dlY" secondAttribute="bottom" id="87s-Lw-Ifg"/>
+                                    <constraint firstAttribute="trailing" secondItem="q3M-Z6-dlY" secondAttribute="trailing" constant="16" id="BId-LS-TZq"/>
+                                    <constraint firstItem="q3M-Z6-dlY" firstAttribute="leading" secondItem="KfJ-C3-B8j" secondAttribute="leading" constant="16" id="faR-rf-ptO"/>
+                                    <constraint firstItem="q3M-Z6-dlY" firstAttribute="top" secondItem="KfJ-C3-B8j" secondAttribute="top" id="z8d-sp-ZB7"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="KfJ-C3-B8j" firstAttribute="leading" secondItem="lrt-Ba-xnT" secondAttribute="leading" id="8gN-uF-qUY"/>
+                            <constraint firstItem="KfJ-C3-B8j" firstAttribute="top" secondItem="lrt-Ba-xnT" secondAttribute="top" id="9Cf-PI-aqj"/>
+                            <constraint firstItem="KfJ-C3-B8j" firstAttribute="trailing" secondItem="lrt-Ba-xnT" secondAttribute="trailing" id="kEP-UV-QAb"/>
+                            <constraint firstAttribute="bottom" secondItem="KfJ-C3-B8j" secondAttribute="bottom" id="tfC-xV-NiG"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="lrt-Ba-xnT"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Privacy Statement" id="p8R-18-9By">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="x" id="kDk-OX-kqw">
+                            <color key="tintColor" red="0.12129447610000001" green="0.12922456860000001" blue="0.14169979099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="exitClicked:" destination="Psl-31-KFd" id="duL-ZM-ye7"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="textView" destination="q3M-Z6-dlY" id="XVP-ea-9Jt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ujb-xF-KRe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4681.159420289855" y="2353.7946428571427"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="HP3-aN-hVo">
             <objects>
@@ -2008,6 +2165,378 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L6P-Lx-kfr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-659" y="2071"/>
+        </scene>
+        <!--Terms and Conditions-->
+        <scene sceneID="Znb-AA-NJ4">
+            <objects>
+                <viewController storyboardIdentifier="TermsController" id="Sqt-sF-aXg" customClass="TermsController" customModule="TrackMy" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="0Kq-Yk-Kdm">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gMv-8X-4gn">
+                                <rect key="frame" x="0.0" y="88" width="414" height="808"/>
+                                <subviews>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xH1-nr-1i6">
+                                        <rect key="frame" x="16" y="0.0" width="382" height="808"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                        <mutableString key="text">TrackMy
+Privacy Policy
+Last updated: April 23, 2020
+
+This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
+
+We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy.
+
+Interpretation and Definitions
+Interpretation
+The words of which the initial letter is capitalized have meanings defined under the following conditions.
+
+The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
+
+Definitions
+For the purposes of this Privacy Policy:
+
+You means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.
+
+Company (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to TrackMy.
+
+Application means the software program provided by the Company downloaded by You on any electronic device, named TrackMy
+Affiliate means an entity that controls, is controlled by or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.
+Account means a unique account created for You to access our Service or parts of our Service.
+Service refers to the Application.
+Country refers to: California, United States
+Service Provider means any natural or legal person who processes the data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service or to assist the Company in analyzing how the Service is used.
+
+Third-party Social Media Service refers to any website or any social network website through which a User can log in or create an account to use the Service.
+Personal Data is any information that relates to an identified or identifiable individual.
+
+Device means any device that can access the Service such as a computer, a cellphone or a digital tablet.
+Usage Data refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).
+Do Not Track (DNT) is a concept that has been promoted by US regulatory authorities, in particular the U.S. Federal Trade Commission (FTC), for the Internet industry to develop and implement a mechanism for allowing internet users to control the tracking of their online activities across websites.
+Collecting and Using Your Personal Data
+Types of Data Collected
+Personal Data
+While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:
+
+Email address
+First name and last name
+Usage Data
+Usage Data
+Usage Data is collected automatically when using the Service.
+
+Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.
+
+When You access the Service by or through a mobile device, We may collect certain information automatically, including, but not limited to, the type of mobile device You use, Your mobile device unique ID, the IP address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use, unique device identifiers and other diagnostic data.
+
+We may also collect information that Your browser sends whenever You visit our Service or when You access the Service by or through a mobile device.
+
+Information Collected while Using the Application
+While using Our Application, in order to provide features of Our Application, We may collect, with your prior permission:
+
+We use this information to provide features of Our Service, to improve and customize Our Service. The information may be uploaded to the Company's servers and/or a Service Provider's server or it be simply stored on Your device.
+
+You can enable or disable access to this information at any time, through Your Device settings.
+
+Use of Your Personal Data
+The Company may use Personal Data for the following purposes:
+
+To provide and maintain our Service, including to monitor the usage of our Service.
+To manage Your Account: to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.
+For the performance of a contract: the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service.
+To contact You: To contact You by email, telephone calls, SMS, or other equivalent forms of electronic communication, such as a mobile application's push notifications regarding updates or informative communications related to the functionalities, products or contracted services, including the security updates, when necessary or reasonable for their implementation.
+To provide You with news, special offers and general information about other goods, services and events which we offer that are similar to those that you have already purchased or enquired about unless You have opted not to receive such information.
+To manage Your requests: To attend and manage Your requests to Us.
+We may share your personal information in the following situations:
+
+With Service Providers: We may share Your personal information with Service Providers to monitor and analyze the use of our Service, for payment processing, to contact You.
+For Business transfers: We may share or transfer Your personal information in connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of all or a portion of our business to another company.
+With Affiliates: We may share Your information with Our affiliates, in which case we will require those affiliates to honor this Privacy Policy. Affiliates include Our parent company and any other subsidiaries, joint venture partners or other companies that We control or that are under common control with Us.
+With Business partners: We may share Your information with Our business partners to offer You certain products, services or promotions.
+With other users: when You share personal information or otherwise interact in the public areas with other users, such information may be viewed by all users and may be publicly distributed outside. If You interact with other users or register through a Third-Party Social Media Service, Your contacts on the Third-Party Social Media Service may see Your name, profile, pictures and description of Your activity. Similarly, other users will be able to view descriptions of Your activity, communicate with You and view Your profile.
+Retention of Your Personal Data
+The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.
+
+The Company will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for a shorter period of time, except when this data is used to strengthen the security or to improve the functionality of Our Service, or We are legally obligated to retain this data for longer time periods.
+
+Transfer of Your Personal Data
+Your information, including Personal Data, is processed at the Company's operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ than those from Your jurisdiction.
+
+Your consent to this Privacy Policy followed by Your submission of such information represents Your agreement to that transfer.
+
+The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy and no transfer of Your Personal Data will take place to an organization or a country unless there are adequate controls in place including the security of Your data and other personal information.
+
+Disclosure of Your Personal Data
+Business Transactions
+If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy Policy.
+
+Law enforcement
+Under certain circumstances, the Company may be required to disclose Your Personal Data if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).
+
+Other legal requirements
+The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:
+
+Comply with a legal obligation
+Protect and defend the rights or property of the Company
+Prevent or investigate possible wrongdoing in connection with the Service
+Protect the personal safety of Users of the Service or the public
+Protect against legal liability
+Security of Your Personal Data
+The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While We strive to use commercially acceptable means to protect Your Personal Data, We cannot guarantee its absolute security.
+
+Detailed Information on the Processing of Your Personal Data
+Service Providers have access to Your Personal Data only to perform their tasks on Our behalf and are obligated not to disclose or use it for any other purpose.
+
+Analytics
+We may use third-party Service providers to monitor and analyze the use of our Service.
+
+Google Analytics
+
+Google Analytics is a web analytics service offered by Google that tracks and reports website traffic. Google uses the data collected to track and monitor the use of our Service. This data is shared with other Google services. Google may use the collected data to contextualise and personalise the ads of its own advertising network.
+
+You may opt-out of certain Google Analytics features through your mobile device settings, such as your device advertising settings or by following the instructions provided by Google in their Privacy Policy: https://policies.google.com/privacy?hl=en
+
+For more information on the privacy practices of Google, please visit the Google Privacy &amp; Terms web page: https://policies.google.com/privacy?hl=en
+
+Firebase
+
+Firebase is an analytics service provided by Google Inc.
+
+You may opt-out of certain Firebase features through your mobile device settings, such as your device advertising settings or by following the instructions provided by Google in their Privacy Policy: https://policies.google.com/privacy?hl=en
+
+We also encourage you to review the Google's policy for safeguarding your data: https://support.google.com/analytics/answer/6004245.
+
+For more information on what type of information Firebase collects, please visit the Google Privacy &amp; Terms web page: https://policies.google.com/privacy?hl=en
+
+Email Marketing
+We may use Your Personal Data to contact You with newsletters, marketing or promotional materials and other information that may be of interest to You. You may opt-out of receiving any, or all, of these communications from Us by following the unsubscribe link or instructions provided in any email We send or by contacting Us.
+
+We may use Email Marketing Service Providers to manage and send emails to You.
+
+Payments
+We may provide paid products and/or services within the Service. In that case, we may use third-party services for payment processing (e.g. payment processors).
+
+We will not store or collect Your payment card details. That information is provided directly to Our third-party payment processors whose use of Your personal information is governed by their Privacy Policy. These payment processors adhere to the standards set by PCI-DSS as managed by the PCI Security Standards Council, which is a joint effort of brands like Visa, Mastercard, American Express and Discover. PCI-DSS requirements help ensure the secure handling of payment information.
+
+Stripe
+
+Their Privacy Policy can be viewed at https://stripe.com/us/privacy
+
+"Do Not Track" Policy as Required by California Online Privacy Protection Act (CalOPPA)
+Our Service does not respond to Do Not Track signals.
+
+However, some third party websites do keep track of Your browsing activities. If You are visiting such websites, You can set Your preferences in Your web browser to inform websites that You do not want to be tracked. You can enable or disable DNT by visiting the preferences or settings page of Your web browser.
+
+Children's Privacy
+Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us. If We become aware that We have collected Personal Data from anyone under the age of 13 without verification of parental consent, We take steps to remove that information from Our servers.
+
+If We need to rely on consent as a legal basis for processing Your information and Your country requires consent from a parent, We may require Your parent's consent before We collect and use that information.
+
+Your California Privacy Rights (California's Shine the Light law)
+Under California Civil Code Section 1798 (California's Shine the Light law), California residents with an established business relationship with us can request information once a year about sharing their Personal Data with third parties for the third parties' direct marketing purposes.
+
+If you'd like to request more information under the California Shine the Light law, and if you are a California resident, You can contact Us using the contact information provided below.
+
+California Privacy Rights for Minor Users (California Business and Professions Code Section 22581)
+California Business and Professions Code section 22581 allow California residents under the age of 18 who are registered users of online sites, services or applications to request and obtain removal of content or information they have publicly posted.
+
+To request removal of such data, and if you are a California resident, You can contact Us using the contact information provided below, and include the email address associated with Your account.
+
+Be aware that Your request does not guarantee complete or comprehensive removal of content or information posted online and that the law may not permit or require removal in certain circumstances.
+
+Links to Other Websites
+Our Service may contain links to other websites that are not operated by Us. If You click on a third party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit.
+
+We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services.
+
+Changes to this Privacy Policy
+We may update our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.
+
+We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the "Last updated" date at the top of this Privacy Policy.
+
+You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
+
+Contact Us
+If you have any questions about this Privacy Policy, You can contact us:
+
+By email: classnotify1@gmail.com</mutableString>
+                                        <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstItem="xH1-nr-1i6" firstAttribute="top" secondItem="gMv-8X-4gn" secondAttribute="top" id="NKY-19-98I"/>
+                                    <constraint firstAttribute="trailing" secondItem="xH1-nr-1i6" secondAttribute="trailing" constant="16" id="TaS-0p-yXb"/>
+                                    <constraint firstAttribute="bottom" secondItem="xH1-nr-1i6" secondAttribute="bottom" id="b0A-5X-dfa"/>
+                                    <constraint firstItem="xH1-nr-1i6" firstAttribute="leading" secondItem="gMv-8X-4gn" secondAttribute="leading" constant="16" id="fzn-By-PxG"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.79599106310000001" green="0.79612869019999999" blue="0.7959824204" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="gMv-8X-4gn" firstAttribute="trailing" secondItem="qMP-HN-fL4" secondAttribute="trailing" id="CcZ-Vw-UGO"/>
+                            <constraint firstAttribute="bottom" secondItem="gMv-8X-4gn" secondAttribute="bottom" id="ZuI-Ql-mIL"/>
+                            <constraint firstItem="gMv-8X-4gn" firstAttribute="top" secondItem="qMP-HN-fL4" secondAttribute="top" id="da8-Tn-rfy"/>
+                            <constraint firstItem="gMv-8X-4gn" firstAttribute="leading" secondItem="qMP-HN-fL4" secondAttribute="leading" id="pK3-EM-Bp0"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="qMP-HN-fL4"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Terms and Conditions" id="z2Q-nJ-ePv">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="x" id="DvA-Ja-5Qk">
+                            <color key="tintColor" red="0.12129447610000001" green="0.12922456860000001" blue="0.14169979099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="exitedClicked:" destination="Sqt-sF-aXg" id="974-53-xu9"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="textView" destination="xH1-nr-1i6" id="3BS-IA-9y0"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PUy-8E-RFF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2876.811594202899" y="2353.7946428571427"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="JNW-eS-7fZ">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="LUM-4f-SXm" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="zmj-cW-36n">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Psl-31-KFd" kind="relationship" relationship="rootViewController" id="j5A-gz-fSX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6vy-73-74g" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3771.0144927536235" y="2353.7946428571427"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Ul8-Ue-dLh">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="mPd-TU-KEq" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="OcK-Lg-Jze">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Sqt-sF-aXg" kind="relationship" relationship="rootViewController" id="5OC-F0-WJ8"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Oub-09-thk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1966.6666666666667" y="2353.7946428571427"/>
+        </scene>
+        <!--Credits-->
+        <scene sceneID="KzK-KJ-0fI">
+            <objects>
+                <viewController storyboardIdentifier="CreditsController" id="z3R-ej-Ctw" customClass="CreditsController" customModule="TrackMy" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="AiC-1h-q9L">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GMt-BR-HeC" customClass="RoundedView" customModule="TrackMy" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="140" width="414" height="756"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="0oy-yP-a07">
+                                <rect key="frame" x="0.0" y="156" width="414" height="740"/>
+                                <color key="backgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CreditCell" rowHeight="71" id="jLG-Jd-Kax" customClass="CreditCell" customModule="TrackMy" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="414" height="71"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jLG-Jd-Kax" id="fNz-Wu-P7m">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="71"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dqH-EG-wO0">
+                                                    <rect key="frame" x="16" y="19.5" width="25" height="25"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="25" id="hIk-do-1ih"/>
+                                                        <constraint firstAttribute="width" constant="25" id="hLA-7K-MKR"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Icon made by Pixel perfect from www.flaticon.com" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pUt-pJ-AzW">
+                                                    <rect key="frame" x="57" y="11" width="321" height="42"/>
+                                                    <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="16"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="pUt-pJ-AzW" secondAttribute="trailing" constant="16" id="31P-AR-aCB"/>
+                                                <constraint firstItem="pUt-pJ-AzW" firstAttribute="leading" secondItem="dqH-EG-wO0" secondAttribute="trailing" constant="16" id="GHC-tz-cCl"/>
+                                                <constraint firstItem="pUt-pJ-AzW" firstAttribute="top" secondItem="fNz-Wu-P7m" secondAttribute="topMargin" id="INH-0F-Um8"/>
+                                                <constraint firstItem="dqH-EG-wO0" firstAttribute="leading" secondItem="fNz-Wu-P7m" secondAttribute="leading" constant="16" id="XK7-hZ-Jug"/>
+                                                <constraint firstItem="dqH-EG-wO0" firstAttribute="centerY" secondItem="pUt-pJ-AzW" secondAttribute="centerY" id="eEI-3q-eq8"/>
+                                                <constraint firstItem="pUt-pJ-AzW" firstAttribute="top" secondItem="fNz-Wu-P7m" secondAttribute="topMargin" id="lXw-Xy-yPr"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="pUt-pJ-AzW" secondAttribute="bottom" constant="4" id="uFc-bU-98A"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="descriptionLabel" destination="pUt-pJ-AzW" id="yqU-La-nKu"/>
+                                            <outlet property="iconImage" destination="dqH-EG-wO0" id="08t-kH-KmD"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <sections/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.79599106310000001" green="0.79612869019999999" blue="0.7959824204" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="GMt-BR-HeC" firstAttribute="trailing" secondItem="T9T-OB-s1b" secondAttribute="trailing" id="8UC-Nb-Azf"/>
+                            <constraint firstItem="0oy-yP-a07" firstAttribute="leading" secondItem="T9T-OB-s1b" secondAttribute="leading" id="Lgf-Kl-6XE"/>
+                            <constraint firstItem="0oy-yP-a07" firstAttribute="top" secondItem="T9T-OB-s1b" secondAttribute="top" constant="16" id="Vlg-RI-tJz"/>
+                            <constraint firstAttribute="bottom" secondItem="0oy-yP-a07" secondAttribute="bottom" id="YOP-Jc-6j1"/>
+                            <constraint firstItem="GMt-BR-HeC" firstAttribute="leading" secondItem="T9T-OB-s1b" secondAttribute="leading" id="dLV-nb-gS0"/>
+                            <constraint firstAttribute="bottom" secondItem="GMt-BR-HeC" secondAttribute="bottom" id="msK-qN-SfZ"/>
+                            <constraint firstAttribute="trailing" secondItem="0oy-yP-a07" secondAttribute="trailing" id="nv0-s3-X8l"/>
+                            <constraint firstItem="GMt-BR-HeC" firstAttribute="top" secondItem="T9T-OB-s1b" secondAttribute="top" id="xSr-6J-vbE"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="T9T-OB-s1b"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Credits" id="poR-jB-6nA">
+                        <barButtonItem key="leftBarButtonItem" image="x" id="eJ9-u8-Q4q">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="exitClicked:" destination="z3R-ej-Ctw" id="KEG-Sa-CeR"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="0oy-yP-a07" id="aIA-Gx-u9Y"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jEf-fB-9Gi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4769.5652173913049" y="-1173.2142857142856"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="NOB-hW-hW8">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="kJA-kI-pAE" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="eg9-Qk-Bqp">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="z3R-ej-Ctw" kind="relationship" relationship="rootViewController" id="3Vd-t9-DYV"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7gz-Kr-8UD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3861" y="-1173"/>
         </scene>
     </scenes>
     <resources>

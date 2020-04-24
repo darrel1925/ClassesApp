@@ -150,10 +150,10 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     func presentSupportOrFeedBack(){
         let message = "Your sending your Feeback or seeking Support?"
         let alert = UIAlertController(title: "Feedback or Support", message: message, preferredStyle: .alert)
-        let feebackAction = UIAlertAction(title: "Feeback!", style: .default, handler: {_ in
+        let feebackAction = UIAlertAction(title: "Feeback", style: .default, handler: {_ in
             self.presentSupport(emailType: "Feedback")
         })
-        let supportAction = UIAlertAction(title: "Support!", style: .default, handler: {_ in
+        let supportAction = UIAlertAction(title: "Support", style: .default, handler: {_ in
             self.presentSupport(emailType: "Support")
         })
         
@@ -176,6 +176,14 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         
         present(composer, animated: true)
     }
+    
+    func presentCredits() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "CreditsController") as! CreditsController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
+    }
+    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
@@ -261,7 +269,12 @@ class HomePageController: UIViewController, UITextFieldDelegate {
                 
             case "Support":
                 self.presentSupportOrFeedBack()
+                
+            case "Credits":
+                self.presentCredits()
+                
             default:
+                print("here")
                 return
             }
         }
