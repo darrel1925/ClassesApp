@@ -13,6 +13,7 @@
 		9A1BA9EB243420400087622D /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1BA9EA243420400087622D /* SettingsController.swift */; };
 		9A21C7EA2452A7D000355CC2 /* NotifcationStatusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A21C7E82452A7D000355CC2 /* NotifcationStatusController.swift */; };
 		9A21C7EB2452A7D000355CC2 /* NotifcationStatusController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */; };
+		9A21C7F124535FE300355CC2 /* HistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A21C7F024535FE300355CC2 /* HistoryController.swift */; };
 		9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */; };
 		9A40E7F2243857B90070A410 /* StripeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A40E7F1243857B90070A410 /* StripeAPI.swift */; };
 		9A445419242D959300089389 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A445418242D959300089389 /* UserService.swift */; };
@@ -93,6 +94,7 @@
 		9A1BA9EA243420400087622D /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		9A21C7E82452A7D000355CC2 /* NotifcationStatusController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifcationStatusController.swift; sourceTree = "<group>"; };
 		9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotifcationStatusController.xib; sourceTree = "<group>"; };
+		9A21C7F024535FE300355CC2 /* HistoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryController.swift; sourceTree = "<group>"; };
 		9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenAnimation.swift; sourceTree = "<group>"; };
 		9A40E7F1243857B90070A410 /* StripeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeAPI.swift; sourceTree = "<group>"; };
 		9A445418242D959300089389 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
@@ -293,12 +295,12 @@
 				9A77D7AC243BF15600D7963F /* ClassesApp.entitlements */,
 				9A9472B8242C1E7C004927DD /* Info.plist */,
 				9A8CF978242C4BEA008D0DC6 /* GoogleService-Info.plist */,
-				9A853400243E7C1400F7197F /* Constants */,
+				9A31D1402434309900C05EA1 /* Animations */,
 				9A8533F3243D6B9500F7197F /* Xibs */,
 				9A9FD2FD243815530011F8A4 /* Stripe */,
-				9A31D1402434309900C05EA1 /* Animations */,
 				9AAD828B2431B3EF00C66838 /* Cells */,
 				9A445417242D957900089389 /* Services */,
+				9A853400243E7C1400F7197F /* Constants */,
 				9A8CF97D242C6CB5008D0DC6 /* Modles */,
 				9A9472DD242C2BB1004927DD /* Controllers */,
 				9A9472DC242C2BAF004927DD /* Storyboards */,
@@ -363,6 +365,7 @@
 				9AF3AEC2244E534000D690C7 /* TermsController.swift */,
 				9AA2116D244EEA6B00A49606 /* PrivacyController.swift */,
 				9A7B46A4244FAB6F00B4D7A0 /* CreditsController.swift */,
+				9A21C7F024535FE300355CC2 /* HistoryController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -662,6 +665,7 @@
 				9AC4A959244B92620019921F /* WelcomeScreen4.swift in Sources */,
 				9A8CF97C242C58C7008D0DC6 /* Extensions.swift in Sources */,
 				9A445419242D959300089389 /* UserService.swift in Sources */,
+				9A21C7F124535FE300355CC2 /* HistoryController.swift in Sources */,
 				9A8CF973242C3F43008D0DC6 /* SplashScreenController.swift in Sources */,
 				9A8CF975242C48FA008D0DC6 /* LogInController.swift in Sources */,
 				9A7E051D244189E8002E9803 /* ServerService.swift in Sources */,

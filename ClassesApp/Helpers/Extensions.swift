@@ -314,7 +314,7 @@ extension AuthErrorCode {
         case .userNotFound:
             return "Account not found for this email address. Please check and try again!"
         case .userDisabled:
-            return "Your account has been disabled. Please contact support."
+            return "Your account has been disabled. Please contact support at \(AppConstants.support_email)"
         case .networkError:
             return "Network error. Please try again."
         case .wrongPassword:

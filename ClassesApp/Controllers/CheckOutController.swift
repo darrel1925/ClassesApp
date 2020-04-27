@@ -45,7 +45,7 @@ class CheckOutController: UIViewController {
     
     func setRepeatTrackedCourses(){
         for course in Array(courseDict.keys) {
-            if UserService.user.trackedClasses.contains(course) {
+            if UserService.user.trackedClassesArr.contains(course) {
                 repreatTrackedCourses += 1
             }
         }

@@ -21,29 +21,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let user = Auth.auth().currentUser
         AppConstants.initalizeConstants()
-//
-//
+        //
+        //
         // if user is logged in
         if ((user) != nil) {
-
+            
+            isUserDisabled(user: user!)
             // if user's email is not verified
             if !user!.isEmailVerified { print("email not verified"); return }
-
+            
             print("user:\(user?.email ?? "email not found") already logged in\n\n")
             guard let windowScene = (scene as? UIWindowScene) else { return }
             self.window = UIWindow(windowScene: windowScene)
-
+            
             UserService.dispatchGroup.enter()
             UserService.getCurrentUser(email: user?.email ?? "no email found at start") // leaves dispatch group
-
+            
             UserService.dispatchGroup.notify(queue: .main, execute: {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
-
+                
                 guard let rootVC = storyboard.instantiateViewController(identifier: "HomePageController") as? HomePageController else {
                     print("ViewController not found")
                     return
                 }
-
+                
                 let rootNC = UINavigationController(rootViewController: rootVC)
                 self.window?.rootViewController = rootNC
                 self.window?.makeKeyAndVisible()
@@ -84,6 +85,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window?.makeKeyAndVisible()
     }
     
+    func isUserDisabled(user: FirebaseAuth.User) {
+        user.reload(completion: { (error) in
+            if error != nil {
+                if let error = AuthErrorCode(rawValue: error!._code) {
+                    print("IS DISABLED", error.errorMessage)
+                    print("IS DISABLED raw value", error.rawValue)
+                return
+                }
+            }
+            print("no error")
+        })
+        print("checked disabled")
+    }
+    
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
@@ -95,7 +111,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         UserService.isLoggedIn = false // <- to allow user logon into new account and have fcm update automatically
-
+        
     }
     
     func sceneWillResignActive(_ scene: UIScene) {

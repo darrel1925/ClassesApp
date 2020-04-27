@@ -34,7 +34,7 @@ class SettingsController: UIViewController {
         backgroundView.addGestureRecognizer(swipe1)
         navigationController?.navigationBar.addGestureRecognizer(swipe2)
     }
-
+    
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil)
     }
@@ -47,19 +47,23 @@ class SettingsController: UIViewController {
 extension SettingsController: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return 6
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: // Preferences title
+        case 0: // Account Info
             return 1
-        case 1: // Email Preferences, Notifiations
+        case 1: // Name, Email, School
+            return 3
+        case 2: // Preferences title
+            return 1
+        case 3: // Email Preferences, Notifiations
             return 2
-        case 2: // Purchase History title
+        case 4: // Purchase History title
             return 1
-        case 3: // Purchase Histort list
-            return UserService.user.purchaseHistory.count
+        case 5: // Purchase History, Track Classes History
+            return 2
         default:
             return 0
         }        
@@ -73,40 +77,73 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
-            cell.titleLabel.text = "Preferences"
+            cell.titleLabel.text = "Acount Info"
             return cell
             
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
             switch row {
             case 0:
-                cell.titleLabel.text = "Email Preferences"
+                cell.titleLabel.text = "Name"
+                cell.infoLabel.text = "\(UserService.user.fullName)"
                 return cell
             case 1:
-                cell.titleLabel.text = "Notifications"
+                cell.titleLabel.text = "Email"
+                cell.infoLabel.text = "\(UserService.user.email)"
+                return cell
+            case 2:
+                cell.titleLabel.text = "School"
+                cell.infoLabel.text = "\(UserService.user.school)"
                 return cell
             default:
                 return cell
             }
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
-            cell.titleLabel.text = "Purchase History"
+            cell.titleLabel.text = "Preferences"
             return cell
             
         case 3:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PurchaseHistoryCell") as! PurchaseHistoryCell
-            let purchase = UserService.user.purchaseHistory.reversed()[row]
-            
-            if purchase[DataBase.num_credits] == "1" {
-                cell.numCreditsLabel.text = "\(purchase[DataBase.num_credits] ?? "Error") Credit"
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
+            switch row {
+            case 0:
+                cell.titleLabel.text = "Email Preferences"
+                cell.infoLabel.text = ""
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .gray
+                return cell
+            case 1:
+                cell.titleLabel.text = "Notifications"
+                cell.infoLabel.text = ""
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
+                return cell
+            default:
+                return cell
             }
-            else {
-                cell.numCreditsLabel.text = "\(purchase[DataBase.num_credits] ?? "Error") Credits"
-            }
-            cell.timeLabel.text = purchase[DataBase.date]?.toDate().toStringInWords()
-            cell.priceLabel.text = Int(purchase[DataBase.price] ?? "Error")?.penniesToFormattedDollars()
+        case 4:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
+            cell.titleLabel.text = "History"
             return cell
             
+        case 5:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
+            switch row {
+            case 0:
+                cell.titleLabel.text = "Purchase History"
+                cell.infoLabel.text = ""
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .gray
+                return cell
+            case 1:
+                cell.titleLabel.text = "Tracked Classes History"
+                cell.infoLabel.text = ""
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
+                return cell
+            default:
+                return cell
+            }
         default:
             return UITableViewCell()
         }
@@ -115,23 +152,38 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = indexPath.row
         let section = indexPath.section
-
+        
         switch section {
-        case 1:
+        case 3:
+            print("clicked \(row) \(section)")
+            tableView.deselectRow(at: indexPath, animated: true)
             switch row {
             case 0:
-                print("clicked \(row) \(section)")
                 let toggleEmailsVC = ToggleEmailsController()
                 toggleEmailsVC.modalPresentationStyle = .overFullScreen
                 self.present(toggleEmailsVC, animated: true, completion: nil)
             case 1:
-                print("clicked \(row) \(section)")
                 let notifStatusVC = NotifcationStatusController()
                 notifStatusVC.modalPresentationStyle = .overFullScreen
                 self.present(notifStatusVC, animated: true, completion: nil)
-                
             default:
                 return
+            }
+        case 5:
+            tableView.deselectRow(at: indexPath, animated: true)
+            switch row {
+            case 0: // Purchase History
+                let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
+                historyVC.modalPresentationStyle = .overFullScreen
+                historyVC.presentPurchaseHist = true
+                self.present(historyVC, animated: true, completion: nil)
+            case 1: // Tracked Classes History
+                let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
+                historyVC.modalPresentationStyle = .overFullScreen
+                historyVC.presentPurchaseHist = false
+                self.present(historyVC, animated: true, completion: nil)
+            default:
+                break
             }
             return
         default:

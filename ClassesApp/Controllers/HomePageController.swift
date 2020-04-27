@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import MessageUI
 
-class HomePageController: UIViewController, UITextFieldDelegate {
+class HomePageController: UIViewController {
     
     @IBOutlet weak var quarterLabel: UILabel!
     @IBOutlet weak var backgroundView: RoundedView!
@@ -28,6 +28,9 @@ class HomePageController: UIViewController, UITextFieldDelegate {
     var courseCodes = [String]()
     var courseStatus = [String]()
     
+    var lastClick: TimeInterval!
+    var lastIndexPath: IndexPath!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,58 +46,6 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         super.viewDidAppear(animated)
         refreshTableView()
         addClassesisPresented = false
-        
-        let isRegisteredForRemoteNotifications = UIApplication.shared.isRegisteredForRemoteNotifications
-        if isRegisteredForRemoteNotifications {
-             print("is registered")
-        } else {
-             print("is NOT registered")
-        }
-        
-        let current = UNUserNotificationCenter.current()
-        current.getNotificationSettings(completionHandler: { (settings) in
-            if settings.authorizationStatus == .notDetermined {
-                print("not determined")
-            } else if settings.authorizationStatus == .denied {
-                print("registration denied")
-            } else if settings.authorizationStatus == .authorized {
-                print("registration granted")
-            } else if settings.authorizationStatus == .provisional {
-                print("registration privisional")
-            }
-        })
-        
-        // At the top, import UserNotifications
-        // to use UNUserNotificationCenter
-//        import UserNotifications
-//        if #available(iOS 10.0, *) {
-//           let current = UNUserNotificationCenter.current()
-//           current.getNotificationSettings(completionHandler: { settings in
-//
-//               switch settings.authorizationStatus {
-//
-//               case .notDetermined:
-//                   // Authorization request has not been made yet
-//               case .denied:
-//                break
-//                   // User has denied authorization.
-//                   // You could tell them to change this in Settings
-//               case .authorized:
-//                break
-//                   // User has given authorization.
-//               case .provisional:
-//                break
-//               }
-//           })
-//        } else {
-//            // Fallback on earlier versions
-//            if UIApplication.shared.isRegisteredForRemoteNotifications {
-//                print("APNS-YES")
-//            } else {
-//                print("APNS-NO")
-//            }
-//        }
-        
     }
     
     func setUpGestures() {
@@ -209,8 +160,11 @@ class HomePageController: UIViewController, UITextFieldDelegate {
             self.presentSupport(emailType: "Support")
         })
         
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
         alert.addAction(feebackAction)
         alert.addAction(supportAction)
+        alert.addAction(cancelAction)
         present(alert, animated: true, completion: nil)
     }
     
@@ -234,12 +188,6 @@ class HomePageController: UIViewController, UITextFieldDelegate {
         let navController = UINavigationController(rootViewController: vc)
         navController.modalPresentationStyle = .fullScreen
         self.present(navController, animated: true, completion: nil)
-    }
-    
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return false
     }
     
     func toggleNoClassLabel(){
@@ -400,6 +348,23 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let now: TimeInterval = Date().timeIntervalSince1970
+        if self.lastClick == nil {
+            self.lastClick = now
+            self.lastIndexPath = indexPath
+            return
+        }
+        
+        if (now - lastClick < 0.3) && (lastIndexPath?.row == indexPath.row )
+        {
+            self.presentDeleteAlert(atIndexPath: indexPath)
+        }
+        self.lastClick = now
+        self.lastIndexPath = indexPath
+
+    }
+    
     func updateUI(withCell cell: TrackedCell, withResponce response: String) {
         print("got response \(response)")
         switch response {
@@ -478,5 +443,4 @@ extension HomePageController: MFMailComposeViewControllerDelegate {
         }
     }
 }
-
 

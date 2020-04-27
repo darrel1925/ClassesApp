@@ -29,7 +29,7 @@ class User {
     var seenWelcomePage: Bool
     var notificationsEnabled: Bool
     var classes: [String: [Any]]
-    var trackedClasses: [String]
+    var trackedClasses: [[String: String]] // [ [course_code: 34250, date: Date] ]
     var purchaseHistory: [ [String: String] ] // [ [num_credits: 3, date: Date, price: 149] ]
     var notifications: [ [String: String] ] // [ [course_code: '34250', status: 'FULL OPEN', date: Date] ]?
     
@@ -37,6 +37,13 @@ class User {
     var revPurchaseHistory: [ [String: String] ] { return purchaseHistory.reversed()}
     var classArr: [String] { return Array(classes.keys) }
     var fullName: String { return "\(firstName) \(lastName)" }
+    var trackedClassesArr: [String] {
+        var classes: [String] = []
+        for course in trackedClasses {
+            classes.append(course[DataBase.course_code] ?? "")
+        }
+        return classes
+    }
     
     
     // User is Signing Up
@@ -46,7 +53,7 @@ class User {
          fcm_token: String = "", credits: Int = 0, receiveEmails: Bool = true,
          seenWelcomePage: Bool = false, isLoggedIn: Bool = true, notificationsEnabled: Bool = true,
          purchaseHistory: [[String: String]] = [], notifications: [[String: String]] = [],
-         trackedClasses: [String] = []){
+         trackedClasses: [[String: String]] = []){
         
         self.id = id
         self.email = email
@@ -92,12 +99,11 @@ class User {
             self.classes = [:]
         }
         
-        
         self.school = data[DataBase.school] as? String ?? ""
         self.fcm_token = data[DataBase.fcm_token] as? String ?? ""
         self.receiveEmails = data[DataBase.receive_emails] as? Bool ?? true
         self.seenWelcomePage = data[DataBase.seen_welcome_page] as? Bool ?? false
-        self.trackedClasses = data[DataBase.tracked_classes] as? [String] ?? []
+        self.trackedClasses = data[DataBase.tracked_classes] as? [[String: String]] ?? []
         self.notificationsEnabled = data[DataBase.notifications_enabled] as? Bool ?? true
         if let purchaseHistory =  data[DataBase.purchase_history] as? [[String : String]] {
             self.purchaseHistory = purchaseHistory
@@ -133,7 +139,7 @@ class User {
             DataBase.seen_welcome_page: user.seenWelcomePage,
             DataBase.notifications: user.notifications,
             DataBase.tracked_classes: user.trackedClasses,
-            DataBase.notifications_enabled: user.notificationsEnabled
+            DataBase.notifications_enabled: user.notificationsEnabled,
         ]
         
         return data

@@ -36,6 +36,7 @@ class MenuController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
         tableView.deselectRow(at: indexPath, animated: true)
         guard let menuType = MenuType(rawValue: indexPath.row) else { return }
         dismiss(animated: true) { [weak self] in

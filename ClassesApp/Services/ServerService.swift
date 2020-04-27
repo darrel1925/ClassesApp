@@ -278,11 +278,13 @@ final class _ServerService {
         let docRef = db.collection(DataBase.User).document(UserService.user.email)
         
         var updatedTrackedClasses = UserService.user.trackedClasses
-        
+    
         for course in classes {
-            if !updatedTrackedClasses.contains(course) {
-                updatedTrackedClasses.append(course)
-            }
+            let data: [String: String] = [
+                DataBase.course_code: course,
+                DataBase.date: Date().toString(),
+            ]
+            updatedTrackedClasses.append(data)
         }
         
         docRef.updateData([DataBase.tracked_classes: updatedTrackedClasses]) { (err) in

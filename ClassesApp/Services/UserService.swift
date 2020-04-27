@@ -42,8 +42,18 @@ final class _UserService {
             print("user info has been updated")
             self.dispatchGroup.customLeave()
         })
+        
+        self.dispatchGroup.notify(queue: .main) {
+            self.updateFirebaseWithUpdatedVars()
+        }
     }
     
+    func updateFirebaseWithUpdatedVars() {
+        let docRef = db.collection(DataBase.User).document(user.email)
+        let userInfo = User.modelToData(user: user)
+        docRef.setData(userInfo, merge: true)
+        print("user info merged")
+    }
     
     func logoutUser(disaptchGroup dg: DispatchGroup) {
         print(user.email)
