@@ -50,9 +50,15 @@ struct DataBase {
     static let new_status  = "new_status"
     static let num_credits = "num_credits"
     
+    // App Constant Docs
+    static let Constants = "Constants"
+
     // App Constants
     static let price_map     = "price_map"
     static let server_ip     = "server_ip"
+    static let terms_url     = "terms_url"
+    static let stripe_pk     = "stripe_pk"
+    static let privacy_url   = "privacy_url"
     static let server_port   = "server_port"
     static let merchant_id   = "merchant_id"
     static let connect_pswd  = "connect_pswd"
@@ -60,6 +66,7 @@ struct DataBase {
     static let price_per_class    = "price_per_class"
     static let supported_schools  = "supported_schools"
     static let support_email_pswd = "support_email_pswd"
+
 }
 
 struct Response {

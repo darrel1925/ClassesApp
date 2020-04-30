@@ -11,7 +11,6 @@ import Firebase
 import FirebaseAuth
 import FirebaseMessaging
 import UserNotifications
-import Stripe
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,8 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
-        Stripe.setDefaultPublishableKey("pk_test_5W4qYOX73DDJflI1KUB811pt003w2sM0Qn")
-
         if #available(iOS 10.0, *) {
           // For iOS 10 display notification (sent via APNS)
           UNUserNotificationCenter.current().delegate = self
@@ -40,15 +37,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Messaging.messaging().delegate = self
         application.registerForRemoteNotifications()
         
-//        setupCloudMessaging()
-
         return true
-    }
-    
-    func setUpCloudMessaging() {
-    
-    }
+    }    // to handle incoming url schemes
 
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        // getting link through app store
+        if let dynamicLink = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url) {
+            print("got link though custom url scheme", dynamicLink)
+            handleIncomingLink(dynamicLink)
+            return true
+        }
+        // another url that is not my dynamic link'
+        return false
+    }
+    
+    func handleIncomingLink(_ dynamicaLink: DynamicLink) {
+        guard let url = dynamicaLink.url else {
+            print("Thats weird. The url didn't get here")
+            return
+        }
+        print("got the dynamic link from custom url! \(url)")
+
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            let queryItems = components.queryItems else { return }
+        
+        for query in queryItems {
+            print("Perameter \(query.name), Value \(query.value)")
+        }
+        
+        switch dynamicaLink.matchType {
+        case .unique:
+            // 100% sure this is the link your user clicked on
+            break
+        case .default:
+            // Pretty sure this is the link the user clicked on but dont know for sure
+            break
+        case .weak:
+            // Guessing that this might be the correct link but tbh we dont know for sure
+            break
+        case .none:
+            // There is nothing in this dynamic link
+            break
+        }
+    }
+    
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {

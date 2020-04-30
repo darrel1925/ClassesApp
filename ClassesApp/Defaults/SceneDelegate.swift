@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -91,13 +92,62 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 if let error = AuthErrorCode(rawValue: error!._code) {
                     print("IS DISABLED", error.errorMessage)
                     print("IS DISABLED raw value", error.rawValue)
-                return
+                    return
                 }
             }
             print("no error")
         })
         print("checked disabled")
     }
+    
+    
+    // handle universal URLs (when user clicks on dynamic link and has app installed)
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        print("ENTEREED URL")
+        if let incomingURL = userActivity.webpageURL {
+            print("incoming URL is \(incomingURL)")
+            
+            // turns link into dynamic link object
+            DynamicLinks.dynamicLinks().handleUniversalLink(incomingURL) { (dynamicLink, error) in
+                if let error = error {
+                    print("Found and err! \(error.localizedDescription)")
+                }
+                if let dynamicLink = dynamicLink {
+                    self.handleIncomingLink(dynamicLink)
+                }
+            }
+        }
+    }
+    
+    func handleIncomingLink(_ dynamicaLink: DynamicLink) {
+        guard let url = dynamicaLink.url else {
+            print("Thats weird. The url didn't get here")
+            return
+        }
+        print("got the dynamic link from url! \(url)")
+
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            let queryItems = components.queryItems else { return }
+        
+        for query in queryItems {
+            print("Perameter \(query.name), Value \(query.value)")
+        }
+        
+        switch dynamicaLink.matchType {
+        case .unique:
+            // 100% sure this is the link your user clicked on
+            break
+        case .default:
+            // Pretty sure this is the link the user clicked on but dont know for sure
+            break
+        case .weak:
+            // Guessing that this might be the correct link but tbh we dont know for sure
+            break
+        case .none:
+            // There is nothing in this dynamic link
+            break
+        }    }
+    
     
     
     func sceneDidDisconnect(_ scene: UIScene) {

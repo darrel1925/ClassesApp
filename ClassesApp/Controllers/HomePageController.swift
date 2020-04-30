@@ -40,6 +40,7 @@ class HomePageController: UIViewController {
         setUpNavController()
         setUpTableView()
         setUpGestures()
+        UserService.generateReferralLink()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -170,7 +171,7 @@ class HomePageController: UIViewController {
     
     func presentSupport(emailType: String) {
         guard MFMailComposeViewController.canSendMail() else {
-            let message = "Email account not set in device. Head Setting -> Passwords&Accounts -> Add Account then add you email account. You can also send an email to \(AppConstants.support_email)"
+            let message = "Email account not set up on this device. Head over to Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
             self.displayError(title: "Cannot Send Mail", message: message)
             return
         }
@@ -356,7 +357,7 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
             return
         }
         
-        if (now - lastClick < 0.3) && (lastIndexPath?.row == indexPath.row )
+        if (now - self.lastClick < 0.4) && (self.lastIndexPath?.row == indexPath.row )
         {
             self.presentDeleteAlert(atIndexPath: indexPath)
         }

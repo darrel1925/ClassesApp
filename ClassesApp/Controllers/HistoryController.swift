@@ -17,6 +17,7 @@ class HistoryController: UIViewController {
     
     var presentPurchaseHist: Bool! // purchase history or tracking history
 
+    let containerHieght: CGFloat = 500
     var noClassLabel: UILabel!
     var labelHasBeenPresented: Bool = false
 
@@ -58,7 +59,7 @@ class HistoryController: UIViewController {
     func animateViewUpwards() {
         guard let window = UIApplication.shared.keyWindow else { return }
         
-        let height: CGFloat = 600
+        let height: CGFloat = containerHieght
         let y = window.frame.height - height
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
@@ -80,14 +81,13 @@ class HistoryController: UIViewController {
 
         noClassLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 250, height: 350))
         noClassLabel.font = UIFont(name: "Futura", size: 20.0)
-        noClassLabel.center = window.center
         noClassLabel.textAlignment = .center
         noClassLabel.text = "No new notifications. Check in again later or pull down to refresh!"
         noClassLabel.numberOfLines = 0
         
-        noClassLabel.center = self.view.center
-        noClassLabel.center.x = self.view.center.x
-        noClassLabel.center.y = self.view.center.y
+        noClassLabel.center = containerView.center
+        noClassLabel.center.x = window.center.x
+        noClassLabel.center.y = window.frame.maxY - (containerHieght/2)
         
         labelHasBeenPresented = true
 

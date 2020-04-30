@@ -233,7 +233,7 @@ class CheckOutController: UIViewController {
         
         // if user does not have enough credits
         if UserService.user.credits < getTotalCost() {
-            let message = "You do not have enough credits. Go to the Store to get more credits"
+            let message = "You do not have enough credits. Head to the Store to get more credits"
             displayError(title: "Not Enough Credits", message: message)
             return
         }

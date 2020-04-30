@@ -11,6 +11,7 @@ target 'ClassesApp' do
 	pod 'Firebase/Firestore'
 	pod 'Firebase/Functions'
 	pod 'Firebase/Messaging'
+	pod 'Firebase/DynamicLinks'
 
 	
 	pod 'Firebase/Auth' # firebase auth

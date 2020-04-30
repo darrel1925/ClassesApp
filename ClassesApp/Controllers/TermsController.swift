@@ -21,7 +21,7 @@ class TermsController: UIViewController {
         let webView = WKWebView(frame: view.frame)
         view.addSubview(webView)
         
-        let url = URL(string: "https://www.termsfeed.com/terms-conditions/dbbbc444ec3b39f928157c712c5f978a")!
+        let url = URL(string: AppConstants.terms_url)!
         let request = URLRequest(url: url)
         webView.load(request)
 

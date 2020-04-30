@@ -25,7 +25,8 @@ class SignUpController: UIViewController {
     let db = Firestore.firestore()
     let schoolExtDict: [String: String] = [
         "UCI": "uci",
-        "UCLA": "ucla"
+        "UCLA": "ucla",
+        "SJSU": "sjsu"
     ]
     
     var termsLowerBound: Int!
@@ -37,7 +38,6 @@ class SignUpController: UIViewController {
         setUpToolBar()
         setDelegates()
         setUpTextView()
-        
     }
     
     func setUpSchoolPicker() {
@@ -64,6 +64,8 @@ class SignUpController: UIViewController {
         emailField.delegate = self
         passwordField.delegate = self
         confirmPasswordField.delegate = self
+        
+        schoolField.text = "UCI"
     }
     
     func setUpTextView() {
@@ -150,6 +152,13 @@ class SignUpController: UIViewController {
         let emailArray = trimmedEmail.components(separatedBy: "@") // ['pname', 'uci.edu']
         let extensionArray = emailArray[1].components(separatedBy: ".") // ['uci', 'edu']
         let schoolExtenstion = extensionArray[0]
+        
+        // Chose .ucsf is not in the schoolExtDict values
+        if !Array(schoolExtDict.values).contains(schoolExtenstion) {
+              let message = "Email must be a valid school email address ending in '.edu' /n/n Ex. panteatr@uci.edu, bbears@ucla.edu"
+              self.displayError(title: "Invalid Email.", message: message)
+              return false
+          }
         
         // Chose UCLA as school but has a .uci.edu email address
         if schoolExtenstion != schoolExtDict[schoolField.text!]{

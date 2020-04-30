@@ -35,6 +35,20 @@ class SettingsController: UIViewController {
         navigationController?.navigationBar.addGestureRecognizer(swipe2)
     }
     
+    func presentTermsController() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "TermsController") as! TermsController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
+    }
+    
+    func presentPrivacyController() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "PrivacyController") as! PrivacyController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
+    }
+    
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil)
     }
@@ -47,7 +61,7 @@ class SettingsController: UIViewController {
 extension SettingsController: UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 6
+        return 8
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -63,6 +77,10 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         case 4: // Purchase History title
             return 1
         case 5: // Purchase History, Track Classes History
+            return 2
+        case 6:
+            return 1 // Legal
+        case 7:
             return 2
         default:
             return 0
@@ -144,6 +162,29 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             default:
                 return cell
             }
+        case 6:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
+            cell.titleLabel.text = "Legal"
+            return cell
+            
+        case 7:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
+            switch row {
+            case 0:
+                cell.titleLabel.text = "Privacy Policy"
+                cell.infoLabel.text = ""
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .gray
+                return cell
+            case 1:
+                cell.titleLabel.text = "Terms and Agreements"
+                cell.infoLabel.text = ""
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
+                return cell
+            default:
+                return cell
+            }
         default:
             return UITableViewCell()
         }
@@ -185,7 +226,16 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             default:
                 break
             }
-            return
+        case 7:
+            tableView.deselectRow(at: indexPath, animated: true)
+            switch row {
+            case 0: // Privacy Policy
+                presentPrivacyController()
+            case 1: // Terms and Agreements
+                presentTermsController()
+            default:
+                break
+            }
         default:
             return
         }

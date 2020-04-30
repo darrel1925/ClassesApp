@@ -20,7 +20,7 @@ class PrivacyController: UIViewController {
         let webView = WKWebView(frame: view.frame)
         view.addSubview(webView)
         
-        let url = URL(string: "https://www.termsfeed.com/privacy-policy/442d8d1d2c1816301827f97bd4302e67")!
+        let url = URL(string: AppConstants.privacy_url)!
         let request = URLRequest(url: url)
         webView.load(request)
     }
