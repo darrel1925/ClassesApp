@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/darrelm/Desktop/classes/ClassesApp/ClassesApp/Controllers/ReferralController.swift">
-   </FileRef>
-   <FileRef
       location = "group:ClassesApp.xcodeproj">
    </FileRef>
    <FileRef

@@ -8,6 +8,7 @@
 
 import UIKit
 import Stripe
+import AudioToolbox
 import FirebaseFunctions
 import FirebaseFirestore
 
@@ -140,6 +141,7 @@ class StorePopUpController: UIViewController {
     
     func presentSuccessAlert() {
 //        ServerService.updatePurchaseHistory(numCreditsBought: AppConstants.premium_price, totalPrice: AppConstants.premium_price) // <-- UPDATE
+        if !applePayPresented { AudioServicesPlaySystemSound(1519) } // vibrate phone 
         let message = "Thank you for your support!"
         let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
         let okay = UIAlertAction(title: "Okay", style: .default, handler: {(action) in
@@ -201,12 +203,14 @@ class StorePopUpController: UIViewController {
             
             self.backgroundView.alpha = 0
             
-        }, completion: {_ in
+        }, completion: {finished in
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
                 self.dismiss(animated: true, completion: nil)
                 
-            }, completion: nil)
+            }, completion: { finished2 in
+                if UserService.user.hasPremium{ self.storeController.handleDismiss() }
+            })
         })
     }
     

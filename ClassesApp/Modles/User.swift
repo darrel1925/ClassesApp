@@ -13,45 +13,40 @@ import FirebaseMessaging
 
 
 class User {
-    var fcm_token_has_set: Bool = false
-    
     var id: String
+    
     var email: String
-    var webReg: Bool
-    var webRegPswd: String
-    var firstName: String
+    var school: String
     var lastName: String
     var stripeId: String
-    var isLoggedIn:Bool
-    
-    var school: String
+    var firstName: String
     var fcm_token: String
-    var numReferrals: Int
+    var webRegPswd: String
     var referralLink: String
-    var purchaseTier: Int
+    
+    var webReg: Bool
+    var isLoggedIn:Bool
+    var hasPremium: Bool
     var receiveEmails: Bool
     var isEmailVerified: Bool
-    var hasShortReferral: Bool
-    var hasPremium: Bool
     var seenWelcomePage: Bool
+    var hasShortReferral: Bool
     var notificationsEnabled: Bool
     
+    var seenHomeTapDirections: Bool
+    
+    var numReferrals: Int
+
     var classes: [String: [Any]]
-    var trackedClasses: [[String: String]] // [ [course_code: 34250, date: Date ....] ]
-    var purchaseHistory: [ [String: String] ] // [ [num_credits: 3, date: Date, price: 149] ]
-    var notifications: [ [String: String] ] // [ [course_code: '34250', status: 'FULL OPEN', date: Date] ]?
+    
+    var purchaseHistory: [[String: String]] // [ [num_credits: 3, date: Date, price: 149] ]
+    var notifications: [[String: String]] // [ [course_code: '34250', status: 'FULL OPEN', date: Date] ]?
     
     var revNotifications: [ [String: String] ] { return notifications.reversed()}
     var revPurchaseHistory: [ [String: String] ] { return purchaseHistory.reversed()}
     var courseCodes: [String] { return Array(classes.keys) }
     var fullName: String { return "\(firstName) \(lastName)" }
-    var trackedClassesArr: [String] {
-        var classes: [String] = []
-        for course in trackedClasses {
-            classes.append(course[DataBase.course_code] ?? "")
-        }
-        return classes
-    }
+
     
     // User is Signing Up
     init(id: String = "", email: String = "", firstName: String = "",
@@ -59,10 +54,10 @@ class User {
          stripeId: String = "", classes: [String: [Any]] = [:], school: String = "",
          hasShortReferral: Bool  = false, fcm_token: String = "", numReferrals: Int = 0,
          hasPremium: Bool = false, receiveEmails: Bool = true, seenWelcomePage: Bool = false,
-         isLoggedIn: Bool = true,
-         isEmailVerified: Bool = false, referralLink: String = "", purchaseTier: Int = Tire.Free,
+         isLoggedIn: Bool = true, isEmailVerified: Bool = false, referralLink: String = "",
+         seenHomeTapDirections: Bool = false,
          notificationsEnabled: Bool = true, purchaseHistory: [[String: String]] = [],
-         notifications: [[String: String]] = [], trackedClasses: [[String: String]] = []){
+         notifications: [[String: String]] = []){
         
         self.id = id
         self.email = email
@@ -83,11 +78,11 @@ class User {
         self.isEmailVerified = isEmailVerified
         self.seenWelcomePage = seenWelcomePage
         self.classes = classes
-        self.purchaseTier = purchaseTier
         self.purchaseHistory = purchaseHistory
         self.notificationsEnabled = notificationsEnabled
         self.notifications = notifications
-        self.trackedClasses = trackedClasses
+        
+        self.seenHomeTapDirections = seenHomeTapDirections
         
         setFCMTokenAndUpdateDB()
         print("user is made")
@@ -118,11 +113,9 @@ class User {
         
         self.school = data[DataBase.school] as? String ?? ""
         self.fcm_token = data[DataBase.fcm_token] as? String ?? ""
-        self.purchaseTier = data[DataBase.purchase_tire] as? Int ?? Tire.Free
         self.receiveEmails = data[DataBase.receive_emails] as? Bool ?? true
         self.isEmailVerified = data[DataBase.is_email_verified] as? Bool ?? false
         self.seenWelcomePage = data[DataBase.seen_welcome_page] as? Bool ?? false
-        self.trackedClasses = data[DataBase.tracked_classes] as? [[String: String]] ?? []
         self.notificationsEnabled = data[DataBase.notifications_enabled] as? Bool ?? true
         
         if let purchaseHistory =  data[DataBase.purchase_history] as? [[String : String]] {
@@ -132,6 +125,9 @@ class User {
         if let notifications =  data[DataBase.notifications] as? [[String : String]] {
             self.notifications = notifications
         } else { self.notifications = [] }
+        
+        
+        self.seenHomeTapDirections = data[DataBase.seen_home_tap_directions] as? Bool ?? false
         
         setFCMTokenAndUpdateDB()
         print("user is made")
@@ -153,7 +149,6 @@ class User {
             DataBase.is_logged_in: user.isLoggedIn,
             DataBase.school: user.school,
             DataBase.fcm_token: user.fcm_token,
-            DataBase.purchase_tire: user.purchaseTier,
             DataBase.purchase_history: user.purchaseHistory,
             DataBase.receive_emails: user.receiveEmails,
             DataBase.is_email_verified: user.isEmailVerified,
@@ -162,8 +157,8 @@ class User {
             DataBase.num_referrals: user.numReferrals,
             DataBase.referral_link: user.referralLink,
             DataBase.has_short_referral: user.hasShortReferral,
-            DataBase.tracked_classes: user.trackedClasses,
             DataBase.notifications_enabled: user.notificationsEnabled,
+            DataBase.seen_home_tap_directions: user.seenHomeTapDirections,
         ]
         
         return data
@@ -201,10 +196,10 @@ class User {
     }
     
     private func setFCMTokenAndUpdateDB() {
-        if fcm_token_has_set  { print("fcm_token_has_set = \(fcm_token_has_set) "); return }
+        if UserService.fcm_token_has_set  { print("fcm_token_has_set = \(UserService.fcm_token_has_set) "); return }
         
-        print("fcm_token_has_set = \(fcm_token_has_set) ")
-        fcm_token_has_set = true
+        print("fcm_token_has_set = \(UserService.fcm_token_has_set) ")
+        UserService.fcm_token_has_set = true
         
         let new_fcm = Messaging.messaging().fcmToken ?? "couldnt get fcm token"
         if new_fcm == self.fcm_token { print("fcm Token is the same as last login!"); return }

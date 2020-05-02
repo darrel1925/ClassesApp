@@ -35,6 +35,11 @@ final class _ServerService {
         case AddComplete      // add operation complete
     }
     
+    func getPort() -> Int {
+        let ports = AppConstants.server_ports
+        return ports[Int.random(in: 0..<ports.count)]
+    }
+    
     func constuctInput(withAction action: String, withCode course_code: String) -> String {
         
         let email = UserService.user.email
@@ -81,7 +86,9 @@ final class _ServerService {
             print("created")
             do {
                 let server_ip = AppConstants.server_ip
+//                let server_port = getPort()
                 let server_port = AppConstants.server_port
+                print("port #: \(AppConstants.server_port)")
                 try mySocket.connect(to: server_ip, port: Int32(server_port))
                 
                 do {
@@ -126,7 +133,7 @@ final class _ServerService {
         let _ = db.collection(ServerService.schoolParam).whereField(DataBase.course_code, isEqualTo: course.course_code)
             .getDocuments() { (querySnapshot, err) in
                 if let _ = err {
-                    let message = "There was a problem tracking your class, please try again later. Your card has NOT been charged."
+                    let message = "There was a problem tracking your class, please try again later."
                     controller.displayError(title: "Error", message: message)
                     returnValue = false
                     self.dispatchGroup.customLeave()
@@ -144,7 +151,7 @@ final class _ServerService {
                         
                         docRef.setData(data, merge: true) { (err) in
                             if let _ = err {
-                                let message = "There was a problem tracking your class, please try again later. Your card has NOT been charged."
+                                let message = "There was a problem tracking your class, please try again later."
                                 controller.displayError(title: "Error", message: message)
                                 returnValue = false
                                 self.dispatchGroup.customLeave()
@@ -171,7 +178,7 @@ final class _ServerService {
         let docRef = db.collection(DataBase.User).document(UserService.user.email)
         docRef.getDocument { (doc, err) in
             if let _ = err {
-                let message = "There was a problem tracking your class, please try again later. Your card has NOT been charged."
+                let message = "There was a problem tracking your class, please try again later."
                 controller.displayError(title: "Error", message: message)
                 self.dispatchGroup.customLeave()
                 returnValue = false
@@ -269,23 +276,23 @@ final class _ServerService {
     }
     
     func addToTrackedClasses(courses: [Course]) {
-        let db = Firestore.firestore()
-        let docRef = db.collection(DataBase.User).document(UserService.user.email)
-        
-        var updatedTrackedClasses = UserService.user.trackedClasses
-    
-        for course in courses {
-            var data = course.modelToData()
-            data[DataBase.date] = Date().toString()
-            updatedTrackedClasses.append(data as? [String : String] ?? [:])
-        }
-        
-        docRef.updateData([DataBase.tracked_classes: updatedTrackedClasses]) { (err) in
-            if let err = err {
-                print("Error updatign tracked classes", err.localizedDescription)
-                return
-            }
-            print("Success updating trackedClasses")
-        }
+//        let db = Firestore.firestore()
+//        let docRef = db.collection(DataBase.User).document(UserService.user.email)
+//
+//        var updatedTrackedClasses = UserService.user.trackedClasses
+//
+//        for course in courses {
+//            var data = course.modelToData()
+//            data[DataBase.date] = Date().toString()
+//            updatedTrackedClasses.append(data as? [String : String] ?? [:])
+//        }
+//
+//        docRef.updateData([DataBase.tracked_classes: updatedTrackedClasses]) { (err) in
+//            if let err = err {
+//                print("Error updatign tracked classes", err.localizedDescription)
+//                return
+//            }
+//            print("Success updating trackedClasses")
+//        }
     }
 }

@@ -12,21 +12,35 @@ class ShareController: UIViewController {
     
     @IBOutlet weak var toGoLabel: UILabel!
     @IBOutlet weak var referralLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var copyButton: RoundedButton!
+    @IBOutlet weak var redeemButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
         setLabels()
+        setRedeemButton()
         setUpGestures()
     }
     
     func setLabels() {
-        if UserService.user.numReferrals > 3 {
-            toGoLabel.text = "You're all set but why stop there. Click below to share!"
+        
+        if UserService.user.numReferrals >= 3 {
+            toGoLabel.text = "You're all set!"
         }
         else {
-            toGoLabel.text = "\(3 - UserService.user.numReferrals) to go!"
+            if UserService.user.numReferrals == 1 {
+                toGoLabel.text = "\(UserService.user.numReferrals) referral, so far!"
+            }
+            else {
+                toGoLabel.text = "\(UserService.user.numReferrals) referrals, so far!"
+            }
+            
+        }
+        
+        if UserService.user.hasPremium {
+            descriptionLabel.text =  "If you're enjoying the app, we would love for you to share. It only takes one click!"
         }
         
         referralLabel.text = UserService.user.referralLink
@@ -38,10 +52,46 @@ class ShareController: UIViewController {
         navigationController?.navigationBar.addGestureRecognizer(swipe1)
     }
     
+    func setRedeemButton() {
+        var image: UIImage!
+        
+        switch UserService.user.numReferrals {
+        case 0:
+            image = UIImage(named: "zeroThirds")
+        case 1:
+            image = UIImage(named: "oneThird")
+        case 2:
+            image = UIImage(named: "twoThirds")
+        default:
+            image = UIImage(named: "threeThirds")
+        }
+        redeemButton.setImage(image, for: .normal)
+    }
+    
     func presentShareController() {
         let shareStr = ReferralLink.message
         let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
         self.present(sharingController, animated: true, completion: nil)
+    }
+    
+    func presentPremiumAlert() {
+        let message = "You'll now be able to track unlimited classes for the remainder of the term. Enjoy!"
+        displaySimpleError(title: "Welcome To Premium!", message: message, completion: {_ in
+            self.handleDismiss()
+        })
+    }
+    
+    @IBAction func redeemButonClicked(_ sender: Any) {
+        switch UserService.user.numReferrals {
+        case 0:
+            presentShareController()
+        case 1:
+            presentShareController()
+        case 2:
+            presentShareController()
+        default:
+            presentPremiumAlert()
+        }
     }
     
     @objc func handleDismiss() {

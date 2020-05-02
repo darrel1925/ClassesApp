@@ -137,12 +137,10 @@ class ChangeSchoolController: UIViewController {
     }
     @IBAction func updateSchoolClicked(_ sender: Any) {
         if schoolField.text?.isEmpty ?? true { return }
-        if schoolField.text == UserService.user.school {
-            handleDismiss()
-        }
-        else {
-            presentUpdateAlert()
-        }
+        if !AppConstants.supported_schools.contains(schoolField.text ?? "") { return }
+        
+        if schoolField.text == UserService.user.school { handleDismiss() }
+        else { presentUpdateAlert() }
     }
 }
 

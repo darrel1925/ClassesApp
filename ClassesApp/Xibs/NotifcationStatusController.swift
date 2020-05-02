@@ -123,14 +123,14 @@ class NotifcationStatusController: UIViewController {
         self.notificationButton.backgroundColor = #colorLiteral(red: 0.762566535, green: 0.3093850772, blue: 0.2170317457, alpha: 1)
         self.notificationButton.setTitle("Stop receiving notifications", for: .normal)
         self.titleLabel.text = "Push Notifications On"
-        self.descriptionLabel.text = "Click below to stop receiving push notifications on this device. (Not Recommended)"
+        self.descriptionLabel.text = "Click below to stop receiving push notifications on this account. (Not Recommended)"
     }
     
     func notifsOff() {
         self.notificationButton.backgroundColor = #colorLiteral(red: 0.3260789019, green: 0.5961753091, blue: 0.1608898185, alpha: 1)
         self.notificationButton.setTitle("Begin receiving notifications", for: .normal)
         self.titleLabel.text = "Push Notifications Off"
-        self.descriptionLabel.text = "Click below to begin receiving push notifications on this device. (Recommended)"
+        self.descriptionLabel.text = "Click below to begin receiving push notifications on this account. (Recommended)"
     }
     
     func updateDataBase() {

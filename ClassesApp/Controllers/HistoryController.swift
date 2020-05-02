@@ -102,16 +102,16 @@ class HistoryController: UIViewController {
     }
     
     func toggleNoClassLabel(){
-        if presentPurchaseHist {
-            if UserService.user.purchaseHistory.count > 0  {
-                self.noClassLabel.isHidden = true
-            }
-        }
-        else {
-            if UserService.user.trackedClassesArr.count > 0  {
-                self.noClassLabel.isHidden = true
-            }
-        }
+//        if presentPurchaseHist {
+//            if UserService.user.purchaseHistory.count > 0  {
+//                self.noClassLabel.isHidden = true
+//            }
+//        }
+//        else {
+//            if UserService.user.trackedClassesArr.count > 0  {
+//                self.noClassLabel.isHidden = true
+//            }
+//        }
     }
     
     @objc func handleDismiss() {
@@ -131,11 +131,12 @@ class HistoryController: UIViewController {
 
 extension HistoryController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if presentPurchaseHist {
-            return UserService.user.purchaseHistory.count
-        }
-        
-        return UserService.user.trackedClassesArr.count
+        return 0
+//        if presentPurchaseHist {
+//            return UserService.user.purchaseHistory.count
+//        }
+//        
+//        return UserService.user.trackedClassesArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -157,11 +158,11 @@ extension HistoryController: UITableViewDelegate, UITableViewDataSource {
         }
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
-            let trackedClass = UserService.user.trackedClasses.reversed()[row]
-            
-            cell.titleLabel.text = "\(trackedClass[DataBase.course_code] ?? "Error")"
-            cell.infoLabel.text = trackedClass[DataBase.date]?.toDate().toStringInWords()
-            cell.infoLabel.font = cell.infoLabel.font.withSize(13) // set font size to 13
+//            let trackedClass = UserService.user.trackedClasses.reversed()[row]
+//            
+//            cell.titleLabel.text = "\(trackedClass[DataBase.course_code] ?? "Error")"
+//            cell.infoLabel.text = trackedClass[DataBase.date]?.toDate().toStringInWords()
+//            cell.infoLabel.font = cell.infoLabel.font.withSize(13) // set font size to 13
             return cell
         }
     }

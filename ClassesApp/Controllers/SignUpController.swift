@@ -20,6 +20,8 @@ class SignUpController: UIViewController {
     @IBOutlet weak var confirmPasswordField: UITextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var passwordEyeButton: UIButton!
+    @IBOutlet weak var confirmEyeButton: UIButton!
     
     let db = Firestore.firestore()
     let schoolExtDict: [String: String] = [
@@ -30,6 +32,7 @@ class SignUpController: UIViewController {
     
     var termsLowerBound: Int!
     var privacyLowerBound: Int!
+    var securityTextVisible = false
     
     override func viewDidLoad(){
         super.viewDidLoad()
@@ -105,17 +108,17 @@ class SignUpController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
-//    func presentVerificationSentAlert(user: FirebaseAuth.User) {
-//        let message = "Verify your email to begin tracking!"
-//        let alert = UIAlertController(title: "Verification Email Sent", message: message, preferredStyle: .alert)
-//
-//        let okayAction = UIAlertAction(title: "Okay", style: .default, handler: {_ in
-//            self.presentNextPage(user: user)
-//        })
-//
-//        alert.addAction(okayAction)
-//        present(alert, animated: true, completion: nil)
-//    }
+    func presentVerificationSentAlert(user: FirebaseAuth.User) {
+        let message = "Verify your email to begin tracking!"
+        let alert = UIAlertController(title: "Verification Email Sent", message: message, preferredStyle: .alert)
+
+        let okayAction = UIAlertAction(title: "Okay", style: .default, handler: {_ in
+            self.presentNextPage(user: user)
+        })
+
+        alert.addAction(okayAction)
+        present(alert, animated: true, completion: nil)
+    }
     
     func presentWelcomeScreen() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "PageController") as! PageController
@@ -136,6 +139,14 @@ class SignUpController: UIViewController {
         presentHomePage()
     }
     
+    func sendVerificationEmail(user: FirebaseAuth.User) {
+        user.sendEmailVerification { (error) in
+            if let error = error {
+                print("Error sending verification email", error.localizedDescription)
+            }
+        }
+    }
+    
     @objc func dismissKeyboard() {
         view.endEditing(true)
         schoolField.resignFirstResponder()
@@ -153,8 +164,8 @@ class SignUpController: UIViewController {
             self.displayError(title: "School Not Selected.", message: message)
             return false
         }
-        else if (passwordField.text!.count < 5 || passwordField.text!.containsWhitespace) {
-            print(passwordField.text!.count < 5)
+        else if (passwordField.text!.count < 6 || passwordField.text!.containsWhitespace) {
+            print(passwordField.text!.count < 6)
             print(passwordField.text!.containsWhitespace)
             let message = "Password must be at least 6 charaters and contain no spaces."
             self.displayError(title: "Whoops.", message: message)
@@ -184,7 +195,6 @@ class SignUpController: UIViewController {
             self.displayError(title: "Mismatch", message: message)
             return false
         }
-        
         return true
     }
         
@@ -207,9 +217,8 @@ class SignUpController: UIViewController {
             UserService.getCurrentUser(email: user.email) // <--- calls dispatchGroup.leave()
             
             UserService.dispatchGroup.notify(queue: .main) {
-                self.presentNextPage(user: fireUser)
+                self.presentVerificationSentAlert(user: fireUser)
                 UserService.generateReferralLink()
-                self.handleReferral()
             }
         }
     }
@@ -234,35 +243,25 @@ class SignUpController: UIViewController {
         }
     }
     
-    func handleReferral() {
-        // this device was referred as some point
-        if UserDefaults.standard.bool(forKey: Defaults.wasReferred) {
-            // if referral was used alraedy, return
-            if UserDefaults.standard.bool(forKey: Defaults.hasUsedOneReferral) { print("referral used");return }
-            
-            // referralEmail = the person who referred you
-            guard let referralEmail = UserDefaults.standard.string(forKey: Defaults.referralEmail) else {
-                print("Couldn't find referral email in sign up")
-                return
-            }
-            
-            // get the document of the referrer
-            let docRef = db.collection(DataBase.User).document(referralEmail)
-            docRef.getDocument { (document, error) in
-                if let error = error {
-                    print("Error getting document for referral", error.localizedDescription)
-                }
-                let data = document?.data()
-                
-                guard let num_referrals = data?[DataBase.num_referrals] as? Int else {
-                    print("Couldnt find num referrals")
-                    return
-                }
-                // This device will not be able to send anyone else a referral link
-                UserDefaults.standard.set(true, forKey: Defaults.hasUsedOneReferral)
-                docRef.updateData([DataBase.num_referrals: num_referrals + 1 ])
-                print("Num referrals updated successfully ")
-            }
+    @IBAction func eyeButtonClicked(_ sender: Any) {
+        // make text secured
+        if securityTextVisible {
+            securityTextVisible = false
+            passwordField.isSecureTextEntry = false
+            confirmPasswordField.isSecureTextEntry = false
+            let image = UIImage(named:"openedEye")!
+            passwordEyeButton.setImage(image, for: .normal)
+            confirmEyeButton.setImage(image, for: .normal)
+        }
+        
+        // make text visible
+        else {
+            securityTextVisible = true
+            passwordField.isSecureTextEntry = true
+            confirmPasswordField.isSecureTextEntry = true
+            let image = UIImage(named:"closedEye")!
+            passwordEyeButton.setImage(image, for: .normal)
+            confirmEyeButton.setImage(image, for: .normal)
         }
     }
     
@@ -294,6 +293,7 @@ class SignUpController: UIViewController {
             
             UserDefaults.standard.set(true, forKey: Defaults.wasReferred)
             
+            self.sendVerificationEmail(user: fireUser)
             self.createFireStoreUser(user: user, fireUser: fireUser)
         }
     }

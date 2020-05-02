@@ -73,19 +73,19 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         switch section {
         case 0: // Account Info
             return 1
-        case 1: // Name, Email, School
-            return 3
+        case 1: // Email, School
+            return 2
         case 2: // Preferences title
             return 1
         case 3: // Email Preferences, Notifiations
             return 2
         case 4: // Purchase History title
+            return 0 // <-- remove?
+        case 5: // Purchase History
+            return 0 // <-- remove?
+        case 6: // Legal
             return 1
-        case 5: // Purchase History, Track Classes History
-            return 2
-        case 6:
-            return 1 // Legal
-        case 7:
+        case 7: // Privacy Policy, Terms and Agreements
             return 2
         default:
             return 0
@@ -106,15 +106,15 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
             switch row {
+//            case 0:
+//                cell.titleLabel.text = "Name"
+//                cell.infoLabel.text = "\(UserService.user.fullName)"
+//                return cell
             case 0:
-                cell.titleLabel.text = "Name"
-                cell.infoLabel.text = "\(UserService.user.fullName)"
-                return cell
-            case 1:
                 cell.titleLabel.text = "Email"
                 cell.infoLabel.text = "\(UserService.user.email)"
                 return cell
-            case 2:
+            case 1:
                 cell.titleLabel.text = "School"
                 cell.infoLabel.text = "\(UserService.user.school)"
                 cell.accessoryType = .disclosureIndicator
@@ -148,27 +148,27 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             }
         case 4:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
-            cell.titleLabel.text = "History"
+//            cell.titleLabel.text = "History"
             return cell
             
         case 5:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
-            switch row {
-            case 0:
-                cell.titleLabel.text = "Purchase History"
-                cell.infoLabel.text = ""
-                cell.accessoryType = .disclosureIndicator
-                cell.selectionStyle = .gray
+//            switch row {
+//            case 0:
+//                cell.titleLabel.text = "Purchase History"
+//                cell.infoLabel.text = ""
+//                cell.accessoryType = .disclosureIndicator
+//                cell.selectionStyle = .gray
+//                return cell
+//            case 1:
+//                cell.titleLabel.text = "Tracked Classes History"
+//                cell.infoLabel.text = ""
+//                cell.accessoryType = .disclosureIndicator
+//                cell.selectionStyle = .default
+//                return cell
+//            default:
                 return cell
-            case 1:
-                cell.titleLabel.text = "Tracked Classes History"
-                cell.infoLabel.text = ""
-                cell.accessoryType = .disclosureIndicator
-                cell.selectionStyle = .default
-                return cell
-            default:
-                return cell
-            }
+//            }
         case 6:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
             cell.titleLabel.text = "Legal"
@@ -204,7 +204,7 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         switch section {
         case 1:
             switch row {
-            case 2:
+            case 1:
                 let changeSchoolVC = ChangeSchoolController()
                 changeSchoolVC.modalPresentationStyle = .overFullScreen
                 changeSchoolVC.settingsVC = self
@@ -229,16 +229,16 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             }
         case 5:
             switch row {
-            case 0: // Purchase History
-                let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
-                historyVC.modalPresentationStyle = .overFullScreen
-                historyVC.presentPurchaseHist = true
-                self.present(historyVC, animated: true, completion: nil)
-            case 1: // Tracked Classes History
-                let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
-                historyVC.modalPresentationStyle = .overFullScreen
-                historyVC.presentPurchaseHist = false
-                self.present(historyVC, animated: true, completion: nil)
+//            case 0: // Purchase History
+//                let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
+//                historyVC.modalPresentationStyle = .overFullScreen
+//                historyVC.presentPurchaseHist = true
+//                self.present(historyVC, animated: true, completion: nil)
+//            case 1: // Tracked Classes History
+//                let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
+//                historyVC.modalPresentationStyle = .overFullScreen
+//                historyVC.presentPurchaseHist = false
+//                self.present(historyVC, animated: true, completion: nil)
             default:
                 break
             }

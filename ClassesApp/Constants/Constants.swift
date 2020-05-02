@@ -14,7 +14,6 @@ struct DataBase {
     static let User  = "User"
     static let Class = "Class"
     static let AppConstants = "AppConstants"
-    static let AppVariables = "AppVariables"
 
     // Class
     static let year    = "year"
@@ -36,12 +35,11 @@ struct DataBase {
     static let has_premium   = "has_premium"
     static let web_reg_pswd  = "web_reg_pswd"
     static let is_logged_in  = "is_logged_in"
-    static let purchase_tire = "purchase_tire"
     static let notifications = "notifications"
     static let num_referrals = "num_referrals"
     static let referral_link = "referral_link"
     static let receive_emails    = "receive_emails"
-    static let tracked_classes   = "tracked_classes"
+//    static let tracked_classes   = "tracked_classes"
     static let purchase_history  = "purchase_history"
     static let seen_welcome_page = "seen_welcome_page"
     static let course_dict_arr   = "course_dict_arr"
@@ -65,8 +63,9 @@ struct DataBase {
     static let terms_url     = "terms_url"
     static let stripe_pk     = "stripe_pk"
     static let privacy_url   = "privacy_url"
-    static let server_port   = "server_port"
     static let merchant_id   = "merchant_id"
+    static let server_port   = "server_port"
+    static let server_ports  = "server_ports"
     static let connect_pswd  = "connect_pswd"
     static let support_email = "support_email"
     static let premium_price = "premium_price"
@@ -87,13 +86,10 @@ struct DataBase {
     static let course_type  = "course_type"
     static let course_title = "course_title"
     static let dis_and_labs = "dis_and_labs"
+    
+    // Animations
+    static let seen_home_tap_directions = "seen_home_tap_directions"
 
-}
-
-struct Tire {
-    static let Free = 0
-    static let TwoClasses = 1
-    static let Unlimited = 2
 }
 
 struct Status {

@@ -25,6 +25,7 @@ class _AppConstants {
     var price_per_class = 199
     var premium_price = 499
     var support_email_pswd = ""
+    var server_ports: [Int] = []
     var supported_schools: [String] = ["UCI", "UCLA"]
     var appConstantListener: ListenerRegistration? = nil
     var registration_pages: [String: String] = [:]
@@ -55,6 +56,7 @@ class _AppConstants {
             self.merchant_id = data[DataBase.merchant_id] as? String ?? ""
             self.connect_pswd = data[DataBase.connect_pswd] as? String ?? ""
             self.support_email = data[DataBase.support_email] as? String ?? ""
+            self.server_ports = data[DataBase.server_ports] as? [Int] ?? []
             self.support_email_pswd = data[DataBase.support_email_pswd] as? String ?? ""
             self.price_map = data[DataBase.price_map] as? [String:Int] ?? ["1": 199, "3":399, "10":1449]
             self.supported_schools = data[DataBase.supported_schools] as? [String] ?? ["UCI", "UCLA"]

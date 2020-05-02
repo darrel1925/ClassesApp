@@ -14,15 +14,16 @@ class LogInController: UIViewController {
     
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
+    @IBOutlet weak var eyeButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     let dg = DispatchGroup()
-    var emailText: String = ""
+    var securityTextVisible = false
+
     override func viewDidLoad() {
         super.viewDidLoad()
         emailField.delegate = self
         passwordField.delegate = self
-        emailField.text = emailText
     }
     
     func presentHomePage() {
@@ -133,6 +134,24 @@ class LogInController: UIViewController {
         forgotPassVC.modalTransitionStyle = .crossDissolve
         forgotPassVC.modalPresentationStyle = .overCurrentContext
         present(forgotPassVC, animated: true, completion: nil)
+    }
+    
+    @IBAction func eyeButtonClicked(_ sender: Any) {
+        // make text secured
+        if securityTextVisible {
+            securityTextVisible = false
+            passwordField.isSecureTextEntry = false
+            let image = UIImage(named:"openedEye")!
+            eyeButton.setImage(image, for: .normal)
+        }
+        
+        // make text visible
+        else {
+            securityTextVisible = true
+            passwordField.isSecureTextEntry = true
+            let image = UIImage(named:"closedEye")!
+            eyeButton.setImage(image, for: .normal)
+        }
     }
 }
 

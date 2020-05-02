@@ -68,11 +68,13 @@ class AddClassController: UIViewController {
         tableView.addGestureRecognizer(tap3)
     }
     
-    func presentCart() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let cartVc = storyboard.instantiateViewController(withIdentifier: "CheckOutController") as! CheckOutController
-        self.present(cartVc, animated: true, completion: nil)
+    func presentStore() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "StoreController") as! StoreController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
     }
+    
     
     func presnentAddToList(course: Course) {
         let addToListVC = AddToListController()
@@ -81,64 +83,7 @@ class AddClassController: UIViewController {
         addToListVC.addClassVC = self
         self.present(addToListVC, animated: true, completion: nil)
     }
-    
-    func presentPaymentErrorAlert() {
-        print("error alert presenting")
-        let message = "There was an error while attempting to track your classes. Your credits have not been affected."
-        
-        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        let okay = UIAlertAction(title: "Okay", style: .default, handler: nil)
-        
-        alertController.addAction(okay)
-        self.present(alertController, animated: true)
 
-    }
-    
-    func presentSuccessAlert() {
-        ServerService.addToTrackedClasses(courses: courses)
-        
-        AudioServicesPlaySystemSound(1519) // Actuate "Peek" feedback (weak boom)
-        let message = "You're all set.\n\nNote: It may take up to 1 minute to begin tracking your class."
-
-        let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
-        let okay = UIAlertAction(title: "Okay", style: .default, handler: {(action) in
-            self.navigationController?.popViewController(animated: true)
-        })
-        
-        alertController.addAction(okay)
-        self.present(alertController, animated: true)
-    }
-    
-    func addClasses(dispatchGroup dg: DispatchGroup) -> Bool {
-        dg.enter()
-
-        for course in courses {
-            if !ServerService.addClassToFirebase(withCourse: course, viewController: self) {
-                ServerService.dispatchGroup.notify(queue: .main) {
-                    print("is false")
-                    // error occured, remove classes
-                    ServerService.removeClassesFromFirebase(withCourseCodes: Course.getCodes(courses: self.courses))
-                    self.activityIndicator.stopAnimating()
-                    self.presentPaymentErrorAlert()
-                    dg.leave()
-                }
-            }
-        }
-        dg.leave()
-        return true
-    }
-    
-    func trackClasses() {
-        let dg = DispatchGroup()
-        if !addClasses(dispatchGroup: dg) { return }
-        
-        dg.notify(queue: .main) {
-            print("dispatched finished")
-
-            self.presentSuccessAlert()
-        }
-    }
-    
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -170,15 +115,6 @@ class AddClassController: UIViewController {
         }
     }
     
-    func updateTrackClassLabel() {
-        if courses.count == 1 {
-            trackClassesButton.titleLabel?.text = "Track \(courses.count) class"
-        }
-        else {
-            trackClassesButton.titleLabel?.text = "Track \(courses.count) classes"
-        }
-    }
-    
     func makeConnection(withCourseCode code: String, withAction action: String, withString input: String) {
         
         let serverResponse = ServerService.makeConnection(withAction: action, withInput: input)
@@ -190,7 +126,7 @@ class AddClassController: UIViewController {
             activityIndicator.stopAnimating()
             return
         case "ConnectionError1": // could not read what was returned from server
-            let message = "Looks like there was an issue. If this continues, try opening and closing the app!"
+            let message = "Looks like there was an issue. If this continues, try opening and closing the app or contacting support!"
             self.displayError(title: "Connection Error", message: message)
             activityIndicator.stopAnimating()
             return
@@ -200,12 +136,12 @@ class AddClassController: UIViewController {
             activityIndicator.stopAnimating()
             return
         case "NetworkError1": // server is not up and runnung | <-- might be user's interner connection
-            let message = "This isn't your fault this one's on us. We're probably taking this time to make TrackMy a better app for you! Try again later while we work to get this fixed!"
+            let message = "Looks like there is a connection issue. Things to try:n\n1.Try again\n2. Check that you haev a reliable inernet connection\n3:Restart the app\n4:Contact suuport"
             self.displayError(title: "Network Error", message: message)
             activityIndicator.stopAnimating()
             return
         case "NetworkError2": // problem with users internet connection
-            let message = "Looks like there is an issue. Try checking your internet connection and try again."
+            let message = "Looks like there is a connection issue. Things to try:n\n1.Try again\n2. Check that you haev a reliable inernet connection\n3:Restart the app\n4:Contact suuport"
             self.displayError(title: "Network Error", message: message)
             activityIndicator.stopAnimating()
             return
@@ -218,25 +154,25 @@ class AddClassController: UIViewController {
         
         if [Status.Waitl, Status.OPEN, Status.FULL, Status.NewOnly].contains(status) {
             print("updated vals \(course.status) | \(course.course_code)")
-            activityIndicator.stopAnimating()
+//            activityIndicator.stopAnimating()
             presnentAddToList(course: course)
             return
         }
         
         activityIndicator.stopAnimating()
-        tableView.reloadData()
+//        tableView.reloadData()
     }
     
-    func alreadyTrackingClasses() -> Bool {
-        for code in Course.getCodes(courses: courses) {
-            if UserService.user.courseCodes.contains(code){
-                let message = "You are already tracking course \(code). Remove this course from the list before continuing."
-                displayError(title: "Duplicate Class", message: message)
-                return true
-            }
-        }
-        return false
-    }
+//    func alreadyTrackingClasses() -> Bool {
+//        for code in Course.getCodes(courses: courses) {
+//            if UserService.user.courseCodes.contains(code){
+//                let message = "You are already tracking course \(code). Remove this course from the list before continuing."
+//                displayError(title: "Duplicate Class", message: message)
+//                return true
+//            }
+//        }
+//        return false
+//    }
     
     func sendRequest(withAction action: String) {
         if courseCodeField.text?.isEmpty ?? true {
@@ -266,27 +202,33 @@ class AddClassController: UIViewController {
     
     @IBAction func checkAvailabilityClicked(_ sender: Any) {
         activityIndicator.startAnimating()
+        
+//        if !UserService.user.hasPremium && courses.count >= 1 {
+//            presentStore()
+//            return
+//        }
+        
         sendRequest(withAction: "get")
     }
 
     
-    @IBAction func trackClassesClicked(_ sender: Any) {
+//    @IBAction func trackClassesClicked(_ sender: Any) {
 
-        if courses.count == 0 {
-            let message = "Tap 'Check Availibility' before trying to track your classes"
-            self.displayError(title: "No Classes Added.", message: message)
-            return
-        }
+//        if courses.count == 0 {
+//            let message = "Tap 'Check Availibility' before trying to track your classes"
+//            self.displayError(title: "No Classes Added.", message: message)
+//            return
+//        }
         
-        if alreadyTrackingClasses() { return }
-                
-        var courseDict: [String: String] = [:]
-        for i in stride(from: 0, to: courses.count, by: 1) {
-            courseDict.updateValue(courses[i].status, forKey: courses[i].course_code)
-        }
+//        if alreadyTrackingClasses() { return }
+//
+//        var courseDict: [String: String] = [:]
+//        for i in stride(from: 0, to: courses.count, by: 1) {
+//            courseDict.updateValue(courses[i].status, forKey: courses[i].course_code)
+//        }
         
-        trackClasses()
-    }
+//        trackClasses()
+//    }
 }
 
 extension AddClassController: UITextFieldDelegate {
@@ -321,8 +263,8 @@ extension AddClassController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
 
-            self.courses.remove(at: indexPath.row)
-            updateTrackClassLabel()
+//            self.courses.remove(at: indexPath.row)
+//            updateTrackClassLabel()
             
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
         }

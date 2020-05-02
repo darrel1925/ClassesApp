@@ -18,6 +18,7 @@ final class _UserService {
 
     var user: User!
     var userListener: ListenerRegistration? = nil // our listener
+    var fcm_token_has_set: Bool = false
     let dispatchGroup = DispatchGroup()
     let db = Firestore.firestore()
     

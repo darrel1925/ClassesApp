@@ -37,6 +37,16 @@ class CreditsController: UIViewController {
           "iconName": "x" ],
         [ "author" : "Pixel perfect",
           "iconName": "register" ],
+        [ "author" : "Freepik",
+          "iconName": "copy" ],
+        [ "author" : "Kiranshastry",
+          "iconName": "openedEye" ],
+        [ "author" : "Becris",
+          "iconName": "closedEye" ],
+        [ "author" : "Kiranshastry",
+          "iconName": "tap" ],
+        [ "author" : "Freepik",
+          "iconName": "swipeLeft" ],
     ]
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AudioToolbox
 
 class AddToListController: UIViewController {
     
@@ -37,7 +38,7 @@ class AddToListController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        addClassVC.activityIndicator.stopAnimating()
         animateViewUpwards()
     }
     
@@ -82,8 +83,60 @@ class AddToListController: UIViewController {
         containerView.frame = CGRect(x: 0, y: window.frame.height, width: window.frame.width, height: 0)
     }
     
-    @objc func handleDismiss() {
+    func presentPaymentErrorAlert() {
+        print("error alert presenting")
+        let message = "There was an error while attempting to track your classes."
         
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let okay = UIAlertAction(title: "Okay", style: .default, handler: nil)
+        
+        alertController.addAction(okay)
+        self.present(alertController, animated: true)
+
+    }
+    
+    func alreadyTrackingClasses() -> Bool {
+        if UserService.user.courseCodes.contains(course.course_code){
+            let message = "You are already tracking course \(course.course_code)."
+            displaySimpleError(title: "Duplicate Class", message: message) { _ in
+                self.handleDismiss()
+                self.addClassVC.courseCodeField.text = ""
+            }
+            return true
+        }
+        return false
+    }
+    
+    func addClasses(dispatchGroup dg: DispatchGroup) -> Bool {
+        dg.enter()
+
+        if !ServerService.addClassToFirebase(withCourse: course, viewController: self) {
+            ServerService.dispatchGroup.notify(queue: .main) {
+                print("is false")
+                // error occured, remove classes
+                ServerService.removeClassesFromFirebase(withCourseCodes: Course.getCodes(courses: [self.course]))
+                self.presentPaymentErrorAlert()
+                dg.leave()
+            }
+        }
+        dg.leave()
+        return true
+    }
+    
+    func trackClasses() {
+        let dg = DispatchGroup()
+        if !addClasses(dispatchGroup: dg) { return }
+        
+        dg.notify(queue: .main) {
+            print("dispatched finished")
+            AudioServicesPlaySystemSound(1519)
+            self.handleDismiss()
+            self.addClassVC.navigationController?.popViewController(animated: true)
+//            self.presentSuccessAlert()
+        }
+    }
+    
+    @objc func handleDismiss() {
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
             self.view.alpha = 0
@@ -98,10 +151,14 @@ class AddToListController: UIViewController {
     }
     
     @IBAction func addButtonClicked(_ sender: Any) {
-        addClassVC.courseCodeField.text = ""
-        addClassVC.courses.append(course)
-        addClassVC.updateTrackClassLabel()
-        addClassVC.tableView.reloadData()
-        handleDismiss()
+//        addClassVC.courseCodeField.text = ""
+//        addClassVC.courses.append(course)
+//        addClassVC.updateTrackClassLabel()
+//        addClassVC.tableView.reloadData()
+//        handleDismiss()
+        
+        if  alreadyTrackingClasses() { return }
+              
+        trackClasses()
     }
 }

@@ -18,6 +18,7 @@ class HomePageController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var leftForegroundView: UIView!
     @IBOutlet weak var unlimitedLabel: UILabel!
+    @IBOutlet weak var courseCodeLabel: UILabel!
     
     let addClassLauncher = AddClassLauncher()
     let transition = SlideInTransition()
@@ -30,7 +31,7 @@ class HomePageController: UIViewController {
     
     var lastClick: TimeInterval!
     var lastIndexPath: IndexPath!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpAddLabel()
@@ -43,8 +44,9 @@ class HomePageController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setLabels()
+        reloadUser() // <-- for when user just verifies their email
         refreshTableView()
-        addClassesisPresented = false
+        handleShowDirections()
     }
     
     func setLabels() {
@@ -178,7 +180,7 @@ class HomePageController: UIViewController {
         composer.mailComposeDelegate = self
         composer.setSubject(emailType)
         composer.setToRecipients([AppConstants.support_email])
-        
+        print(AppConstants.support_email)
         present(composer, animated: true)
     }
     
@@ -210,6 +212,60 @@ class HomePageController: UIViewController {
         alert.addAction(cancelAction)
         alert.addAction(yesAction)
         present(alert, animated: true, completion: nil)
+    }
+    
+    func presentVerificationSentAlert() {
+        let message = "You'll need to verify your email first! \n\nNote: You may need to restart the app if you just verified."
+        let alert = UIAlertController(title: "Email Not Verified", message: message, preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        let resendAction = UIAlertAction(title: "Resend", style: .default, handler: {_ in
+            self.sendVerificationEmail()
+        })
+        
+        alert.addAction(cancelAction)
+        alert.addAction(resendAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func sendVerificationEmail() {
+        guard let user = Auth.auth().currentUser else { return }
+        
+        user.sendEmailVerification { err in
+            if let _ = err {
+                let message = "Error sending your verification email. Sorry about that. Try restarting the app it fix it!"
+                self.displayError(title: "Verification Email Error", message: message)
+                return
+            }
+            
+            let message = "A verification email is on its way to \(UserService.user.email)!"
+            self.displayError(title: "Email Sent", message: message)
+        }
+    }
+    
+    func emailIsVerified() -> Bool {
+        if UserService.user.isEmailVerified { return true }
+        
+        guard let user = Auth.auth().currentUser else { return false }
+//        user.reload(completion: nil)
+        
+        if user.isEmailVerified {
+            let db = Firestore.firestore()
+            let docRef = db.collection(DataBase.User).document(UserService.user.email)
+            docRef.updateData([DataBase.is_email_verified: true])
+            return true
+        }
+        
+        return false
+    }
+    
+    func reloadUser() {
+        /*
+        If user just verified their email without closing the app, this will refresh their user object to reflect that
+        */
+        if UserService.user.isEmailVerified { return }
+        guard let user = Auth.auth().currentUser else { return }
+        user.reload(completion: nil)
     }
     
     func presentClassDetailController(course: Course, indexPath: IndexPath) {
@@ -250,6 +306,49 @@ class HomePageController: UIViewController {
         self.view.addSubview(noClassLabel)
     }
     
+    func handleReferral() {
+        // this device was never referred at any point
+        if !UserDefaults.standard.bool(forKey: Defaults.wasReferred) { return }
+        // if referral was used alraedy, return
+        if UserDefaults.standard.bool(forKey: Defaults.hasUsedOneReferral) { print("referral used"); return }
+        
+        // referralEmail = the person who referred you
+        guard let referralEmail = UserDefaults.standard.string(forKey: Defaults.referralEmail) else {
+            print("Couldn't find referral email in sign up")
+            return
+        }
+        
+        // get the document of the referrer
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(referralEmail)
+        docRef.getDocument { (document, error) in
+            if let error = error {
+                print("Error getting document for referral", error.localizedDescription)
+            }
+            let data = document?.data()
+            
+            guard let num_referrals = data?[DataBase.num_referrals] as? Int else {
+                print("Couldnt find num referrals")
+                return
+            }
+            // This device will not be able to send anyone else a referral link
+            UserDefaults.standard.set(true, forKey: Defaults.hasUsedOneReferral)
+            docRef.updateData([DataBase.num_referrals: num_referrals + 1 ])
+            print("Num referrals updated successfully ")
+        }
+    }
+    
+    func handleShowDirections() {
+        print(UserService.user.seenHomeTapDirections, courses.count)
+        if UserService.user.seenHomeTapDirections { return }
+        if UserService.user.courseCodes.count != 1 { return }
+        
+        Animations.animateHomeTapDirections(HomeViewController: self)
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
+        docRef.updateData([DataBase.seen_home_tap_directions  : true])
+    }
+    
     func logOut() {
         // if user is signed in
         if let _ = Auth.auth().currentUser {
@@ -276,7 +375,6 @@ class HomePageController: UIViewController {
     func slideInMenu() {
         guard let menuVC = storyboard?.instantiateViewController(identifier: "MenuController") as? MenuController else { return }
         menuVC.didTapMenuType = { menuType in
-            // functions here
             let menuTypeString = String(describing: menuType)
             
             switch menuTypeString {
@@ -289,7 +387,7 @@ class HomePageController: UIViewController {
             case "Settings":
                 self.presentSettings()
                 
-            case "Store":
+            case "Premium":
                 self.presentStore()
                 
             case "HowItWorks":
@@ -305,7 +403,6 @@ class HomePageController: UIViewController {
                 self.presentCredits()
                                 
             default:
-                print("here")
                 return
             }
         }
@@ -332,18 +429,13 @@ class HomePageController: UIViewController {
         if case .Right = gestureRecognizer.horizontalDirection(target: self.view)  {
             slideInMenu()
         }
-        else { // Swiping from right to left
-            if addClassesisPresented { return }
-            
-            //            presentAddClassesController()
-            addClassesisPresented = true
-        }
     }
     
     @IBAction func addClassClicked(_ sender: Any) {
-        
-        if UserService.user.hasPremium || UserService.user.courseCodes.count ==  0{
+        if !emailIsVerified() { presentVerificationSentAlert();  return }
+        if UserService.user.hasPremium || UserService.user.courseCodes.count <  1{
             presentAddClassesController()
+            handleReferral()
             return
         }
         

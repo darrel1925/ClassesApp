@@ -21,8 +21,6 @@
 		9A3D4A0A245776A30073C0F7 /* AddToListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A3D4A08245776A30073C0F7 /* AddToListController.xib */; };
 		9A40E7F2243857B90070A410 /* StripeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A40E7F1243857B90070A410 /* StripeAPI.swift */; };
 		9A445419242D959300089389 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A445418242D959300089389 /* UserService.swift */; };
-		9A44561D245B2C160054521A /* ChangeClassController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A44561B245B2C160054521A /* ChangeClassController.swift */; };
-		9A44561E245B2C160054521A /* ChangeClassController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A44561C245B2C160054521A /* ChangeClassController.xib */; };
 		9A445621245B2ED50054521A /* ChangeSchoolController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A44561F245B2ED50054521A /* ChangeSchoolController.swift */; };
 		9A445622245B2ED50054521A /* ChangeSchoolController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A445620245B2ED50054521A /* ChangeSchoolController.xib */; };
 		9A652A31244CCA6200366229 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A652A30244CCA6200366229 /* AppConstants.swift */; };
@@ -72,6 +70,7 @@
 		9AEEB595243C515900F5E6FE /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEEB594243C515900F5E6FE /* NotificationCell.swift */; };
 		9AEEB597243C527E00F5E6FE /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEEB596243C527E00F5E6FE /* NotificationController.swift */; };
 		9AF3AEC3244E534100D690C7 /* TermsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF3AEC2244E534000D690C7 /* TermsController.swift */; };
+		9AFB0C22245CC849008D1297 /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB0C21245CC849008D1297 /* Animations.swift */; };
 		9AFCD2B5244B987E009D2081 /* PageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFCD2B4244B987E009D2081 /* PageController.swift */; };
 		AD1A561E9A801D9F1E7C6C6F /* Pods_ClassesApp_ClassesAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEBF0FC9B4DA1D49DF169EE3 /* Pods_ClassesApp_ClassesAppUITests.framework */; };
 		F587EE35CC1CDB9AE47F7110 /* Pods_ClassesAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B93F6150B596EE3C91E7265F /* Pods_ClassesAppTests.framework */; };
@@ -113,8 +112,6 @@
 		9A3D4A08245776A30073C0F7 /* AddToListController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddToListController.xib; sourceTree = "<group>"; };
 		9A40E7F1243857B90070A410 /* StripeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeAPI.swift; sourceTree = "<group>"; };
 		9A445418242D959300089389 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
-		9A44561B245B2C160054521A /* ChangeClassController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeClassController.swift; sourceTree = "<group>"; };
-		9A44561C245B2C160054521A /* ChangeClassController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChangeClassController.xib; sourceTree = "<group>"; };
 		9A44561F245B2ED50054521A /* ChangeSchoolController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSchoolController.swift; sourceTree = "<group>"; };
 		9A445620245B2ED50054521A /* ChangeSchoolController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChangeSchoolController.xib; sourceTree = "<group>"; };
 		9A652A30244CCA6200366229 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
@@ -171,6 +168,7 @@
 		9AEEB594243C515900F5E6FE /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		9AEEB596243C527E00F5E6FE /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 		9AF3AEC2244E534000D690C7 /* TermsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsController.swift; sourceTree = "<group>"; };
+		9AFB0C21245CC849008D1297 /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		9AFCD2B4244B987E009D2081 /* PageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageController.swift; sourceTree = "<group>"; };
 		9D32B74948B9FAFFA611E4C3 /* Pods-ClassesApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesApp.debug.xcconfig"; path = "Target Support Files/Pods-ClassesApp/Pods-ClassesApp.debug.xcconfig"; sourceTree = "<group>"; };
 		B93F6150B596EE3C91E7265F /* Pods_ClassesAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClassesAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -261,8 +259,6 @@
 				9A3D4A08245776A30073C0F7 /* AddToListController.xib */,
 				9AC6292F245957B700B793C0 /* ClassDetailController.swift */,
 				9AC62930245957B700B793C0 /* ClassDetailController.xib */,
-				9A44561B245B2C160054521A /* ChangeClassController.swift */,
-				9A44561C245B2C160054521A /* ChangeClassController.xib */,
 				9A44561F245B2ED50054521A /* ChangeSchoolController.swift */,
 				9A445620245B2ED50054521A /* ChangeSchoolController.xib */,
 			);
@@ -294,6 +290,7 @@
 				9A652A30244CCA6200366229 /* AppConstants.swift */,
 				9A8CF97E242C6CCB008D0DC6 /* User.swift */,
 				9A3D4A0524576A0F0073C0F7 /* Course.swift */,
+				9AFB0C21245CC849008D1297 /* Animations.swift */,
 			);
 			path = Modles;
 			sourceTree = "<group>";
@@ -555,7 +552,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A44561E245B2C160054521A /* ChangeClassController.xib in Resources */,
 				9A7E051B244131D2002E9803 /* ToggleEmailsController.xib in Resources */,
 				9A9472B7242C1E7C004927DD /* LaunchScreen.storyboard in Resources */,
 				9A08BCA32446102C00DC4B40 /* StorePopUpController.xib in Resources */,
@@ -694,9 +690,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A44561D245B2C160054521A /* ChangeClassController.swift in Sources */,
 				9A8CF977242C490F008D0DC6 /* SignUpController.swift in Sources */,
 				9A9FD2FC24380E240011F8A4 /* CheckOutController.swift in Sources */,
+				9AFB0C22245CC849008D1297 /* Animations.swift in Sources */,
 				9AEEB595243C515900F5E6FE /* NotificationCell.swift in Sources */,
 				9AAD828D2431B41600C66838 /* TrackedCell.swift in Sources */,
 				9A7E051A244131D2002E9803 /* ToggleEmailsController.swift in Sources */,
@@ -921,6 +917,7 @@
 				CODE_SIGN_ENTITLEMENTS = ClassesApp/ClassesApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -944,6 +941,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

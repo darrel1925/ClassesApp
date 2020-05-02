@@ -11,7 +11,7 @@ import UIKit
 enum MenuType: Int {
     case Title
     case Notifications
-    case Store
+    case Premium
     case Settings
     case Share
     case HowItWorks

@@ -44,17 +44,17 @@ class CheckOutController: UIViewController {
     }
     
     func setRepeatTrackedCourses(){
-        for course in Array(courseDict.keys) {
-            if UserService.user.trackedClassesArr.contains(course) {
-                repreatTrackedCourses += 1
-            }
-        }
-        
-        repeatCourseLabel.text = "+ \(repreatTrackedCourses) credits"
-        
-        if repreatTrackedCourses == 0 {
-            repeatStackView.isHidden = true
-        }
+//        for course in Array(courseDict.keys) {
+//            if UserService.user.trackedClassesArr.contains(course) {
+//                repreatTrackedCourses += 1
+//            }
+//        }
+//        
+//        repeatCourseLabel.text = "+ \(repreatTrackedCourses) credits"
+//        
+//        if repreatTrackedCourses == 0 {
+//            repeatStackView.isHidden = true
+//        }
     }
     
     func setLabels() {
