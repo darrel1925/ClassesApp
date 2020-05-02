@@ -14,7 +14,6 @@ import FirebaseFunctions
 
 class SignUpController: UIViewController {
     
-    @IBOutlet weak var fullNameField: UITextField!
     @IBOutlet weak var schoolField: UITextField!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
@@ -37,7 +36,7 @@ class SignUpController: UIViewController {
         setUpSchoolPicker()
         setUpToolBar()
         setDelegates()
-        setUpTextView()
+        termsAndConditionsLabels()
     }
     
     func setUpSchoolPicker() {
@@ -59,7 +58,6 @@ class SignUpController: UIViewController {
     }
     
     func setDelegates() {
-        fullNameField.delegate = self
         schoolField.delegate = self
         emailField.delegate = self
         passwordField.delegate = self
@@ -68,7 +66,7 @@ class SignUpController: UIViewController {
         schoolField.text = "UCI"
     }
     
-    func setUpTextView() {
+    func termsAndConditionsLabels() {
         self.textView.delegate = self
         let labelText = "By tapping Sign Up, you agree to our Terms and Conditions and Privacy Statement"
         let termsString = NSMutableAttributedString(string: labelText)
@@ -82,14 +80,9 @@ class SignUpController: UIViewController {
         termsString.addAttribute(.link, value: "https://google.com", range: termsRange)
         termsString.addAttribute(.link, value: "https://google.com", range: privacyRange)
         
-//        let font  = UIFont()
-//        let color = UIColor.lightGray
-        
-//        termsString.setFontFace(font: font, color: color)
-        
         textView.attributedText = termsString
     }
-
+    
     
     func presentTermsController() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "TermsController") as! TermsController
@@ -112,20 +105,45 @@ class SignUpController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
+//    func presentVerificationSentAlert(user: FirebaseAuth.User) {
+//        let message = "Verify your email to begin tracking!"
+//        let alert = UIAlertController(title: "Verification Email Sent", message: message, preferredStyle: .alert)
+//
+//        let okayAction = UIAlertAction(title: "Okay", style: .default, handler: {_ in
+//            self.presentNextPage(user: user)
+//        })
+//
+//        alert.addAction(okayAction)
+//        present(alert, animated: true, completion: nil)
+//    }
+    
+    func presentWelcomeScreen() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "PageController") as! PageController
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
+    
+    func presentNextPage(user: FirebaseAuth.User) {
+        // If user has not seen welcome page
+        if !UserService.user.seenWelcomePage {
+            let db = Firestore.firestore()
+            let docRef = db.collection(DataBase.User).document(UserService.user.email)
+            docRef.updateData([DataBase.seen_welcome_page: true])
+            presentWelcomeScreen()
+            return
+        }
+        
+        presentHomePage()
+    }
+    
     @objc func dismissKeyboard() {
         view.endEditing(true)
         schoolField.resignFirstResponder()
-        emailField.becomeFirstResponder()
-        
+        passwordField.becomeFirstResponder()
     }
     
     func credentialsAreValid() -> Bool {
-        if !(self.fullNameField.text!.isValidName) {
-            let message = "Please enter only 1 first name and 1 last name. Thank you. (Ex. Michael Young)"
-            self.displayError(title: "Whoops.", message: message)
-            return false
-        }
-        else if !(emailField.text!.isValidSchoolEmail) {
+        if !(emailField.text!.isValidSchoolEmail) {
             let message = "Email must be a valid school email address ending in 'edu' /n/n Ex. panteatr@uci.edu, bbears@ucla.edu"
             self.displayError(title: "Whoops.", message: message)
             return false
@@ -155,10 +173,10 @@ class SignUpController: UIViewController {
         
         // Chose .ucsf is not in the schoolExtDict values
         if !Array(schoolExtDict.values).contains(schoolExtenstion) {
-              let message = "Email must be a valid school email address ending in '.edu' /n/n Ex. panteatr@uci.edu, bbears@ucla.edu"
-              self.displayError(title: "Invalid Email.", message: message)
-              return false
-          }
+            let message = "Email must be a valid school email address ending in '.edu' /n/n Ex. panteatr@uci.edu, bbears@ucla.edu"
+            self.displayError(title: "Invalid Email.", message: message)
+            return false
+        }
         
         // Chose UCLA as school but has a .uci.edu email address
         if schoolExtenstion != schoolExtDict[schoolField.text!]{
@@ -169,33 +187,7 @@ class SignUpController: UIViewController {
         
         return true
     }
-    
-    func presentVerificationSentAlert(user: FirebaseAuth.User) {
-        let message = "A verification email has been send to \(user.email!). Please verifiy your account then log in."
-        let alert = UIAlertController(title: "Verification Email Sent", message: message, preferredStyle: .alert)
         
-        let okayAction = UIAlertAction(title: "Okay", style: .default, handler: {_ in
-            let logInVC = self.storyboard?.instantiateViewController(identifier: "LogInController") as! LogInController
-            logInVC.emailText = user.email!
-            self.present(logInVC, animated: true, completion: nil)
-        })
-        
-        alert.addAction(okayAction)
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func sendVerificationEmail(user: FirebaseAuth.User) {
-        user.sendEmailVerification { err in
-            if let _ = err {
-                let message = "Error sending your verification email. Head over to the login screen to log in."
-                self.displayError(title: "Verification Email Error", message: message)
-                return
-            }
-            print("verification email sent")
-            self.presentVerificationSentAlert(user: user)
-        }
-    }
-    
     func createFireStoreUser(user: User, fireUser: FirebaseAuth.User) {
         // Add a new document with a generated ID
         let ref = db.collection(DataBase.User).document(user.email)
@@ -215,7 +207,9 @@ class SignUpController: UIViewController {
             UserService.getCurrentUser(email: user.email) // <--- calls dispatchGroup.leave()
             
             UserService.dispatchGroup.notify(queue: .main) {
-                self.sendVerificationEmail(user: fireUser)
+                self.presentNextPage(user: fireUser)
+                UserService.generateReferralLink()
+                self.handleReferral()
             }
         }
     }
@@ -240,15 +234,44 @@ class SignUpController: UIViewController {
         }
     }
     
+    func handleReferral() {
+        // this device was referred as some point
+        if UserDefaults.standard.bool(forKey: Defaults.wasReferred) {
+            // if referral was used alraedy, return
+            if UserDefaults.standard.bool(forKey: Defaults.hasUsedOneReferral) { print("referral used");return }
+            
+            // referralEmail = the person who referred you
+            guard let referralEmail = UserDefaults.standard.string(forKey: Defaults.referralEmail) else {
+                print("Couldn't find referral email in sign up")
+                return
+            }
+            
+            // get the document of the referrer
+            let docRef = db.collection(DataBase.User).document(referralEmail)
+            docRef.getDocument { (document, error) in
+                if let error = error {
+                    print("Error getting document for referral", error.localizedDescription)
+                }
+                let data = document?.data()
+                
+                guard let num_referrals = data?[DataBase.num_referrals] as? Int else {
+                    print("Couldnt find num referrals")
+                    return
+                }
+                // This device will not be able to send anyone else a referral link
+                UserDefaults.standard.set(true, forKey: Defaults.hasUsedOneReferral)
+                docRef.updateData([DataBase.num_referrals: num_referrals + 1 ])
+                print("Num referrals updated successfully ")
+            }
+        }
+    }
+    
     @IBAction func signUpClicked(_ sender: Any) {
         if !credentialsAreValid() { return }
         
-        let fullName = fullNameField.text!.separateAndFormatName()
         let school = schoolField.text!
         let email = emailField.text!
         let password = passwordField.text!
-        let firstName = fullName[0]
-        let lastName = fullName[1]
         
         activityIndicator.startAnimating()
         
@@ -265,12 +288,11 @@ class SignUpController: UIViewController {
             
             let user = User.init(id: fireUser.uid,
                                  email: email,
-                                 firstName: firstName,
-                                 lastName: lastName,
                                  webReg: false,
                                  school: school,
-                                 credits: 2,
                                  receiveEmails: true)
+            
+            UserDefaults.standard.set(true, forKey: Defaults.wasReferred)
             
             self.createFireStoreUser(user: user, fireUser: fireUser)
         }
@@ -280,13 +302,11 @@ class SignUpController: UIViewController {
 extension SignUpController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == fullNameField {
+
+       if textField == emailField {
             textField.resignFirstResponder()
             schoolField.becomeFirstResponder()
-        } else if textField == schoolField {
-            textField.resignFirstResponder()
-            emailField.becomeFirstResponder()
-        } else if textField == emailField {
+       } else if textField == schoolField {
             textField.resignFirstResponder()
             passwordField.becomeFirstResponder()
         } else if textField == passwordField {

@@ -45,7 +45,7 @@ class NotificationController: UIViewController {
         backgroundView.addGestureRecognizer(swipe1)
         navigationController?.navigationBar.addGestureRecognizer(swipe2)
     }
-    
+
     func displayClearNotificationsAlert() {
         let message = "Click Okay to confirm and clear your notifications."
         displayError(title: "Clear Notifications", message: message) { (_) in

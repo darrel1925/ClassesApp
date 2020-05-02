@@ -22,14 +22,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let user = Auth.auth().currentUser
         AppConstants.initalizeConstants()
-        //
-        //
+
         // if user is logged in
         if ((user) != nil) {
             
             isUserDisabled(user: user!)
-            // if user's email is not verified
-            if !user!.isEmailVerified { print("email not verified"); return }
             
             print("user:\(user?.email ?? "email not found") already logged in\n\n")
             guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -89,13 +86,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func isUserDisabled(user: FirebaseAuth.User) {
         user.reload(completion: { (error) in
             if error != nil {
-                if let error = AuthErrorCode(rawValue: error!._code) {
-                    print("IS DISABLED", error.errorMessage)
-                    print("IS DISABLED raw value", error.rawValue)
-                    return
-                }
+                print("Error reloading user \(error?.localizedDescription ?? "")")
             }
-            print("no error")
         })
         print("checked disabled")
     }
@@ -126,29 +118,42 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         print("got the dynamic link from url! \(url)")
 
+        // get info from the url
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems else { return }
         
+        
+        var email = ""
+        
         for query in queryItems {
             print("Perameter \(query.name), Value \(query.value)")
+            if query.name == "email"{
+                email = query.value ?? "??"
+            }
         }
         
         switch dynamicaLink.matchType {
         case .unique:
             // 100% sure this is the link your user clicked on
+            print("Unique")
+            AppDelegate.addToUserDefaults(email: email)
             break
         case .default:
             // Pretty sure this is the link the user clicked on but dont know for sure
+            print("default")
+            AppDelegate.addToUserDefaults(email: email)
             break
         case .weak:
+            print("weak")
+            AppDelegate.addToUserDefaults(email: email)
             // Guessing that this might be the correct link but tbh we dont know for sure
             break
         case .none:
+            print("none")
             // There is nothing in this dynamic link
             break
-        }    }
-    
-    
+        }
+    }
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

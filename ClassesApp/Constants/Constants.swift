@@ -29,18 +29,24 @@ struct DataBase {
     static let school    = "school"
     static let web_reg   = "web_reg"
     static let classes   = "classes"
-    static let credits   = "credits"
     static let stripeId  = "stripeId"
     static let fcm_token = "fcm_token"
     static let last_name = "last_name"
     static let first_name    = "first_name"
+    static let has_premium   = "has_premium"
     static let web_reg_pswd  = "web_reg_pswd"
     static let is_logged_in  = "is_logged_in"
+    static let purchase_tire = "purchase_tire"
     static let notifications = "notifications"
+    static let num_referrals = "num_referrals"
+    static let referral_link = "referral_link"
     static let receive_emails    = "receive_emails"
     static let tracked_classes   = "tracked_classes"
     static let purchase_history  = "purchase_history"
     static let seen_welcome_page = "seen_welcome_page"
+    static let course_dict_arr   = "course_dict_arr"
+    static let is_email_verified = "is_email_verified"
+    static let has_short_referral    = "has_short_referral"
     static let notifications_enabled = "notifications_enabled"
     
     // Notifications & Purchase History
@@ -63,13 +69,34 @@ struct DataBase {
     static let merchant_id   = "merchant_id"
     static let connect_pswd  = "connect_pswd"
     static let support_email = "support_email"
-    static let price_per_class    = "price_per_class"
-    static let supported_schools  = "supported_schools"
-    static let support_email_pswd = "support_email_pswd"
+    static let premium_price = "premium_price"
+    static let price_per_class     = "price_per_class"
+    static let supported_schools   = "supported_schools"
+    static let support_email_pswd  = "support_email_pswd"
+    static let registration_pages  = "registration_pages"
+    
+    // Courses
+    static let room  = "room"
+    static let days  = "days"
+    static let units = "units"
+//    static let status    = "status"
+    static let section   = "section"
+    static let professor = "professor"
+    static let class_time   = "class_time"
+    static let course_name  = "course_name"
+    static let course_type  = "course_type"
+    static let course_title = "course_title"
+    static let dis_and_labs = "dis_and_labs"
 
 }
 
-struct Response {
+struct Tire {
+    static let Free = 0
+    static let TwoClasses = 1
+    static let Unlimited = 2
+}
+
+struct Status {
     static let OPEN    = "OPEN"
     static let Waitl   = "Waitl"
     static let FULL    = "FULL"
@@ -80,4 +107,15 @@ struct Response {
 struct Schools {
     static let UCI  = "UCI"
     static let UCLA = "UCLA"
+}
+
+struct ReferralLink {
+    static let message = "TrackMy tracks your classes and notifies you when they open up! Check it out! \(UserService.user.referralLink)"
+}
+
+struct Defaults {
+    
+    static let wasReferred   = "wasReferred"
+    static let referralEmail = "referralEmail"
+    static let hasUsedOneReferral = "hasUsedOneReferral"
 }

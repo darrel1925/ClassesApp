@@ -58,23 +58,23 @@ class CheckOutController: UIViewController {
     }
     
     func setLabels() {
-        let numClasses = StripeCart.cartItems.count
-        
-        if numClasses == 1 {
-            trackClassesLabel.text = "Track \(numClasses) Class!"
-        }
-        else {
-            trackClassesLabel.text = "Track \(numClasses) Classes!"
-        }
-        
-        currentBalanceLabel.text = "\(UserService.user.credits) credits"
-        costLabel.text = "- \(StripeCart.cartItems.count) credits"
-        let newBalance = UserService.user.credits - getTotalCost()
-        newBalanceLabel.text = "\(newBalance) credits"
-        
-        if newBalance < 0 {
-            newBalanceLabel.textColor = #colorLiteral(red: 0.762566535, green: 0.3093850772, blue: 0.2170317457, alpha: 1)
-        }
+//        let numClasses = StripeCart.cartItems.count
+//
+//        if numClasses == 1 {
+//            trackClassesLabel.text = "Track \(numClasses) Class!"
+//        }
+//        else {
+//            trackClassesLabel.text = "Track \(numClasses) Classes!"
+//        }
+//
+//        currentBalanceLabel.text = "\(UserService.user.credits) credits"
+//        costLabel.text = "- \(StripeCart.cartItems.count) credits"
+//        let newBalance = UserService.user.credits - getTotalCost()
+//        newBalanceLabel.text = "\(newBalance) credits"
+//
+//        if newBalance < 0 {
+//            newBalanceLabel.textColor = #colorLiteral(red: 0.762566535, green: 0.3093850772, blue: 0.2170317457, alpha: 1)
+//        }
     }
     
     func animateViewUpwards() {
@@ -113,19 +113,19 @@ class CheckOutController: UIViewController {
     }
     
     func presentSuccessAlert() {
-        ServerService.addToTrackedClasses(classes: Array(courseDict.keys))
-        
-        AudioServicesPlaySystemSound(1519) // Actuate "Peek" feedback (weak boom)
-        let message = "You're all set.\n\nNote: It may take up to 2 minutes to begin tracking your class."
-
-        let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
-        let okay = UIAlertAction(title: "Okay", style: .default, handler: {(action) in
-            self.handleDismiss2()
-            self.addClassesVC.navigationController?.popViewController(animated: true)
-        })
-        
-        alertController.addAction(okay)
-        self.present(alertController, animated: true)
+//        ServerService.addToTrackedClasses(classes: Array(courseDict.keys))
+//        
+//        AudioServicesPlaySystemSound(1519) // Actuate "Peek" feedback (weak boom)
+//        let message = "You're all set.\n\nNote: It may take up to 1 minutes to begin tracking your class."
+//
+//        let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
+//        let okay = UIAlertAction(title: "Okay", style: .default, handler: {(action) in
+//            self.handleDismiss2()
+//            self.addClassesVC.navigationController?.popViewController(animated: true)
+//        })
+//        
+//        alertController.addAction(okay)
+//        self.present(alertController, animated: true)
     }
     
     func presentPaymentErrorAlert() {
@@ -146,8 +146,8 @@ class CheckOutController: UIViewController {
     
     func enablePaymentButton() {
         UIView.animate(withDuration: 0.6) {
-            self.confirmPurchaseButton.setTitle("Confirm", for: .normal)
             self.confirmPurchaseButton.titleLabel?.font = UIFont(name: "Futura", size: 17.0)
+            self.confirmPurchaseButton.setTitle("Confirm", for: .normal)
             self.confirmPurchaseButton.backgroundColor = #colorLiteral(red: 0.3260789019, green: 0.5961753091, blue: 0.1608898185, alpha: 1)
         }
     }
@@ -162,18 +162,18 @@ class CheckOutController: UIViewController {
     
     func addClasses(dispatchGroup dg: DispatchGroup) -> Bool {
         dg.enter()
-        print("entering in addClass")
+        print("entering in add Class")
         for code in StripeCart.cartItems {
-            if !ServerService.addClassToFirebase(withCode: code, withStatus: courseDict[code] ?? "FULL", viewController: self) {
-                ServerService.dispatchGroup.notify(queue: .main) {
-                    print("is false")
-                    // error occured | remove classes
-                    ServerService.removeClassesFromFirebase(withClasses: StripeCart.cartItems)
-                    self.activityIndicator.stopAnimating()
-                    self.presentPaymentErrorAlert()
-                    dg.leave()
-                }
-            }
+//            if !ServerService.addClassToFirebase(withCode: code, withStatus: courseDict[code] ?? "FULL", viewController: self) {
+//                ServerService.dispatchGroup.notify(queue: .main) {
+//                    print("is false")
+//                    // error occured | remove classes
+//                    ServerService.removeClassesFromFirebase(withClasses: StripeCart.cartItems)
+//                    self.activityIndicator.stopAnimating()
+//                    self.presentPaymentErrorAlert()
+//                    dg.leave()
+//                }
+//            }
         }
         dg.leave()
         return true
@@ -184,18 +184,18 @@ class CheckOutController: UIViewController {
         let docRef = db.collection(DataBase.User).document(UserService.user.email)
         var returnValue = true
         
-        let newBalance = UserService.user.credits - getTotalCost()
+//        let newBalance = UserService.user.credits - getTotalCost()
         
-        
-        docRef.setData(["credits": newBalance], merge: true) { (error) in
-            if error != nil {
-                // error occured | remove classes
-                ServerService.removeClassesFromFirebase(withClasses: StripeCart.cartItems)
-                self.activityIndicator.stopAnimating()
-                self.presentPaymentErrorAlert()
-                returnValue = false
-            }
-        }
+//        
+//        docRef.setData(["credits": newBalance], merge: true) { (error) in
+//            if error != nil {
+//                // error occured | remove classes
+//                ServerService.removeClassesFromFirebase(withClasses: StripeCart.cartItems)
+//                self.activityIndicator.stopAnimating()
+//                self.presentPaymentErrorAlert()
+//                returnValue = false
+//            }
+//        }
         
         activityIndicator.stopAnimating()
         return returnValue
@@ -231,12 +231,12 @@ class CheckOutController: UIViewController {
     
     @IBAction func confirmPurchaseClicked(_ sender: Any) {
         
-        // if user does not have enough credits
-        if UserService.user.credits < getTotalCost() {
-            let message = "You do not have enough credits. Head to the Store to get more credits"
-            displayError(title: "Not Enough Credits", message: message)
-            return
-        }
+//        // if user does not have enough credits
+//        if UserService.user.credits < getTotalCost() {
+//            let message = "You do not have enough credits. Head to the Store to get more credits"
+//            displayError(title: "Not Enough Credits", message: message)
+//            return
+//        }
 
         // if button stil says continue
         if confirmPurchaseButton.titleLabel?.text == "Continue" {

@@ -35,6 +35,8 @@ class CreditsController: UIViewController {
           "iconName": "speed" ],
         [ "author" : "Alfredo Hernandez",
           "iconName": "x" ],
+        [ "author" : "Pixel perfect",
+          "iconName": "register" ],
     ]
     override func viewDidLoad() {
         super.viewDidLoad()

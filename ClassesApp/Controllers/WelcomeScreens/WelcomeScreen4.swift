@@ -68,7 +68,7 @@ class WelcomeScreen4: UIViewController {
     }
 
     func presentShareController() {
-        let shareStr = "URL for appl download goes here :p"
+        let shareStr = ReferralLink.message
         let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
         self.present(sharingController, animated: true, completion: nil)
     }

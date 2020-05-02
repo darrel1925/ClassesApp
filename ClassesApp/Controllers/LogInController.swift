@@ -59,11 +59,6 @@ class LogInController: UIViewController {
     }
     
     func presentNextPage(user: FirebaseAuth.User) {
-        // If email is not verified
-        if !user.isEmailVerified {
-            presentEmailVerificationAlert(user: user)
-            return
-        }
         
         // If user has not seen welcome page
         if !UserService.user.seenWelcomePage {
@@ -84,6 +79,17 @@ class LogInController: UIViewController {
             return false
         }
         return true
+    }
+    
+    func handleReferral() {
+        // this device was referred
+        if UserDefaults.standard.bool(forKey: Defaults.wasReferred) {
+            // if referral was used alraedy, return
+            if UserDefaults.standard.bool(forKey: Defaults.hasUsedOneReferral) { print("referral used");return }
+            // This device will not be able to send anyone else a referral link
+            UserDefaults.standard.set(true, forKey: Defaults.hasUsedOneReferral)
+            print("This device will not be able to send anyone a referral link.")
+        }
     }
     
     
@@ -108,15 +114,15 @@ class LogInController: UIViewController {
                 if let _ = err{ print("unable to reload user") ; return}
                 print("user reloaded")
             })
-   
+            
             print("Login was successful")
             self?.activityIndicator.stopAnimating()
             
             UserService.dispatchGroup.enter()
             UserService.getCurrentUser(email: email) // <--- calls dispatchGroup.leave()
-
+            
             UserService.dispatchGroup.notify(queue: .main) {
-                
+                self?.handleReferral()
                 self?.presentNextPage(user: user!.user)
             }
         }
@@ -131,7 +137,7 @@ class LogInController: UIViewController {
 }
 
 extension LogInController: UITextFieldDelegate {
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == emailField {
             textField.resignFirstResponder()

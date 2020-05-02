@@ -44,9 +44,11 @@ final class _UserService {
             self.dispatchGroup.customLeave()
         })
         
-        self.dispatchGroup.notify(queue: .main) {
-            self.updateFirebaseWithUpdatedVars()
+        dispatchGroup.notify(queue: .main) {
+            UserService.updateFirebaseWithUpdatedVars()
+            UserService.checkForShortLink()
         }
+
     }
     
     func updateFirebaseWithUpdatedVars() {
@@ -54,6 +56,11 @@ final class _UserService {
         let userInfo = User.modelToData(user: user)
         docRef.setData(userInfo, merge: true)
         print("user info merged")
+    }
+    
+    func checkForShortLink() {
+        if user.hasShortReferral { return }
+        generateReferralLink()
     }
     
     func generateReferralLink() {
@@ -77,15 +84,14 @@ final class _UserService {
         }
         
         // Where to direct users if app is not installed
-        shareLink.iOSParameters?.appStoreID = "962194608"
-        shareLink.iOSParameters?.customScheme = "962194608"
+        shareLink.iOSParameters?.appStoreID = "962194608" // <-- Google phots adding comment =
         
         // Used to present how link is displayed and to populate inbetween screen before app store
         shareLink.socialMetaTagParameters = DynamicLinkSocialMetaTagParameters()
-        shareLink.socialMetaTagParameters?.title = "Time To Get Tracking!"
+        shareLink.socialMetaTagParameters?.title = "TrackMy | Get notified when your class opens up!"
         shareLink.socialMetaTagParameters?.descriptionText = "No more late-night discussions or bad professors. Let TrackMy get you the classes you deserve! Thank \(user.email) for the referral!"
         
-        if let imageURL = URL( string: "https://kissflow.com/wp-content/uploads/2018/11/Purchase-Order-Tracking_Blog.png") {
+        if let imageURL = URL( string: "https://bitrebels.com/wp-content/uploads/2019/08/push-notifications-e-commerce-sales-header-image.png") {
             shareLink.socialMetaTagParameters?.imageURL = imageURL
         }
         
@@ -104,11 +110,22 @@ final class _UserService {
                 }
             }
             
-            guard let url = url else { return }
-            print("Short dynamic URL is \(url)")
+            guard let shortURL = url else { return }
+            print("Short dynamic URL is \(shortURL)")
+            
+            let stringShortUrl = "\(shortURL)"
+            let userRef = self.db.collection(DataBase.User).document(self.user.email)
+            userRef.updateData([DataBase.referral_link : stringShortUrl, DataBase.has_short_referral: true])
+
             return
         }
-        // user long url instead
+        
+        // use long url instead
+        let stringLongURL = "\(longURL)"
+        let userRef = db.collection(DataBase.User).document(user.email)
+        userRef.updateData([DataBase.referral_link : stringLongURL])
+        
+        
     }
     
     func logoutUser(disaptchGroup dg: DispatchGroup) {
@@ -125,11 +142,10 @@ final class _UserService {
                 
             }
             else {
-                print("is_log_in_set")
+                print("is_logged_in_set")
                 dg.customLeave()
             }
         }
-        print("here")
         userListener?.remove()
         userListener = nil
         user = nil

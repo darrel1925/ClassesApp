@@ -57,30 +57,63 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Thats weird. The url didn't get here")
             return
         }
-        print("got the dynamic link from custom url! \(url)")
+        print("got the dynamic link from url! \(url)")
 
+        // get info from the url
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems else { return }
         
+        
+        var email = ""
+        
         for query in queryItems {
             print("Perameter \(query.name), Value \(query.value)")
+            if query.name == "email"{
+                email = query.value ?? "??"
+            }
         }
         
         switch dynamicaLink.matchType {
         case .unique:
             // 100% sure this is the link your user clicked on
+            print("Unique")
+            AppDelegate.addToUserDefaults(email: email)
             break
         case .default:
             // Pretty sure this is the link the user clicked on but dont know for sure
+            print("default")
+            AppDelegate.addToUserDefaults(email: email)
             break
         case .weak:
+            print("weak")
+            AppDelegate.addToUserDefaults(email: email)
             // Guessing that this might be the correct link but tbh we dont know for sure
             break
         case .none:
+            print("none")
             // There is nothing in this dynamic link
             break
         }
     }
+    
+    static func addToUserDefaults(email: String) {
+        
+        // starts out as false if never executed
+        let wasReferred = UserDefaults.standard.bool(forKey: Defaults.wasReferred)
+        print(Defaults.wasReferred, wasReferred)
+
+        // this device already clicked on some referral link at some point
+        if wasReferred { return }
+            
+        // this device has never been referred
+        else {
+            UserDefaults.standard.set(true, forKey: Defaults.wasReferred)
+            UserDefaults.standard.set(false, forKey: Defaults.hasUsedOneReferral)
+            UserDefaults.standard.set(email, forKey: Defaults.referralEmail)
+            print("device has never been referred")
+        }
+    }
+    
     
     // MARK: UISceneSession Lifecycle
 

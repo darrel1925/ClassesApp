@@ -23,9 +23,11 @@ class _AppConstants {
     var connect_pswd = ""
     var support_email = ""
     var price_per_class = 199
+    var premium_price = 499
     var support_email_pswd = ""
     var supported_schools: [String] = ["UCI", "UCLA"]
     var appConstantListener: ListenerRegistration? = nil
+    var registration_pages: [String: String] = [:]
     var price_map: [String: Int] = ["1": 199, "3":399, "10":1449]
     
     func initalizeConstants() {
@@ -48,6 +50,7 @@ class _AppConstants {
             self.stripe_pk = data[DataBase.stripe_pk] as? String ?? ""
             self.privacy_url = data[DataBase.privacy_url] as? String ?? ""
             self.server_port = data[DataBase.server_port] as? Int ?? 0
+            self.premium_price = data[DataBase.premium_price] as? Int ?? 499
             self.price_per_class = data[DataBase.price_per_class] as? Int ?? 199
             self.merchant_id = data[DataBase.merchant_id] as? String ?? ""
             self.connect_pswd = data[DataBase.connect_pswd] as? String ?? ""
@@ -55,6 +58,7 @@ class _AppConstants {
             self.support_email_pswd = data[DataBase.support_email_pswd] as? String ?? ""
             self.price_map = data[DataBase.price_map] as? [String:Int] ?? ["1": 199, "3":399, "10":1449]
             self.supported_schools = data[DataBase.supported_schools] as? [String] ?? ["UCI", "UCLA"]
+            self.registration_pages = data[DataBase.registration_pages] as? [String: String] ?? [:]
             Stripe.setDefaultPublishableKey(self.stripe_pk)
 
 //            print(data)

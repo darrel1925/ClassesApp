@@ -45,20 +45,22 @@ final class _ServerService {
         return "\(AppConstants.connect_pswd) \(action)\(email),\(quarter),\(year),\(course_code),\(school),,,"
     }
     
-    func getClassStatus(withGroup dispatchGroup: DispatchGroup, homeVC: HomePageController){
+    func getClassStatus(withGroup dispatchGroup: DispatchGroup, homeVC: HomePageController) {
         let db = Firestore.firestore()
-        for cls in UserService.user.classArr {
+        homeVC.courses.removeAll()
+        for cls in UserService.user.courseCodes {
             dispatchGroup.enter()
             let docRef = db.collection(ServerService.schoolParam).document(cls)
             
             docRef.getDocument { (document, error) in
                 if let document = document, document.exists {
                     guard let data = document.data() else { print("couldn't do it"); return }
-                    let status = data[DataBase.curr_status] as! String
-                    homeVC.courseCodes.append(cls)
-                    homeVC.courseStatus.append(status)
-                    
-                    print("Found course: \(cls) status: \(data[DataBase.curr_status])")
+
+                    print(data)
+                    let course = Course(courseDict: data)
+                    homeVC.courses.append(course)
+
+                    print("Found course: \(cls) status: \(course.status)")
                     dispatchGroup.leave()
                     
                 } else {
@@ -115,12 +117,13 @@ final class _ServerService {
         return ""
     }
     
-    func addClassToFirebase(withCode course_code: String, withStatus status: String, viewController controller: UIViewController, withDiscussions discussions: [String] = [], withLabs labs: [String] = []) -> Bool {
+    func addClassToFirebase(withCourse course: Course, viewController controller: UIViewController, withDiscussions discussions: [String] = [], withLabs labs: [String] = []) -> Bool {
         dispatchGroup.enter()
         let db = Firestore.firestore()
         var returnValue = true // <-- indicates success or failure
         
-        let _ = db.collection(ServerService.schoolParam).whereField(DataBase.course_code, isEqualTo: course_code)
+        // Find course in db
+        let _ = db.collection(ServerService.schoolParam).whereField(DataBase.course_code, isEqualTo: course.course_code)
             .getDocuments() { (querySnapshot, err) in
                 if let _ = err {
                     let message = "There was a problem tracking your class, please try again later. Your card has NOT been charged."
@@ -134,15 +137,10 @@ final class _ServerService {
                     
                     // If class is not being tracked by anyone
                     if docs.count == 0 {
-                        let docRef = db.collection(ServerService.schoolParam).document(course_code)
-                        let data: [String: Any] = [
-                            DataBase.curr_status: status,
-                            DataBase.course_code: course_code,
-                            DataBase.quarter: AppConstants.quarter,
-                            DataBase.school: UserService.user.school,
-                            DataBase.emails: [UserService.user.email],
-                            DataBase.year: AppConstants.year
-                        ]
+                        // Create a new class
+                        let docRef = db.collection(ServerService.schoolParam).document(course.course_code)
+                        var data = course.modelToData()
+                        data[DataBase.emails] = [UserService.user.email]
                         
                         docRef.setData(data, merge: true) { (err) in
                             if let _ = err {
@@ -180,7 +178,7 @@ final class _ServerService {
                 return
             }
             var classDict = doc?.data()![DataBase.classes]  as! [String: Any]
-            classDict.updateValue(discussions + labs, forKey: course_code)
+            classDict.updateValue(discussions + labs, forKey: course.course_code)
             docRef.setData([DataBase.classes: classDict], merge: true)
         }
         print("add classes finished")
@@ -188,7 +186,7 @@ final class _ServerService {
         return returnValue
     }
     
-    func removeClassesFromFirebase(withClasses codes: [String]) {
+    func removeClassesFromFirebase(withCourseCodes codes: [String]) {
         let db = Firestore.firestore()
         
         // remove class from user
@@ -200,14 +198,12 @@ final class _ServerService {
             }
             
             guard var classes = doc?[DataBase.classes] as? [String : [Any]] else { return }
-            print("classes: \(classes)\n\n")
-            print("codes: \(codes)\n\n")
-            
-            for course_code in codes {
+                        
+            for code in codes {
                 // If class is in user's classes dict
-                if classes.keys.contains(course_code) {
+                if classes.keys.contains(code) {
                     // Remove email address
-                    classes.removeValue(forKey: course_code)
+                    classes.removeValue(forKey: code)
                 }
             }
             docRef.updateData([DataBase.classes : classes]) { (err) in
@@ -218,11 +214,10 @@ final class _ServerService {
             }
             
             
-            print("codes2: \(codes)\n\n")
             // remove email from classes
-            for course_code in codes {
+            for code in codes {
 
-                let _ = db.collection(ServerService.schoolParam).whereField(DataBase.course_code, isEqualTo: course_code).getDocuments { (querySnapshot, error) in
+                let _ = db.collection(ServerService.schoolParam).whereField(DataBase.course_code, isEqualTo: code).getDocuments { (querySnapshot, error) in
                     if querySnapshot?.documents.count ?? 0 > 0 { // on success | if query doesnt exist, default to 0
                         print("doc1: \(querySnapshot!.documents)\n\n")
                         print("doc2: \(querySnapshot!.documents[0].data())\n\n")
@@ -235,7 +230,7 @@ final class _ServerService {
                             // Remove email from array
                             emails = emails.filter { $0 != UserService.user.email }
                             
-                            print("course \(course_code) emails \(emails))")
+                            print("course \(code) emails \(emails))")
                             // If no one else is tracking this class
                             if emails.count == 0 {
                                 classRef.delete()
@@ -273,18 +268,16 @@ final class _ServerService {
         docRef.setData([DataBase.purchase_history : purchaseHistory], merge: true)
     }
     
-    func addToTrackedClasses(classes: [String]) {
+    func addToTrackedClasses(courses: [Course]) {
         let db = Firestore.firestore()
         let docRef = db.collection(DataBase.User).document(UserService.user.email)
         
         var updatedTrackedClasses = UserService.user.trackedClasses
     
-        for course in classes {
-            let data: [String: String] = [
-                DataBase.course_code: course,
-                DataBase.date: Date().toString(),
-            ]
-            updatedTrackedClasses.append(data)
+        for course in courses {
+            var data = course.modelToData()
+            data[DataBase.date] = Date().toString()
+            updatedTrackedClasses.append(data as? [String : String] ?? [:])
         }
         
         docRef.updateData([DataBase.tracked_classes: updatedTrackedClasses]) { (err) in

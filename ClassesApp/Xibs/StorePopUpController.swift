@@ -14,9 +14,6 @@ import FirebaseFirestore
 class StorePopUpController: UIViewController {
     
     @IBOutlet weak var trackClassesLabel: UILabel!
-    @IBOutlet weak var currentCreditsLabel: UILabel!
-    @IBOutlet weak var purchasingCreditLabel: UILabel!
-    @IBOutlet weak var totalCreditsLabel: UILabel!
     @IBOutlet weak var totalAmountLabel: UILabel!
     @IBOutlet weak var paymentMethodButton: UIButton!
     @IBOutlet weak var confirmPurchaseButton: RoundedButton!
@@ -28,23 +25,7 @@ class StorePopUpController: UIViewController {
     var applePayPresented = false
     
     var storeController: StoreController!
-    var purchasingCredits: Int! // 8624 
-    var purchaseAmountInPennies: Int {
-        switch purchasingCredits {
-        case 1:
-            print("Have \(purchasingCredits) credits :)")
-            return AppConstants.price_map["1"]!
-        case 3:
-            print("Have \(purchasingCredits) credits :)")
-            return AppConstants.price_map["3"]!
-        case 10:
-            print("Have \(purchasingCredits) credits :)")
-            return AppConstants.price_map["10"]!
-        default:
-            print("Have \(purchasingCredits) credits :)")
-            return -1
-        }}
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,15 +38,17 @@ class StorePopUpController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animateViewUpwards()
-        setPaymentInfo() // <--- must be here bc purchasingCredits isnt init until view loads
+//        setPaymentInfo() // <--- must be here bc purchasingCredits isnt init until view loads
     }
     
     func showApplePay() {
         // Pay
         let merchantId = AppConstants.merchant_id
         let paymentRequest = Stripe.paymentRequest(withMerchantIdentifier: merchantId, country: "US", currency: "USD")
+        let price: Double = Double(AppConstants.premium_price) / 100.0
+        let decimal = NSDecimalNumber(value: price)
         paymentRequest.paymentSummaryItems = [
-            PKPaymentSummaryItem(label: "Rubber duck", amount: 1.5)
+            PKPaymentSummaryItem(label: "TrackMy Unlimited", amount: decimal),
         ]
         guard Stripe.canSubmitPaymentRequest(paymentRequest) else {
             assertionFailure()
@@ -80,24 +63,13 @@ class StorePopUpController: UIViewController {
     }
     
     func setLabels() {
-        if purchasingCredits == 1 {
-            trackClassesLabel.text = "Get \(purchasingCredits!) Credit!"
-        }
-        else {
-            trackClassesLabel.text = "Get \(purchasingCredits!) Credits!"
-        }
-        
-        currentCreditsLabel.text = "\(UserService.user.credits)"
-        purchasingCreditLabel.text = "\(purchasingCredits!)"
-        totalCreditsLabel.text = "\(UserService.user.credits + purchasingCredits)"
-        totalAmountLabel.text = purchaseAmountInPennies.penniesToFormattedDollars()
-   
+        totalAmountLabel.text = AppConstants.premium_price.penniesToFormattedDollars()
     }
     
     func animateViewUpwards() {
         guard let window = UIApplication.shared.keyWindow else { return }
         
-        let height: CGFloat = 375
+        let height: CGFloat = containerView.frame.height
         let y = window.frame.height - height
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
@@ -135,14 +107,14 @@ class StorePopUpController: UIViewController {
         // invokes cloud function to get ephemeral key and customers stripe paymemt info
         let customerContext = STPCustomerContext(keyProvider: StripeAPI)
         paymentContext = STPPaymentContext(customerContext: customerContext, configuration: config, theme: .default())
-        paymentContext.paymentAmount = purchaseAmountInPennies
+        paymentContext.paymentAmount = AppConstants.premium_price
         print("current paymentContext.paymentAmount is \(paymentContext.paymentAmount)")
         paymentContext.delegate = self
         paymentContext.hostViewController = self
         
     }
     func setPaymentInfo() {
-        paymentContext.paymentAmount = purchaseAmountInPennies
+        paymentContext.paymentAmount = AppConstants.premium_price
     }
     
     func presentHomePage() {
@@ -152,12 +124,26 @@ class StorePopUpController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
+    func updatePremium() {
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
+        docRef.updateData([DataBase.has_premium: true]) { (err) in
+            if let err = err {
+                print("Error updating getting premium", err.localizedDescription)
+                self.presentPaymentErrorAlert(error: err)
+                return
+            }
+            print("Success getting premium")
+            self.presentSuccessAlert()
+        }
+    }
+    
     func presentSuccessAlert() {
-        ServerService.updatePurchaseHistory(numCreditsBought: purchasingCredits, totalPrice: purchaseAmountInPennies)
+//        ServerService.updatePurchaseHistory(numCreditsBought: AppConstants.premium_price, totalPrice: AppConstants.premium_price) // <-- UPDATE
         let message = "Thank you for your support!"
         let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
         let okay = UIAlertAction(title: "Okay", style: .default, handler: {(action) in
-            self.storeController.setCreditsLabel()
+            self.storeController.setLabels()
             self.handleDismiss2()
         })
         
@@ -166,7 +152,6 @@ class StorePopUpController: UIViewController {
     }
     
     func presentPaymentErrorAlert(error: Error?) {
-        removeCredits()
         let message = "There was an error completing you payment. Your card was not charged"
         
         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
@@ -199,42 +184,9 @@ class StorePopUpController: UIViewController {
             self.confirmPurchaseButton.backgroundColor = #colorLiteral(red: 0.1212944761, green: 0.1292245686, blue: 0.141699791, alpha: 1)
         }
     }
-    
-    func removeCredits() {
-        let db = Firestore.firestore()
-        let docRef = db.collection(DataBase.User).document(UserService.user.email)
-
-        let credits = UserService.user.credits
-        let newTotalCredits = credits - purchasingCredits
-
-        docRef.setData([DataBase.credits: newTotalCredits], merge: true)
-    }
-    
-    func successfullyAddCredits(dispatchGroup dg: DispatchGroup) -> Bool {
-        dg.enter()
-        let db = Firestore.firestore()
-        let docRef = db.collection(DataBase.User).document(UserService.user.email)
-
-        let credits = UserService.user.credits
-        let newTotalCredits = credits + purchasingCredits
         
-        var returnValue = true
-
-        docRef.setData([DataBase.credits: newTotalCredits], merge: true) { (error) in
-            if let _ = error {
-                returnValue = false
-                let message = "Unable to add credits. Your car was not charged."
-                self.displayError(title: "Error Adding Credits", message: message)
-            }
-            dg.leave()
-        }
-        return returnValue
-    }
-    
-    
     func processPayment(paymentContext: STPPaymentContext) {
         let dg = DispatchGroup()
-        if !successfullyAddCredits(dispatchGroup: dg) { return }
         
         dg.notify(queue: .main) {
             // process payment
@@ -285,6 +237,8 @@ class StorePopUpController: UIViewController {
         }
         
         if confirmPurchaseButton.titleLabel?.text == "Pay" {
+//            showApplePay()
+
             paymentContext.requestPayment()
         }
     }
@@ -298,7 +252,7 @@ extension StorePopUpController: STPPaymentContextDelegate {
         
         // If there is a selected payment option
         if  paymentContext.selectedPaymentOption?.label != nil {
-            print("found \(paymentContext.selectedPaymentOption?.label ?? "")")
+            print("found \(paymentContext.selectedPaymentOption?.label ?? "")", applePayPresented)
             paymentMethodButton.setTitle(paymentContext.selectedPaymentOption?.label, for: .normal)
             
             let label = paymentContext.selectedPaymentOption?.label
@@ -306,6 +260,7 @@ extension StorePopUpController: STPPaymentContextDelegate {
             if label == "Apple Pay" {
                 // If apple payment screen is currently being shown
                 if applePayPresented {
+                    print("track my unlimited")
                     processPayment(paymentContext: self.paymentContext)
                     return
                 }
@@ -357,7 +312,7 @@ extension StorePopUpController: STPPaymentContextDelegate {
         let idempotency = UUID().uuidString.replacingOccurrences(of: "-", with: "")
         let data: [String: Any] = [
             "email": UserService.user.email,
-            "total": purchaseAmountInPennies,
+            "total": AppConstants.premium_price,
             "customer_id": UserService.user.stripeId,
             "idempotency": idempotency,
             "source": paymentResult.source.stripeID
@@ -382,7 +337,7 @@ extension StorePopUpController: STPPaymentContextDelegate {
             presentPaymentErrorAlert(error: error)
             return
         case .success:
-            presentSuccessAlert()
+            updatePremium()
             return
         case .userCancellation:
             return

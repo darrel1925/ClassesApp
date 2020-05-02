@@ -46,19 +46,19 @@ class Course{
         self.room = inputArr[10]
     }
     
-    init(courseDict: [String: String]) {
+    init(courseDict: [String: Any]) {
         
-        self.course_code = courseDict[DataBase.course_code] ?? ""
-        self.course_title = courseDict[DataBase.course_title] ?? ""
-        self.course_name = courseDict[DataBase.course_name] ?? ""
-        self.course_type = courseDict[DataBase.course_type] ?? ""
-        self.section = courseDict[DataBase.section] ?? ""
-        self.units = courseDict[DataBase.units] ?? ""
-        self.professor = courseDict[DataBase.professor] ?? ""
-        self.days = courseDict[DataBase.days] ?? ""
-        self.class_time = courseDict[DataBase.class_time] ?? ""
-        self.status = courseDict[DataBase.curr_status] ?? ""
-        self.room = courseDict[DataBase.room] ?? ""
+        self.course_code = courseDict[DataBase.course_code] as? String ?? ""
+        self.course_title = courseDict[DataBase.course_title] as? String ?? ""
+        self.course_name = courseDict[DataBase.course_name] as? String ?? ""
+        self.course_type = courseDict[DataBase.course_type] as? String ?? ""
+        self.section = courseDict[DataBase.section] as? String ?? ""
+        self.units = courseDict[DataBase.units] as? String ?? ""
+        self.professor = courseDict[DataBase.professor] as? String ?? ""
+        self.days = courseDict[DataBase.days] as? String ?? ""
+        self.class_time = courseDict[DataBase.class_time] as? String ?? ""
+        self.status = courseDict[DataBase.curr_status] as? String ?? ""
+        self.room = courseDict[DataBase.room] as? String ?? ""
         
     }
     

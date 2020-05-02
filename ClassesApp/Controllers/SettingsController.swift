@@ -21,6 +21,10 @@ class SettingsController: UIViewController {
         setUpGestures()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        tableView.reloadData() // incase they update their school
+    }
+    
     func setUpTableView(){
         tableView.delegate = self
         tableView.dataSource = self
@@ -34,6 +38,7 @@ class SettingsController: UIViewController {
         backgroundView.addGestureRecognizer(swipe1)
         navigationController?.navigationBar.addGestureRecognizer(swipe2)
     }
+    
     
     func presentTermsController() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "TermsController") as! TermsController
@@ -112,6 +117,8 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             case 2:
                 cell.titleLabel.text = "School"
                 cell.infoLabel.text = "\(UserService.user.school)"
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .gray
                 return cell
             default:
                 return cell
@@ -193,11 +200,21 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = indexPath.row
         let section = indexPath.section
-        
+        tableView.deselectRow(at: indexPath, animated: true)
         switch section {
+        case 1:
+            switch row {
+            case 2:
+                let changeSchoolVC = ChangeSchoolController()
+                changeSchoolVC.modalPresentationStyle = .overFullScreen
+                changeSchoolVC.settingsVC = self
+                self.present(changeSchoolVC, animated: true, completion: nil)
+                return
+            default:
+                return
+            }
         case 3:
             print("clicked \(row) \(section)")
-            tableView.deselectRow(at: indexPath, animated: true)
             switch row {
             case 0:
                 let toggleEmailsVC = ToggleEmailsController()
@@ -211,7 +228,6 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
                 return
             }
         case 5:
-            tableView.deselectRow(at: indexPath, animated: true)
             switch row {
             case 0: // Purchase History
                 let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
@@ -227,7 +243,6 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
                 break
             }
         case 7:
-            tableView.deselectRow(at: indexPath, animated: true)
             switch row {
             case 0: // Privacy Policy
                 presentPrivacyController()
@@ -241,7 +256,6 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         }
     }
 }
-
 
 
 

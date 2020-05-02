@@ -17,6 +17,7 @@ class HomePageController: UIViewController {
     @IBOutlet weak var backgroundView: RoundedView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var leftForegroundView: UIView!
+    @IBOutlet weak var unlimitedLabel: UILabel!
     
     let addClassLauncher = AddClassLauncher()
     let transition = SlideInTransition()
@@ -25,28 +26,36 @@ class HomePageController: UIViewController {
     var addClassesisPresented = false
     var labelHasBeenPresented = false
     var refreshControl: UIRefreshControl?
-    var courseCodes = [String]()
-    var courseStatus = [String]()
+    var courses = [Course]()
     
     var lastClick: TimeInterval!
     var lastIndexPath: IndexPath!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        quarterLabel.text = "\(AppConstants.quarter.capitalizingFirstLetter()) \(AppConstants.year.capitalizingFirstLetter())"
-        
-        addLabel()
+        setUpAddLabel()
+        setLabels()
         setUpNavController()
         setUpTableView()
         setUpGestures()
-        UserService.generateReferralLink()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        setLabels()
         refreshTableView()
         addClassesisPresented = false
+    }
+    
+    func setLabels() {
+        
+        quarterLabel.text = "\(UserService.user.school) \(AppConstants.quarter.capitalizingFirstLetter()) \(AppConstants.year.capitalizingFirstLetter())"
+        if !UserService.user.hasPremium {
+            unlimitedLabel.isHidden = true
+        }
+        else {
+            unlimitedLabel.isHidden = false
+        }
     }
     
     func setUpGestures() {
@@ -93,23 +102,11 @@ class HomePageController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func presentDeleteAlert(atIndexPath indexPath: IndexPath) {
-        let message = "Are you sure you would like to remove \(courseCodes[indexPath.row])? \n\nYou will be able to track this course again for the rest of the term for no additional cost."
-        
-        let alert = UIAlertController(title: "Delete \(self.courseCodes[indexPath.row])", message: message, preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
-        let deleteAction = UIAlertAction(title: "Delete", style: .default, handler: {_ in
-            print("Deleted")
-            ServerService.removeClassesFromFirebase(withClasses: [self.courseCodes[indexPath.row]])
-            self.courseCodes.remove(at: indexPath.row)
-            self.courseStatus.remove(at: indexPath.row)
-            self.tableView.deleteRows(at: [indexPath], with: .automatic)
-        })
-        
-        alert.addAction(cancelAction)
-        alert.addAction(deleteAction)
-        
-        self.present(alert, animated: true, completion: nil)
+    func removeClass(atIndexPath indexPath: IndexPath) {
+        ServerService.removeClassesFromFirebase(withCourseCodes: [self.courses[indexPath.row].course_code])
+        self.courses.remove(at: indexPath.row)
+        self.tableView.deleteRows(at: [indexPath], with: .automatic)
+        toggleNoClassLabel()
     }
     
     func presentNotifications() {
@@ -140,9 +137,10 @@ class HomePageController: UIViewController {
     }
     
     func presentShareController() {
-        let shareStr = "URL for appl download goes here :p"
-        let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
-        self.present(sharingController, animated: true, completion: nil)
+        let vc = storyboard?.instantiateViewController(withIdentifier: "ShareController") as! ShareController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
     }
     
     func presentHowItWorks() {
@@ -191,17 +189,49 @@ class HomePageController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
+    
+    func presentWebController()
+    {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "WebController") as! WebController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
+    }
+
+    func presentWebControllerAlert()
+    {
+        let title = "Present Your Sign Up Page"
+        let alert = UIAlertController(title: title, message: "", preferredStyle: .alert)
+        let yesAction = UIAlertAction(title: "Yes!", style: .default, handler: {_ in
+            self.presentWebController()
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(yesAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func presentClassDetailController(course: Course, indexPath: IndexPath) {
+        let classDetailVC = ClassDetailController()
+        classDetailVC.modalPresentationStyle = .overFullScreen
+        classDetailVC.course = course
+        classDetailVC.indexPath = indexPath
+        classDetailVC.homeVC = self
+        self.present(classDetailVC, animated: true, completion: nil)
+    }
+    
     func toggleNoClassLabel(){
-        if self.courseCodes.count > 0 {
+        if self.courses.count > 0 {
             self.noClassLabel.isHidden = true
         }
         else {
-            if !self.labelHasBeenPresented { self.addLabel() }
+            if !self.labelHasBeenPresented { self.setUpAddLabel() }
             self.noClassLabel.isHidden = false
         }
     }
     
-    func addLabel() {
+    func setUpAddLabel() {
         guard let window = UIApplication.shared.keyWindow else { return }
         
         noClassLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 250, height: 350))
@@ -273,7 +303,7 @@ class HomePageController: UIViewController {
                 
             case "Credits":
                 self.presentCredits()
-                
+                                
             default:
                 print("here")
                 return
@@ -286,10 +316,8 @@ class HomePageController: UIViewController {
     
     @objc func refreshTableView() {
         let dispatchGroup = DispatchGroup()
-        courseCodes.removeAll()
-        courseStatus.removeAll()
+        courses.removeAll()
         ServerService.getClassStatus(withGroup:dispatchGroup, homeVC: self)
-        
         
         dispatchGroup.notify(queue: .main) {
             print("reloading")
@@ -313,9 +341,14 @@ class HomePageController: UIViewController {
     }
     
     @IBAction func addClassClicked(_ sender: Any) {
-        presentAddClassesController()
+        
+        if UserService.user.hasPremium || UserService.user.courseCodes.count ==  0{
+            presentAddClassesController()
+            return
+        }
+        
+        presentStore()
     }
-    
     
     @IBAction func menuClicked(_ sender: Any) {
         slideInMenu()
@@ -325,17 +358,18 @@ class HomePageController: UIViewController {
 
 extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.courseCodes.count
+        return self.courses.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
         let cell = tableView.dequeueReusableCell(withIdentifier: "TrackedCell") as! TrackedCell
+        let course = courses[row]
         
-        cell.courseCodeLabel.text = self.courseCodes[row]
-        cell.statusLabel.text = self.courseStatus[row]
+        cell.courseCodeLabel.text = "\(course.course_name) \(course.course_type) \(course.section)"
+        cell.statusLabel.text = self.courses[row].status
         cell.cellView.layer.cornerRadius = 5
-        updateUI(withCell: cell, withResponce: self.courseStatus[row])
+        updateUI(withCell: cell, withResponce: self.courses[row].status)
         return cell
     }
     
@@ -345,40 +379,31 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            self.presentDeleteAlert(atIndexPath: indexPath)
+            self.removeClass(atIndexPath: indexPath)
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let now: TimeInterval = Date().timeIntervalSince1970
-        if self.lastClick == nil {
-            self.lastClick = now
-            self.lastIndexPath = indexPath
-            return
-        }
-        
-        if (now - self.lastClick < 0.4) && (self.lastIndexPath?.row == indexPath.row )
-        {
-            self.presentDeleteAlert(atIndexPath: indexPath)
-        }
-        self.lastClick = now
-        self.lastIndexPath = indexPath
-
+        presentClassDetailController(course: courses[indexPath.row], indexPath: indexPath)
+    }
+    
+    func didTapOpenOrWaitlist() -> Bool {
+        return true
     }
     
     func updateUI(withCell cell: TrackedCell, withResponce response: String) {
         print("got response \(response)")
         switch response {
-        case Response.OPEN:
+        case Status.OPEN:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.2520467252)
             return
-        case Response.Waitl:
+        case Status.Waitl:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.248053115)
             return
-        case Response.FULL:
+        case Status.FULL:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.2456195088)
             return
-        case Response.NewOnly:
+        case Status.NewOnly:
             cell.cellView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.2466803115)
             return
         default:
@@ -391,23 +416,15 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
 extension HomePageController: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         transition.isPresenting = true
+        print(transition.isPresenting)
         return transition
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         transition.isPresenting = false
+        print(transition.isPresenting)
         return transition
     }
-}
-
-extension HomePageController: UIGestureRecognizerDelegate {
-    
-    //    private func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
-    //        if touch.view?.isDescendant(of: self.tableView) == true {
-    //        return false
-    //    }
-    //    return true
-    //    }
 }
 
 extension HomePageController: MFMailComposeViewControllerDelegate {

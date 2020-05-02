@@ -14,63 +14,50 @@ import FirebaseFirestore
 
 class StoreController: UIViewController {
     
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var creditsLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var shareDescription: UILabel!
+    @IBOutlet weak var buyButton: RoundedButton!
     @IBOutlet weak var backgroundView: RoundedView!
+    @IBOutlet weak var containerView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true        
-        setUpTableView()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        containerView.layer.cornerRadius = 20
         setUpGestures()
-        setCreditsLabel()
+        setLabels()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setCreditsLabel()
+        setLabels()
     }
-    
-    func setUpTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-    }
-    
-    func setCreditsLabel() {
-        if UserService.user.credits == 0 {
-         creditsLabel.text = "You have \(UserService.user.credits) Credits."
-        }
-        else if UserService.user.credits == 1 {
-            creditsLabel.text = "You have \(UserService.user.credits) Credit!"
-        }
-        else {
-            creditsLabel.text = "You have \(UserService.user.credits) Credits!"
+
+    func setLabels() {
+        descriptionLabel.text = "Go premium to track unlimited classes for \(AppConstants.quarter) \(AppConstants.year)."
+        
+        if UserService.user.hasPremium {
+            buyButton.setTitle("You're all set!", for: .normal)
+            shareDescription.text = "If you're enjoying the app, we would love for you to share. It only takes one click!"
         }
     }
     
     func setUpGestures() {
         let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
-        let swipe2: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
         swipe1.direction = .down
-        swipe2.direction = .down
-        backgroundView.addGestureRecognizer(swipe1)
-        navigationController?.navigationBar.addGestureRecognizer(swipe2)
+        navigationController?.navigationBar.addGestureRecognizer(swipe1)
     }
     
-    func presentStorePopUpVC(row: Int) {
+    func presentShareController() {
+        let shareStr = ReferralLink.message
+        let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
+        self.present(sharingController, animated: true, completion: nil)
+    }
+    
+    func presentStorePopUpVC() {
         let storePopUpVC = StorePopUpController()
         storePopUpVC.modalPresentationStyle = .overFullScreen
         storePopUpVC.storeController = self
-        switch row {
-        case 0:
-            storePopUpVC.purchasingCredits = 1
-        case 1:
-            storePopUpVC.purchasingCredits = 3
-        case 2:
-            storePopUpVC.purchasingCredits = 10
-        default:
-            return
-        }
         self.present(storePopUpVC, animated: true, completion: nil)
     }
     
@@ -78,56 +65,17 @@ class StoreController: UIViewController {
         dismiss(animated: true, completion: nil )
     }
     
+    @IBAction func buyButtonClicked(_ sender: Any) {
+        if UserService.user.hasPremium { return }
+        presentStorePopUpVC()
+    }
+    
+    @IBAction func shareClicked(_ sender: Any) {
+        presentShareController()
+    }
+    
     @IBAction func exitButtonClicked(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
 }
 
-extension StoreController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let row = indexPath.row
-        let cell = tableView.dequeueReusableCell(withIdentifier: "StoreCell") as! StoreCell
-        cell.delegate = self
-        cell.containerView.layer.cornerRadius = 10
-        cell.purchaseButton.layer.cornerRadius = 10
-        
-        switch row {
-        case 0:
-            cell.getCreditsLabel.text = "Get 1 Credit"
-            cell.priceLabel.text = AppConstants.price_map["1"]?.penniesToFormattedDollars()
-            cell.purchaseButton.setTitle("Get Credit", for: .normal)
-            return cell
-        case 1:
-            cell.getCreditsLabel.text = "Get 3 Credits"
-            cell.priceLabel.text = AppConstants.price_map["3"]?.penniesToFormattedDollars()
-            return cell
-        case 2:
-            cell.getCreditsLabel.text = "Get 10 Credits"
-            cell.priceLabel.text = AppConstants.price_map["10"]?.penniesToFormattedDollars()
-            return cell
-        default:
-            return cell
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let row = indexPath.row
-        presentStorePopUpVC(row: row)
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 95
-    }
-}
-
-extension StoreController: StoreCellDelegate {
-    func didTapGetCredits(row: Int?) {
-        if let row = row {
-            self.presentStorePopUpVC(row: row)
-        }
-    }
-}

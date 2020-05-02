@@ -7,24 +7,48 @@
 //
 
 import UIKit
+import WebKit
 
 class WebController: UIViewController {
-
+        
+    var urlStr: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setUpGestures()
+        
+        
+        presentWebView()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    fileprivate func setUpGestures() {
+        let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
+        swipe1.direction = .down
+        navigationController?.navigationBar.addGestureRecognizer(swipe1)
     }
-    */
-
+    
+    fileprivate func presentWebView() {
+        if let urlStr =  AppConstants.registration_pages[UserService.user.school] {
+            if urlStr == "" { return }
+            
+            let webView = WKWebView(frame: view.frame)
+            view.addSubview(webView)
+            
+            let url = URL(string: urlStr)!
+            let request = URLRequest(url: url)
+            webView.load(request)
+        }
+        else {
+            print("Did not pass in a string")
+        }
+    }
+    
+    @objc func handleDismiss() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func exitClicked(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+    
 }
