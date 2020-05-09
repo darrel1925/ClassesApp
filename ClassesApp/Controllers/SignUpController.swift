@@ -101,13 +101,6 @@ class SignUpController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
-    func presentHomePage() {
-        let vc = storyboard?.instantiateViewController(withIdentifier: "HomePageController") as! HomePageController
-        let navController = UINavigationController(rootViewController: vc)
-        navController.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
-        self.present(navController, animated: true, completion: nil)
-    }
-    
     func presentVerificationSentAlert(user: FirebaseAuth.User) {
         let message = "Verify your email to begin tracking!"
         let alert = UIAlertController(title: "Verification Email Sent", message: message, preferredStyle: .alert)
@@ -128,15 +121,11 @@ class SignUpController: UIViewController {
     
     func presentNextPage(user: FirebaseAuth.User) {
         // If user has not seen welcome page
-        if !UserService.user.seenWelcomePage {
-            let db = Firestore.firestore()
-            let docRef = db.collection(DataBase.User).document(UserService.user.email)
-            docRef.updateData([DataBase.seen_welcome_page: true])
-            presentWelcomeScreen()
-            return
-        }
-        
-        presentHomePage()
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
+        docRef.updateData([DataBase.seen_welcome_page: true])
+        presentWelcomeScreen()
+        return
     }
     
     func sendVerificationEmail(user: FirebaseAuth.User) {

@@ -50,8 +50,6 @@
 		9A9472B7242C1E7C004927DD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A9472B5242C1E7C004927DD /* LaunchScreen.storyboard */; };
 		9A9472C2242C1E7C004927DD /* ClassesAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9472C1242C1E7C004927DD /* ClassesAppTests.swift */; };
 		9A9472CD242C1E7C004927DD /* ClassesAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9472CC242C1E7C004927DD /* ClassesAppUITests.swift */; };
-		9A9FD2FC24380E240011F8A4 /* CheckOutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9FD2FB24380E240011F8A4 /* CheckOutController.swift */; };
-		9A9FD2FF243815650011F8A4 /* StripeCart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9FD2FE243815650011F8A4 /* StripeCart.swift */; };
 		9AA2116E244EEA6B00A49606 /* PrivacyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA2116D244EEA6B00A49606 /* PrivacyController.swift */; };
 		9AAD828D2431B41600C66838 /* TrackedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD828C2431B41600C66838 /* TrackedCell.swift */; };
 		9AAD828F2431C66C00C66838 /* AddClassLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD828E2431C66C00C66838 /* AddClassLauncher.swift */; };
@@ -148,8 +146,6 @@
 		9A9472C8242C1E7C004927DD /* ClassesAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClassesAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9472CC242C1E7C004927DD /* ClassesAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassesAppUITests.swift; sourceTree = "<group>"; };
 		9A9472CE242C1E7C004927DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A9FD2FB24380E240011F8A4 /* CheckOutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckOutController.swift; sourceTree = "<group>"; };
-		9A9FD2FE243815650011F8A4 /* StripeCart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeCart.swift; sourceTree = "<group>"; };
 		9AA2116D244EEA6B00A49606 /* PrivacyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyController.swift; sourceTree = "<group>"; };
 		9AAD828C2431B41600C66838 /* TrackedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedCell.swift; sourceTree = "<group>"; };
 		9AAD828E2431C66C00C66838 /* AddClassLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddClassLauncher.swift; sourceTree = "<group>"; };
@@ -385,7 +381,6 @@
 				9A8CF976242C490F008D0DC6 /* SignUpController.swift */,
 				9A8CF980242C78FE008D0DC6 /* HomePageController.swift */,
 				9AAD8299243295E700C66838 /* AddClassController.swift */,
-				9A9FD2FB24380E240011F8A4 /* CheckOutController.swift */,
 				9A1BA9EA243420400087622D /* SettingsController.swift */,
 				9AEEB596243C527E00F5E6FE /* NotificationController.swift */,
 				9A73F1CC2445A4980004AF54 /* StoreController.swift */,
@@ -403,7 +398,6 @@
 		9A9FD2FD243815530011F8A4 /* Stripe */ = {
 			isa = PBXGroup;
 			children = (
-				9A9FD2FE243815650011F8A4 /* StripeCart.swift */,
 				9A40E7F1243857B90070A410 /* StripeAPI.swift */,
 			);
 			path = Stripe;
@@ -691,7 +685,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A8CF977242C490F008D0DC6 /* SignUpController.swift in Sources */,
-				9A9FD2FC24380E240011F8A4 /* CheckOutController.swift in Sources */,
 				9AFB0C22245CC849008D1297 /* Animations.swift in Sources */,
 				9AEEB595243C515900F5E6FE /* NotificationCell.swift in Sources */,
 				9AAD828D2431B41600C66838 /* TrackedCell.swift in Sources */,
@@ -731,7 +724,6 @@
 				9AAD82982432901F00C66838 /* Styles.swift in Sources */,
 				9AEEB597243C527E00F5E6FE /* NotificationController.swift in Sources */,
 				9A9472AD242C1E76004927DD /* SceneDelegate.swift in Sources */,
-				9A9FD2FF243815650011F8A4 /* StripeCart.swift in Sources */,
 				9AC4A955244B92410019921F /* WelcomeScreen2.swift in Sources */,
 				9A08BCA22446102C00DC4B40 /* StorePopUpController.swift in Sources */,
 				9AAD828F2431C66C00C66838 /* AddClassLauncher.swift in Sources */,
@@ -917,7 +909,7 @@
 				CODE_SIGN_ENTITLEMENTS = ClassesApp/ClassesApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -941,7 +933,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

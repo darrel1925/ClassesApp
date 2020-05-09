@@ -58,7 +58,7 @@ class ClassDetailController: UIViewController {
         titleLabel.text = course.course_title
         unitsLabel.text = course.units
         professorLabel.text = course.professor
-        codeLabel.text = course.course_code
+        codeLabel.text = course.code
         sectionLabel.text = "\(course.course_type) \(course.section)"
         roomLabel.text = course.room
         statusLabel.text = course.status
@@ -77,7 +77,7 @@ class ClassDetailController: UIViewController {
     }
 
     func animateIn() {
-        coppiedLabel.text = "\(course.course_code) copied to clipboard"
+        coppiedLabel.text = "\(course.code) copied to clipboard"
         print("clciked")
         UIView.animate(withDuration: 0.5,
                        delay: 0.0,
@@ -109,7 +109,7 @@ class ClassDetailController: UIViewController {
     }
     
     func removeClass(atIndexPath indexPath: IndexPath) {
-        let course_code = homeVC.courses[indexPath.row].course_code
+        let course_code = homeVC.courses[indexPath.row].code
         ServerService.removeClassesFromFirebase(withCourseCodes: [course_code])
         homeVC.courses.remove(at: indexPath.row)
         homeVC.tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -133,7 +133,7 @@ class ClassDetailController: UIViewController {
     }
     
     @IBAction func copyButtonClicked(_ sender: Any) {
-        UIPasteboard.general.string = "\(course.course_code)"
+        UIPasteboard.general.string = "\(course.code)"
         animateIn()
     }
     

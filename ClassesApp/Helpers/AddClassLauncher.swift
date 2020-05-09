@@ -66,8 +66,4 @@ class AddClassLauncher: UIViewController {
 
         }
     }
-    
-//    override init(){
-//        super.init()
-//    }
 }

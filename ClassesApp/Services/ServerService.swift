@@ -13,7 +13,7 @@ import Socket
 let ServerService = _ServerService()
 
 final class _ServerService {
-
+    
     let dispatchGroup = DispatchGroup()
     
     var schoolParam : String {
@@ -27,29 +27,6 @@ final class _ServerService {
         }
     }
     
-    enum ReturnType: String {
-        case ConnectionError1 // could not read what was returned from server
-        case ConnectionError2 // problem with code writing data back
-        case NetworkError1    // server is not up and runnung
-        case NetworkError2    // problem with users internet connection
-        case AddComplete      // add operation complete
-    }
-    
-    func getPort() -> Int {
-        let ports = AppConstants.server_ports
-        return ports[Int.random(in: 0..<ports.count)]
-    }
-    
-    func constuctInput(withAction action: String, withCode course_code: String) -> String {
-        
-        let email = UserService.user.email
-        let quarter = AppConstants.quarter
-        let year = AppConstants.year
-        let school = UserService.user.school
-        print("SENDING -> \(AppConstants.connect_pswd) \(action)\(email),\(quarter),\(year),\(course_code),\(school),,,")
-        return "\(AppConstants.connect_pswd) \(action)\(email),\(quarter),\(year),\(course_code),\(school),,,"
-    }
-    
     func getClassStatus(withGroup dispatchGroup: DispatchGroup, homeVC: HomePageController) {
         let db = Firestore.firestore()
         homeVC.courses.removeAll()
@@ -60,11 +37,11 @@ final class _ServerService {
             docRef.getDocument { (document, error) in
                 if let document = document, document.exists {
                     guard let data = document.data() else { print("couldn't do it"); return }
-
+                    
                     print(data)
                     let course = Course(courseDict: data)
                     homeVC.courses.append(course)
-
+                    
                     print("Found course: \(cls) status: \(course.status)")
                     dispatchGroup.leave()
                     
@@ -75,62 +52,14 @@ final class _ServerService {
             }
         }
     }
-    
-    func makeConnection(withAction action: String, withInput input: String) -> String {
-        var mySocket: Socket
         
-        do {
-            print("will create")
-            mySocket = try Socket.create()
-            mySocket.readBufferSize = 32768
-            print("created")
-            do {
-                let server_ip = AppConstants.server_ip
-//                let server_port = getPort()
-                let server_port = AppConstants.server_port
-                print("port #: \(AppConstants.server_port)")
-                try mySocket.connect(to: server_ip, port: Int32(server_port))
-                
-                do {
-                    try mySocket.write(from: input)
-                    
-                    if action == "get"{
-                        do {
-                            var data: Data = Data()
-                            _ = try mySocket.read(into: &data)
-                            let response = String(data: data, encoding: .utf8)
-                            return response ?? ""}
-                        catch { // could not read what was returned from server
-                            mySocket.close()
-                            return ReturnType.ConnectionError1.rawValue}
-                    }
-                    
-                    if action == "add" {
-                        return ReturnType.AddComplete.rawValue
-                    }
-                    
-                }
-                catch { // problem with code writing data back
-                    mySocket.close()
-                    return ReturnType.ConnectionError2.rawValue}
-            }
-            catch { // server is not up and runnung
-                mySocket.close()
-                return ReturnType.NetworkError1.rawValue}
-        }
-        catch { // problem with users internet connection
-            return ReturnType.NetworkError2.rawValue}
-        
-        return ""
-    }
-    
     func addClassToFirebase(withCourse course: Course, viewController controller: UIViewController, withDiscussions discussions: [String] = [], withLabs labs: [String] = []) -> Bool {
         dispatchGroup.enter()
         let db = Firestore.firestore()
         var returnValue = true // <-- indicates success or failure
         
         // Find course in db
-        let _ = db.collection(ServerService.schoolParam).whereField(DataBase.course_code, isEqualTo: course.course_code)
+        let _ = db.collection(ServerService.schoolParam).whereField(DataBase.code, isEqualTo: course.code)
             .getDocuments() { (querySnapshot, err) in
                 if let _ = err {
                     let message = "There was a problem tracking your class, please try again later."
@@ -145,7 +74,7 @@ final class _ServerService {
                     // If class is not being tracked by anyone
                     if docs.count == 0 {
                         // Create a new class
-                        let docRef = db.collection(ServerService.schoolParam).document(course.course_code)
+                        let docRef = db.collection(ServerService.schoolParam).document(course.code)
                         var data = course.modelToData()
                         data[DataBase.emails] = [UserService.user.email]
                         
@@ -159,7 +88,7 @@ final class _ServerService {
                             }
                         }
                     }
-                    // If class is already being tracked
+                        // If class is already being tracked
                     else {
                         let doc = querySnapshot!.documents[0]
                         var emails = doc.data()[DataBase.emails] as! [String]
@@ -185,7 +114,7 @@ final class _ServerService {
                 return
             }
             var classDict = doc?.data()![DataBase.classes]  as! [String: Any]
-            classDict.updateValue(discussions + labs, forKey: course.course_code)
+            classDict.updateValue(discussions + labs, forKey: course.code)
             docRef.setData([DataBase.classes: classDict], merge: true)
         }
         print("add classes finished")
@@ -205,7 +134,7 @@ final class _ServerService {
             }
             
             guard var classes = doc?[DataBase.classes] as? [String : [Any]] else { return }
-                        
+            
             for code in codes {
                 // If class is in user's classes dict
                 if classes.keys.contains(code) {
@@ -223,8 +152,8 @@ final class _ServerService {
             
             // remove email from classes
             for code in codes {
-
-                let _ = db.collection(ServerService.schoolParam).whereField(DataBase.course_code, isEqualTo: code).getDocuments { (querySnapshot, error) in
+                
+                let _ = db.collection(ServerService.schoolParam).whereField(DataBase.code, isEqualTo: code).getDocuments { (querySnapshot, error) in
                     if querySnapshot?.documents.count ?? 0 > 0 { // on success | if query doesnt exist, default to 0
                         print("doc1: \(querySnapshot!.documents)\n\n")
                         print("doc2: \(querySnapshot!.documents[0].data())\n\n")
@@ -267,7 +196,7 @@ final class _ServerService {
             DataBase.date: Date().toString(),
             DataBase.price: "\(total)"
         ]
-            purchaseHistory.append(data)
+        purchaseHistory.append(data)
         
         let db = Firestore.firestore()
         let docRef = db.collection(DataBase.User).document(UserService.user.email)
@@ -275,24 +204,42 @@ final class _ServerService {
         docRef.setData([DataBase.purchase_history : purchaseHistory], merge: true)
     }
     
-    func addToTrackedClasses(courses: [Course]) {
-//        let db = Firestore.firestore()
-//        let docRef = db.collection(DataBase.User).document(UserService.user.email)
-//
-//        var updatedTrackedClasses = UserService.user.trackedClasses
-//
-//        for course in courses {
-//            var data = course.modelToData()
-//            data[DataBase.date] = Date().toString()
-//            updatedTrackedClasses.append(data as? [String : String] ?? [:])
-//        }
-//
-//        docRef.updateData([DataBase.tracked_classes: updatedTrackedClasses]) { (err) in
-//            if let err = err {
-//                print("Error updatign tracked classes", err.localizedDescription)
-//                return
-//            }
-//            print("Success updating trackedClasses")
-//        }
+    // parameters are the types of data that you want back from this function
+    func getClassInfo(course_code: String, completionHandler: @escaping ([String: Any]?, Bool, Error?) -> Void) {
+        // Create url that will get parsed and give you the parameters
+        print("entered get info")
+        var components = URLComponents()
+        components.scheme = Routes.scheme
+        components.host = AppConstants.server_ip
+        components.path = "/\(UserService.user.school)/\(Routes.class_info ?? "")"
+        
+        let schoolQueryItem = URLQueryItem(name: DataBase.school, value: UserService.user.school)
+        let quarterQueryItem = URLQueryItem(name: DataBase.quarter, value: AppConstants.quarter)
+        let courseCodeQueryItem = URLQueryItem(name: DataBase.code, value: course_code)
+        let yearCodeQueryItem = URLQueryItem(name: DataBase.year, value: AppConstants.year)
+        components.queryItems = [schoolQueryItem, quarterQueryItem, courseCodeQueryItem,yearCodeQueryItem]
+        
+        // Full url with all parameters included
+        guard let url = components.url else { return }
+        print("url is ", url)
+        
+        let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+            if let error = error {
+                print("WE HAVE ERROR", error.localizedDescription)
+                completionHandler(nil, false, error)
+            }
+            
+            print("no error")
+            guard let data = data else { return }
+            print(data)
+            do {
+                let json =  try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                completionHandler(json, false, nil)
+            }
+            catch {
+                completionHandler(nil, true, error)
+            }
+        }
+        task.resume()
     }
 }

@@ -16,29 +16,20 @@ class AddClassController: UIViewController {
     
     @IBOutlet weak var checkAvailabilityButton: RoundedButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var trackClassesButton: RoundedButton!
     @IBOutlet weak var statusTitle: UILabel!
     @IBOutlet weak var courseCodeField: UITextField!
-    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var backgroundView: UIView!
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var quarterLabel: UILabel!
     
     var courses = [Course]()
-
-
+    
+    
     // Change store to get credits or go premium
     override func viewDidLoad() {
         super.viewDidLoad()
         quarterLabel.text = AppConstants.quarter.capitalizingFirstLetter()
         setUpButtons()
-        setUpTableView()
-        setUpGestures()
-    }
-    
-    func setUpTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
     }
     
     func setUpButtons() {
@@ -46,35 +37,8 @@ class AddClassController: UIViewController {
         checkAvailabilityButton.titleLabel?.numberOfLines = 1
         checkAvailabilityButton.titleLabel?.adjustsFontSizeToFitWidth = true
         checkAvailabilityButton.titleLabel?.lineBreakMode = .byClipping
+        courseCodeField.becomeFirstResponder()
     }
-    
-    func setUpGestures() {
-        let tap1: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-        let tap2: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-        let tap3: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-        let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-        let swipe2: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-        let swipe3: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-        
-        swipe1.direction = .down
-        swipe2.direction = .down
-        swipe3.direction = .down
-        
-        backgroundView.addGestureRecognizer(tap1)
-        backgroundView.addGestureRecognizer(swipe1)
-        stackView.addGestureRecognizer(swipe2)
-        stackView.addGestureRecognizer(tap2)
-        tableView.addGestureRecognizer(swipe3)
-        tableView.addGestureRecognizer(tap3)
-    }
-    
-    func presentStore() {
-        let vc = storyboard?.instantiateViewController(withIdentifier: "StoreController") as! StoreController
-        let navController = UINavigationController(rootViewController: vc)
-        navController.modalPresentationStyle = .fullScreen
-        self.present(navController, animated: true, completion: nil)
-    }
-    
     
     func presnentAddToList(course: Course) {
         let addToListVC = AddToListController()
@@ -83,98 +47,51 @@ class AddClassController: UIViewController {
         addToListVC.addClassVC = self
         self.present(addToListVC, animated: true, completion: nil)
     }
+    
+    func makeConnection() {
+        let code = courseCodeField.text!
+        let db = DispatchGroup()
+        var course: Course?
+        var classNotFound: Bool!
+        db.enter()
 
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    func updateUI(withResponce response: String) {
-        print("got response \(response)")
-        let chosenClass = courseCodeField.text ?? "no Text"
-        switch response {
-        case Status.OPEN:
-            backgroundView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.2520467252)
-            statusTitle.text = "\(chosenClass) is Open"
-            break
-        case Status.Waitl:
-            backgroundView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.248053115)
-            statusTitle.text = "\(chosenClass) is on Waitlist"
-            break
-        case Status.FULL:
-            backgroundView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.2456195088)
-            statusTitle.text = "\(chosenClass) is Full"
-            break
-        case Status.NewOnly:
-            backgroundView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.2466803115)
-            statusTitle.text = "\(chosenClass) is New Only"
-            break
-        default:
-            backgroundView.backgroundColor = #colorLiteral(red: 0.505957987, green: 0.01517132679, blue: 0.8248519059, alpha: 0.2461187101)
-            statusTitle.text = "Error: \(chosenClass) is not offered this quarter"
-            break
-        }
-    }
-    
-    func makeConnection(withCourseCode code: String, withAction action: String, withString input: String) {
-        
-        let serverResponse = ServerService.makeConnection(withAction: action, withInput: input)
-        
-        switch serverResponse {
-        case Status.Error:
-            let message = "\(code) is not offered. Double check that you typed in your code correctly."
-            self.displayError(title: "Class Not Offered", message: message)
-            activityIndicator.stopAnimating()
-            return
-        case "ConnectionError1": // could not read what was returned from server
-            let message = "Looks like there was an issue. If this continues, try opening and closing the app or contacting support!"
-            self.displayError(title: "Connection Error", message: message)
-            activityIndicator.stopAnimating()
-            return
-        case "ConnectionError2": // problem with code writing data back
-            let message = "This isn't your fault this one's on us. We're probably taking this time to make TrackMy a better app for you! Try again later while we work to get this fixed!"
-            self.displayError(title: "Connection Error", message: message)
-            activityIndicator.stopAnimating()
-            return
-        case "NetworkError1": // server is not up and runnung | <-- might be user's interner connection
-            let message = "Looks like there is a connection issue. Things to try:n\n1.Try again\n2. Check that you haev a reliable inernet connection\n3:Restart the app\n4:Contact suuport"
-            self.displayError(title: "Network Error", message: message)
-            activityIndicator.stopAnimating()
-            return
-        case "NetworkError2": // problem with users internet connection
-            let message = "Looks like there is a connection issue. Things to try:n\n1.Try again\n2. Check that you haev a reliable inernet connection\n3:Restart the app\n4:Contact suuport"
-            self.displayError(title: "Network Error", message: message)
-            activityIndicator.stopAnimating()
-            return
-        default:
-            break
-        }
-        
-        let course = Course(serverInput: serverResponse)
-        let status = course.status
-        
-        if [Status.Waitl, Status.OPEN, Status.FULL, Status.NewOnly].contains(status) {
-            print("updated vals \(course.status) | \(course.course_code)")
-//            activityIndicator.stopAnimating()
-            presnentAddToList(course: course)
+        ServerService.getClassInfo(course_code: code) { (json, notFound,error) in
+            if notFound {
+                classNotFound = true
+                db.leave()
+                return
+            }
+            else if error != nil {
+                db.leave()
+                return
+            }
+            
+            print(json ?? [:])
+            course = Course(courseDict: json ?? [:])
+            db.leave()
             return
         }
         
-        activityIndicator.stopAnimating()
-//        tableView.reloadData()
+        db.notify(queue: .main) {
+            self.activityIndicator.stopAnimating()
+
+            if let course = course { // success
+                self.presnentAddToList(course: course)
+            }
+            if classNotFound != nil{
+                let message = "\(code) not offered. Double check the course code you entered and try again."
+                self.displayError(title: "Class Not Found", message: message)
+            }
+            else { // failure
+                
+                let message = "Looks like there is a connection issue. Things to try:\n\n1. Restart the app\n2. Check that you have a reliable internet connection\n3. Contact support."
+                self.displayError(title: "Connection Error", message: message)
+            }
+        }
     }
-    
-//    func alreadyTrackingClasses() -> Bool {
-//        for code in Course.getCodes(courses: courses) {
-//            if UserService.user.courseCodes.contains(code){
-//                let message = "You are already tracking course \(code). Remove this course from the list before continuing."
-//                displayError(title: "Duplicate Class", message: message)
-//                return true
-//            }
-//        }
-//        return false
-//    }
-    
-    func sendRequest(withAction action: String) {
+        
+    @IBAction func checkAvailabilityClicked(_ sender: Any) {
+        activityIndicator.startAnimating()
         if courseCodeField.text?.isEmpty ?? true {
             activityIndicator.stopAnimating()
             let message = "Looks like you forgot to enter your course code. Let's try again!"
@@ -193,100 +110,13 @@ class AddClassController: UIViewController {
             self.displayError(title: "Duplicate Course.", message: message)
             return }
         
-        dismissKeyboard()
-        let courseCode = courseCodeField.text!
-        let input = ServerService.constuctInput(withAction: action, withCode: courseCode)
-        
-        makeConnection(withCourseCode: courseCode, withAction: action, withString: input)
+        makeConnection()
     }
-    
-    @IBAction func checkAvailabilityClicked(_ sender: Any) {
-        activityIndicator.startAnimating()
-        
-//        if !UserService.user.hasPremium && courses.count >= 1 {
-//            presentStore()
-//            return
-//        }
-        
-        sendRequest(withAction: "get")
-    }
-
-    
-//    @IBAction func trackClassesClicked(_ sender: Any) {
-
-//        if courses.count == 0 {
-//            let message = "Tap 'Check Availibility' before trying to track your classes"
-//            self.displayError(title: "No Classes Added.", message: message)
-//            return
-//        }
-        
-//        if alreadyTrackingClasses() { return }
-//
-//        var courseDict: [String: String] = [:]
-//        for i in stride(from: 0, to: courses.count, by: 1) {
-//            courseDict.updateValue(courses[i].status, forKey: courses[i].course_code)
-//        }
-        
-//        trackClasses()
-//    }
 }
 
 extension AddClassController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
         return false
-    }
-}
-
-extension AddClassController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return courses.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let row = indexPath.row
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TrackedCell") as! TrackedCell
-        let course = courses[row]
-        
-        cell.statusLabel.text = course.status
-        cell.courseCodeLabel.text = "\(course.course_name) \(course.course_type) \(course.section)"
-        updateCellColor(withCell: cell, withResponce: course.status, atRow: row)
-        cell.cellView.layer.cornerRadius = 5
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-
-//            self.courses.remove(at: indexPath.row)
-//            updateTrackClassLabel()
-            
-            self.tableView.deleteRows(at: [indexPath], with: .automatic)
-        }
-    }
-    
-    func updateCellColor(withCell cell: TrackedCell, withResponce response: String, atRow row: Int) {
-        /*
-         Updates the color of the rounded views the cells in the table view
-         */
-        print("got response \(response)")
-        if response == "" { return }
-        switch response {
-        case Status.OPEN:
-            cell.cellView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.2520467252)
-        case Status.Waitl:
-            cell.cellView.backgroundColor = #colorLiteral(red: 0.8425695398, green: 0.8208485929, blue: 0, alpha: 0.248053115)
-        case Status.FULL:
-            cell.cellView.backgroundColor = #colorLiteral(red: 0.8103429773, green: 0.08139390926, blue: 0.116439778, alpha: 0.2456195088)
-        case Status.NewOnly:
-            cell.cellView.backgroundColor = #colorLiteral(red: 0, green: 0.6157837616, blue: 0.9281850962, alpha: 0.2466803115)
-        default:
-            cell.cellView.backgroundColor = #colorLiteral(red: 0.505957987, green: 0.01517132679, blue: 0.8248519059, alpha: 0.2461187101)
-        }
     }
 }

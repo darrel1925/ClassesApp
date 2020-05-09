@@ -67,9 +67,9 @@ final class _UserService {
     func generateReferralLink() {
         // Create url that will get parsed and give you the parameters
         var components = URLComponents()
-        components.scheme = "https"
-        components.host = "www.apple.com" // should be appstore link
-        components.path = "/ios/app-store"
+        components.scheme = ReferralLink.scheme
+        components.host = ReferralLink.host // should be appstore link
+        components.path = ReferralLink.path ?? "/"
         
         let userInfoQueryItem = URLQueryItem(name: "email", value: UserService.user.email)
         components.queryItems = [userInfoQueryItem]
@@ -78,21 +78,21 @@ final class _UserService {
         guard let linkParameter = components.url else { return }
         
         // Create the big dynamic link
-        guard let shareLink = DynamicLinkComponents.init(link: linkParameter, domainURIPrefix: "https://trackmy.page.link") else { return }
+        guard let shareLink = DynamicLinkComponents.init(link: linkParameter, domainURIPrefix: ReferralLink.domainURIPrefix ?? "") else { return }
         
         if let bundleId = Bundle.main.bundleIdentifier {
             shareLink.iOSParameters = DynamicLinkIOSParameters(bundleID: bundleId)
         }
         
         // Where to direct users if app is not installed
-        shareLink.iOSParameters?.appStoreID = "962194608" // <-- Google phots adding comment =
+        shareLink.iOSParameters?.appStoreID = ReferralLink.appStoreID // <-- Google phots adding comment =
         
         // Used to present how link is displayed and to populate inbetween screen before app store
         shareLink.socialMetaTagParameters = DynamicLinkSocialMetaTagParameters()
-        shareLink.socialMetaTagParameters?.title = "TrackMy | Get notified when your class opens up!"
-        shareLink.socialMetaTagParameters?.descriptionText = "No more late-night discussions or bad professors. Let TrackMy get you the classes you deserve! Thank \(user.email) for the referral!"
+        shareLink.socialMetaTagParameters?.title = ReferralLink.metaTagTitle
+        shareLink.socialMetaTagParameters?.descriptionText = ReferralLink.metaTagDescription
         
-        if let imageURL = URL( string: "https://bitrebels.com/wp-content/uploads/2019/08/push-notifications-e-commerce-sales-header-image.png") {
+        if let imageURL = URL(string: ReferralLink.imageURL ?? "") {
             shareLink.socialMetaTagParameters?.imageURL = imageURL
         }
         

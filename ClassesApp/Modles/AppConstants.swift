@@ -20,16 +20,15 @@ class _AppConstants {
     var server_port = 0
     var privacy_url = ""
     var merchant_id = ""
-    var connect_pswd = ""
+    var domain_name = ""
     var support_email = ""
-    var price_per_class = 199
     var premium_price = 499
     var support_email_pswd = ""
-    var server_ports: [Int] = []
     var supported_schools: [String] = ["UCI", "UCLA"]
     var appConstantListener: ListenerRegistration? = nil
     var registration_pages: [String: String] = [:]
-    var price_map: [String: Int] = ["1": 199, "3":399, "10":1449]
+    var referral_info: [String: String] = [:]
+    var routes: [String: String] = [:]
     
     func initalizeConstants() {
         let db = Firestore.firestore()
@@ -52,15 +51,14 @@ class _AppConstants {
             self.privacy_url = data[DataBase.privacy_url] as? String ?? ""
             self.server_port = data[DataBase.server_port] as? Int ?? 0
             self.premium_price = data[DataBase.premium_price] as? Int ?? 499
-            self.price_per_class = data[DataBase.price_per_class] as? Int ?? 199
             self.merchant_id = data[DataBase.merchant_id] as? String ?? ""
-            self.connect_pswd = data[DataBase.connect_pswd] as? String ?? ""
+            self.domain_name = data[DataBase.domain_name] as? String ?? ""
             self.support_email = data[DataBase.support_email] as? String ?? ""
-            self.server_ports = data[DataBase.server_ports] as? [Int] ?? []
             self.support_email_pswd = data[DataBase.support_email_pswd] as? String ?? ""
-            self.price_map = data[DataBase.price_map] as? [String:Int] ?? ["1": 199, "3":399, "10":1449]
+            self.referral_info = data[DataBase.referral_info] as? [String: String] ?? [:]
             self.supported_schools = data[DataBase.supported_schools] as? [String] ?? ["UCI", "UCLA"]
             self.registration_pages = data[DataBase.registration_pages] as? [String: String] ?? [:]
+            self.routes = data[DataBase.routes] as? [String: String] ?? [:]
             Stripe.setDefaultPublishableKey(self.stripe_pk)
 
 //            print(data)

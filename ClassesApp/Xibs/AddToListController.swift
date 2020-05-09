@@ -56,7 +56,7 @@ class AddToListController: UIViewController {
         courseTitleLabel.text = course.course_title
         unitsLabel.text = course.units
         professorLabel.text = course.professor
-        courseCodeLabel.text = course.course_code
+        courseCodeLabel.text = course.code
         sectionLabel.text = "\(course.course_type) \(course.section)"
         roomLabel.text = course.room
         statusLabel.text = course.status
@@ -96,8 +96,8 @@ class AddToListController: UIViewController {
     }
     
     func alreadyTrackingClasses() -> Bool {
-        if UserService.user.courseCodes.contains(course.course_code){
-            let message = "You are already tracking course \(course.course_code)."
+        if UserService.user.courseCodes.contains(course.code){
+            let message = "You are already tracking course \(course.code)."
             displaySimpleError(title: "Duplicate Class", message: message) { _ in
                 self.handleDismiss()
                 self.addClassVC.courseCodeField.text = ""

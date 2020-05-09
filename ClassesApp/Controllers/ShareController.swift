@@ -65,6 +65,7 @@ class ShareController: UIViewController {
         default:
             image = UIImage(named: "threeThirds")
         }
+        redeemButton.frame.size = CGSize(width: view.frame.height * 0.2, height: view.frame.height * 0.2)
         redeemButton.setImage(image, for: .normal)
     }
     
@@ -90,6 +91,7 @@ class ShareController: UIViewController {
         case 2:
             presentShareController()
         default:
+            if UserService.user.hasPremium { self.handleDismiss(); return }
             presentPremiumAlert()
         }
     }

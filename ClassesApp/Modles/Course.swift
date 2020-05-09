@@ -11,7 +11,7 @@ import Foundation
 
 class Course{
     
-    var course_code: String = ""
+    var code: String = ""
     var course_title: String = ""
     var course_name: String = ""
     var course_type: String = ""
@@ -33,7 +33,7 @@ class Course{
             return
         }
         
-        self.course_code = inputArr[0]
+        self.code = inputArr[0]
         self.course_name = inputArr[1]
         self.course_title = inputArr[2]
         self.course_type = inputArr[3]
@@ -48,16 +48,16 @@ class Course{
     
     init(courseDict: [String: Any]) {
         
-        self.course_code = courseDict[DataBase.course_code] as? String ?? ""
-        self.course_title = courseDict[DataBase.course_title] as? String ?? ""
-        self.course_name = courseDict[DataBase.course_name] as? String ?? ""
-        self.course_type = courseDict[DataBase.course_type] as? String ?? ""
+        self.code = courseDict[DataBase.code] as? String ?? ""
+        self.course_title = courseDict[DataBase.title] as? String ?? ""
+        self.course_name = courseDict[DataBase.name] as? String ?? ""
+        self.course_type = courseDict[DataBase.type] as? String ?? ""
         self.section = courseDict[DataBase.section] as? String ?? ""
         self.units = courseDict[DataBase.units] as? String ?? ""
         self.professor = courseDict[DataBase.professor] as? String ?? ""
         self.days = courseDict[DataBase.days] as? String ?? ""
-        self.class_time = courseDict[DataBase.class_time] as? String ?? ""
-        self.status = courseDict[DataBase.curr_status] as? String ?? ""
+        self.class_time = courseDict[DataBase.time] as? String ?? ""
+        self.status = courseDict[DataBase.status] as? String ?? ""
         self.room = courseDict[DataBase.room] as? String ?? ""
         
     }
@@ -65,17 +65,21 @@ class Course{
     
     func modelToData() -> [String: Any] {
         let data: [String: Any] = [
-            DataBase.course_code: self.course_code,
-            DataBase.course_title: self.course_title,
-            DataBase.course_name: self.course_name,
-            DataBase.course_type: self.course_type,
+            DataBase.code: self.code,
+            DataBase.title: self.course_title,
+            DataBase.name: self.course_name,
+            DataBase.type: self.course_type,
             DataBase.section: self.section,
             DataBase.units: self.units,
             DataBase.professor: self.professor,
             DataBase.days: self.days,
-            DataBase.class_time: self.class_time,
-            DataBase.curr_status: self.status,
+            DataBase.time: self.class_time,
+            DataBase.status: self.status,
             DataBase.room: self.room,
+            
+            DataBase.school: self.school,
+            DataBase.year: self.year,
+            DataBase.quarter: self.quarter
         ]
         return data
     }
@@ -84,7 +88,7 @@ class Course{
         // Given a list of Courses, return a list of all course codes
         var courseCodeArr: [String] = []
         for course in courses{
-            courseCodeArr.append(course.course_code)
+            courseCodeArr.append(course.code)
         }
         return courseCodeArr
     }

@@ -50,8 +50,11 @@ class HomePageController: UIViewController {
     }
     
     func setLabels() {
+        let school = UserService.user.school
+        let quarter = AppConstants.quarter.capitalizingFirstLetter()
+        let year = AppConstants.year.capitalizingFirstLetter()
+        quarterLabel.text = "\(school) \(quarter) \(year)"
         
-        quarterLabel.text = "\(UserService.user.school) \(AppConstants.quarter.capitalizingFirstLetter()) \(AppConstants.year.capitalizingFirstLetter())"
         if !UserService.user.hasPremium {
             unlimitedLabel.isHidden = true
         }
@@ -105,7 +108,7 @@ class HomePageController: UIViewController {
     }
     
     func removeClass(atIndexPath indexPath: IndexPath) {
-        ServerService.removeClassesFromFirebase(withCourseCodes: [self.courses[indexPath.row].course_code])
+        ServerService.removeClassesFromFirebase(withCourseCodes: [self.courses[indexPath.row].code])
         self.courses.remove(at: indexPath.row)
         self.tableView.deleteRows(at: [indexPath], with: .automatic)
         toggleNoClassLabel()

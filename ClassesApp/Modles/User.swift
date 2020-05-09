@@ -17,9 +17,7 @@ class User {
     
     var email: String
     var school: String
-    var lastName: String
     var stripeId: String
-    var firstName: String
     var fcm_token: String
     var webRegPswd: String
     var referralLink: String
@@ -45,12 +43,9 @@ class User {
     var revNotifications: [ [String: String] ] { return notifications.reversed()}
     var revPurchaseHistory: [ [String: String] ] { return purchaseHistory.reversed()}
     var courseCodes: [String] { return Array(classes.keys) }
-    var fullName: String { return "\(firstName) \(lastName)" }
-
     
     // User is Signing Up
-    init(id: String = "", email: String = "", firstName: String = "",
-         lastName: String = "", webReg: Bool = false, webRegPswd: String = "",
+    init(id: String = "", email: String = "", webReg: Bool = false, webRegPswd: String = "",
          stripeId: String = "", classes: [String: [Any]] = [:], school: String = "",
          hasShortReferral: Bool  = false, fcm_token: String = "", numReferrals: Int = 0,
          hasPremium: Bool = false, receiveEmails: Bool = true, seenWelcomePage: Bool = false,
@@ -63,8 +58,6 @@ class User {
         self.email = email
         self.webReg = webReg
         self.webRegPswd = webRegPswd
-        self.firstName = firstName
-        self.lastName = lastName
         self.stripeId = stripeId
         
         self.hasPremium = hasPremium
@@ -93,8 +86,6 @@ class User {
         self.id = data[DataBase.id] as? String ?? ""
         self.email = data[DataBase.email] as? String ?? ""
         self.stripeId = data[DataBase.stripeId] as? String ?? ""
-        self.firstName = data[DataBase.first_name] as? String ?? ""
-        self.lastName = data[DataBase.last_name] as? String ?? ""
         self.webReg = data[DataBase.web_reg] as? Bool ?? false
         self.webRegPswd = data[DataBase.web_reg_pswd] as? String ?? ""
         self.hasShortReferral = data[DataBase.has_short_referral] as? Bool ?? false
@@ -139,8 +130,6 @@ class User {
             DataBase.id : user.id,
             DataBase.email : user.email,
             DataBase.stripeId: user.stripeId,
-            DataBase.first_name: user.firstName,
-            DataBase.last_name: user.lastName,
             DataBase.web_reg: user.webReg,
             DataBase.web_reg_pswd: user.webRegPswd,
             
@@ -163,23 +152,6 @@ class User {
         
         return data
     }
-    
-    
-    func getCourses() -> [Course] {
-        var coursesArr: [Course] = []
-        //        for courseDict in courseDictArr {
-        //            coursesArr.append(Course(courseDict: courseDict))
-        //        }
-        return coursesArr
-    }
-    
-    //    func getCoursesCodes() -> [String] {
-    //        var coursesCodes: [String] = []
-    //        for course in courses {
-    //            coursesCodes.append(course.course_code)
-    //        }
-    //        return coursesCodes
-    //    }
     
     private func handleEmailVerification() {
         // If email is not verified
