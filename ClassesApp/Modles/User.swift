@@ -31,6 +31,8 @@ class User {
     var hasShortReferral: Bool
     var notificationsEnabled: Bool
     
+    var hasSetUserProperty: Bool
+    
     var seenHomeTapDirections: Bool
     
     var numReferrals: Int
@@ -50,7 +52,7 @@ class User {
          hasShortReferral: Bool  = false, fcm_token: String = "", numReferrals: Int = 0,
          hasPremium: Bool = false, receiveEmails: Bool = true, seenWelcomePage: Bool = false,
          isLoggedIn: Bool = true, isEmailVerified: Bool = false, referralLink: String = "",
-         seenHomeTapDirections: Bool = false,
+         seenHomeTapDirections: Bool = false, hasSetUserProperty: Bool = false,
          notificationsEnabled: Bool = true, purchaseHistory: [[String: String]] = [],
          notifications: [[String: String]] = []){
         
@@ -74,6 +76,8 @@ class User {
         self.purchaseHistory = purchaseHistory
         self.notificationsEnabled = notificationsEnabled
         self.notifications = notifications
+        
+        self.hasSetUserProperty = hasSetUserProperty
         
         self.seenHomeTapDirections = seenHomeTapDirections
         
@@ -101,6 +105,8 @@ class User {
             print("Cast unsuccessful")
             self.classes = [:]
         }
+        
+        self.hasSetUserProperty = data[DataBase.has_set_user_poperty] as? Bool ?? false
         
         self.school = data[DataBase.school] as? String ?? ""
         self.fcm_token = data[DataBase.fcm_token] as? String ?? ""
@@ -148,6 +154,7 @@ class User {
             DataBase.has_short_referral: user.hasShortReferral,
             DataBase.notifications_enabled: user.notificationsEnabled,
             DataBase.seen_home_tap_directions: user.seenHomeTapDirections,
+            DataBase.has_set_user_poperty:user.hasSetUserProperty
         ]
         
         return data

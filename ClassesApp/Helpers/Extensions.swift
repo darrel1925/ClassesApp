@@ -286,7 +286,6 @@ extension UIPanGestureRecognizer {
     /// - Parameter target: view target
     /// - Returns: current direction
     func horizontalDirection(target: UIView) -> GestureDirection {
-        print(self.velocity(in: target).x)
         if self.velocity(in: target).x < -1000 {
             return .Left
         }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SettingsController: UIViewController {
     
@@ -54,6 +55,57 @@ class SettingsController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
+    func presentSplashScreen() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "SplashScreenController") as! SplashScreenController
+        vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+        self.present(vc, animated: true, completion: nil)
+    }
+
+    func presentForgotPassword() {
+        let forgotPassVC = ForgotPasswordController()
+        forgotPassVC.modalTransitionStyle = .crossDissolve
+        forgotPassVC.modalPresentationStyle = .overCurrentContext
+        present(forgotPassVC, animated: true, completion: nil)
+    }
+    
+    func presentLogOutAlert() {
+        let message = "Are you sure you would like to log out?"
+        
+        let alert = UIAlertController(title: "Log out", message: message, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        let logOutAction = UIAlertAction(title: "Log out", style: .default, handler: {_ in
+            self.logOut()
+        })
+        
+        alert.addAction(cancelAction)
+        alert.addAction(logOutAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func logOut() {
+         // if user is signed in
+         if let _ = Auth.auth().currentUser {
+             do {
+                 try Auth.auth().signOut()
+                 let dg = DispatchGroup()
+                 UserService.logoutUser(disaptchGroup: dg)
+                 print("sign out successful")
+                 dg.notify(queue: .main) {
+                     self.presentSplashScreen()
+                 }
+             }
+             catch _ as NSError {
+                displayError(title: "Error Signing Out", message: "If this problem continues, please contact support.")
+                 return
+             }
+         }
+         else { // if user is not signed in
+             print("user not signed in")
+             presentSplashScreen()
+         }
+     }
+    
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil)
     }
@@ -73,20 +125,18 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         switch section {
         case 0: // Account Info
             return 1
-        case 1: // Email, School
-            return 2
+        case 1: // Email, School, Change Password
+            return 3
         case 2: // Preferences title
             return 1
         case 3: // Email Preferences, Notifiations
             return 2
-        case 4: // Purchase History title
-            return 0 // <-- remove?
-        case 5: // Purchase History
-            return 0 // <-- remove?
-        case 6: // Legal
+        case 4: // Legal
             return 1
-        case 7: // Privacy Policy, Terms and Agreements
+        case 5: // Privacy Policy, Terms and Agreements
             return 2
+        case 6: // Logout
+            return 1
         default:
             return 0
         }        
@@ -106,10 +156,6 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
             switch row {
-//            case 0:
-//                cell.titleLabel.text = "Name"
-//                cell.infoLabel.text = "\(UserService.user.fullName)"
-//                return cell
             case 0:
                 cell.titleLabel.text = "Email"
                 cell.infoLabel.text = "\(UserService.user.email)"
@@ -117,6 +163,12 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             case 1:
                 cell.titleLabel.text = "School"
                 cell.infoLabel.text = "\(UserService.user.school)"
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .gray
+                return cell
+            case 2:
+                cell.titleLabel.text = "Change Password"
+                cell.infoLabel.text = ""
                 cell.accessoryType = .disclosureIndicator
                 cell.selectionStyle = .gray
                 return cell
@@ -141,40 +193,17 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
                 cell.titleLabel.text = "Notifications"
                 cell.infoLabel.text = ""
                 cell.accessoryType = .disclosureIndicator
-                cell.selectionStyle = .default
+                cell.selectionStyle = .gray
                 return cell
             default:
                 return cell
             }
         case 4:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
-//            cell.titleLabel.text = "History"
-            return cell
-            
-        case 5:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
-//            switch row {
-//            case 0:
-//                cell.titleLabel.text = "Purchase History"
-//                cell.infoLabel.text = ""
-//                cell.accessoryType = .disclosureIndicator
-//                cell.selectionStyle = .gray
-//                return cell
-//            case 1:
-//                cell.titleLabel.text = "Tracked Classes History"
-//                cell.infoLabel.text = ""
-//                cell.accessoryType = .disclosureIndicator
-//                cell.selectionStyle = .default
-//                return cell
-//            default:
-                return cell
-//            }
-        case 6:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
             cell.titleLabel.text = "Legal"
             return cell
             
-        case 7:
+        case 5:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsLabelCell") as! SettingsLabelCell
             switch row {
             case 0:
@@ -187,11 +216,19 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
                 cell.titleLabel.text = "Terms and Agreements"
                 cell.infoLabel.text = ""
                 cell.accessoryType = .disclosureIndicator
-                cell.selectionStyle = .default
+                cell.selectionStyle = .gray
                 return cell
             default:
                 return cell
             }
+        case 6:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
+            cell.titleLabel.text = "Log out"
+            cell.titleLabel?.textColor = #colorLiteral(red: 0.762566535, green: 0.3093850772, blue: 0.2170317457, alpha: 1)
+
+            cell.accessoryType = .disclosureIndicator
+            cell.selectionStyle = .default
+            return cell
         default:
             return UITableViewCell()
         }
@@ -210,11 +247,13 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
                 changeSchoolVC.settingsVC = self
                 self.present(changeSchoolVC, animated: true, completion: nil)
                 return
+            case 2:
+                presentForgotPassword()
+                return
             default:
                 return
             }
         case 3:
-            print("clicked \(row) \(section)")
             switch row {
             case 0:
                 let toggleEmailsVC = ToggleEmailsController()
@@ -229,21 +268,6 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             }
         case 5:
             switch row {
-//            case 0: // Purchase History
-//                let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
-//                historyVC.modalPresentationStyle = .overFullScreen
-//                historyVC.presentPurchaseHist = true
-//                self.present(historyVC, animated: true, completion: nil)
-//            case 1: // Tracked Classes History
-//                let historyVC = storyboard?.instantiateViewController(withIdentifier: "HistoryController") as! HistoryController
-//                historyVC.modalPresentationStyle = .overFullScreen
-//                historyVC.presentPurchaseHist = false
-//                self.present(historyVC, animated: true, completion: nil)
-            default:
-                break
-            }
-        case 7:
-            switch row {
             case 0: // Privacy Policy
                 presentPrivacyController()
             case 1: // Terms and Agreements
@@ -251,6 +275,8 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             default:
                 break
             }
+        case 6: // Logout
+            presentLogOutAlert()
         default:
             return
         }

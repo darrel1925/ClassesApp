@@ -41,7 +41,7 @@ class ForgotPasswordController: UIViewController {
         else {
             let message = "Looks like you forgot to enter your email address."
             self.activityIndicator.stopAnimating()
-            self.displayError(title: "Whoops.", message: message, completion: {_ in
+            self.displayError(title: "Empty Field", message: message, completion: {_ in
             })
             return
         }
@@ -49,8 +49,9 @@ class ForgotPasswordController: UIViewController {
         
         Auth.auth().sendPasswordReset(withEmail: email) { error in
             if error != nil {
-                if let error = AuthErrorCode(rawValue: error!._code) {
-                    self.displayError(title: "Error", message: error.errorMessage)
+                if let _ = AuthErrorCode(rawValue: error!._code) {
+                    let message = "If this continues please contact support"
+                    self.displayError(title: "Reseting Password", message: message)
                     self.activityIndicator.stopAnimating()
                     return
                 }

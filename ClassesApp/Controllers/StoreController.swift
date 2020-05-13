@@ -8,6 +8,7 @@
 
 import UIKit
 import Stripe
+import MessageUI
 import FirebaseFunctions
 import FirebaseFirestore
 
@@ -93,6 +94,18 @@ class StoreController: UIViewController {
     func presentShareController() {
         let shareStr = ReferralLink.message
         let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
+        sharingController.completionWithItemsHandler = {(activityType: UIActivity.ActivityType?, completed: Bool, returnedItems: [Any]?, error: Error?) in
+            if let error = error {
+                print("error sending referral link", error.localizedDescription)
+                return
+            }
+            else if !completed { // User canceled
+                return
+            }
+            // User completed activity
+            Stats.logLinkShared()
+        }
+
         self.present(sharingController, animated: true, completion: nil)
     }
     
@@ -113,8 +126,33 @@ class StoreController: UIViewController {
         })
     }
     
+    func presentSupport() {
+        guard MFMailComposeViewController.canSendMail() else {
+            let message = "Email account not set up on this device. Head over to you device's Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
+            self.displayError(title: "Cannot Send Mail", message: message)
+            return
+        }
+        
+        let composer = MFMailComposeViewController()
+        composer.mailComposeDelegate = self
+        composer.setSubject("Support - Payments")
+        composer.setToRecipients([AppConstants.support_email])
+        print(AppConstants.support_email)
+        present(composer, animated: true)
+    }
+    
+    func presnentLearnMore() {
+            let vc = self.storyboard?.instantiateViewController(withIdentifier: "FAQController") as! FAQController
+            vc.modalPresentationStyle = .overFullScreen
+            self.present(vc, animated: true, completion: nil)
+        }
+    
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil )
+    }
+    
+    @IBAction func learnMoreClicked(_ sender: Any) {
+        presnentLearnMore()
     }
     
     @IBAction func redeemButtonClicked(_ sender: Any) {
@@ -146,6 +184,42 @@ class StoreController: UIViewController {
     
     @IBAction func exitButtonClicked(_ sender: Any) {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+
+extension StoreController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        
+        if error != nil {
+            controller.displaySimpleError(title: "Could Not Send Email", message: "Could not send you email. You can also send an email to \(AppConstants.support_email).", completion: {_ in
+                controller.dismiss(animated: true, completion: nil)
+            })
+            return
+        }
+        
+        switch result{
+        case .cancelled:
+            controller.dismiss(animated: true, completion: nil)
+        case .saved:
+            print("saved")
+            controller.displaySimpleError(title: "Email Saved", message: "Your email has been saved to your drafts.", completion: {_ in
+                controller.dismiss(animated: true, completion: nil)
+            })
+        case .sent:
+            controller.displaySimpleError(title: "Email Sent", message: "Your email has sent successfully!", completion: {_ in
+                controller.dismiss(animated: true, completion: nil)
+            })
+            print("sent")
+        case .failed:
+            controller.displaySimpleError(title: "Error Sending Email", message: "Could not send you email. You can also send an email to \(AppConstants.support_email)", completion: {_ in
+                controller.dismiss(animated: true, completion: nil)
+            })
+            print("failed")
+        @unknown default:
+            controller.dismiss(animated: true, completion: nil)
+            print("unkown")
+        }
     }
 }
 

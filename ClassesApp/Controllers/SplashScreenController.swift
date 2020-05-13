@@ -18,6 +18,7 @@ class SplashScreenController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         animation = AnimateStartPage(startVC: self)
+        setScreenName()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -28,6 +29,10 @@ class SplashScreenController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         animation.stopAnimation()
+    }
+    
+    func setScreenName() {
+        Stats.setScreenName(screenName: "SplashScreen", screenClass: "SplashScreenController")
     }
 
 }

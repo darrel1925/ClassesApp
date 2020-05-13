@@ -48,66 +48,59 @@ class AddClassController: UIViewController {
         self.present(addToListVC, animated: true, completion: nil)
     }
     
+    func presentClassDetailController() {
+        let classLookUplVC = ClassLookUpController()
+        classLookUplVC.modalPresentationStyle = .overFullScreen
+        self.present(classLookUplVC, animated: true, completion: nil)
+    }
+
     func makeConnection() {
         let code = courseCodeField.text!
-        let db = DispatchGroup()
-        var course: Course?
-        var classNotFound: Bool!
-        db.enter()
-
         ServerService.getClassInfo(course_code: code) { (json, notFound,error) in
             if notFound {
-                classNotFound = true
-                db.leave()
+                DispatchQueue.main.async { // Correct
+                    let message = "\(code) not offered. Double check the course code you entered and try again."
+                    self.displayError(title: "Class Not Found", message: message)
+                }
                 return
             }
             else if error != nil {
-                db.leave()
-                return
+                DispatchQueue.main.async { // Correct
+                    let message = "Looks like there is a connection issue. Things to try:\n\n1. Restart the app\n2. Check that you have a reliable internet connection\n3. Contact support."
+                    self.displayError(title: "Connection Error", message: message)
+                }
             }
             
-            print(json ?? [:])
-            course = Course(courseDict: json ?? [:])
-            db.leave()
-            return
-        }
-        
-        db.notify(queue: .main) {
-            self.activityIndicator.stopAnimating()
-
-            if let course = course { // success
+            DispatchQueue.main.async { // Correct
+                let course = Course(courseDict: json ?? [:])
                 self.presnentAddToList(course: course)
             }
-            if classNotFound != nil{
-                let message = "\(code) not offered. Double check the course code you entered and try again."
-                self.displayError(title: "Class Not Found", message: message)
-            }
-            else { // failure
-                
-                let message = "Looks like there is a connection issue. Things to try:\n\n1. Restart the app\n2. Check that you have a reliable internet connection\n3. Contact support."
-                self.displayError(title: "Connection Error", message: message)
-            }
+            print(json ?? [:])
         }
     }
-        
+    
+    @IBAction func tapHereClicked(_ sender: Any) {
+        presentClassDetailController()
+    }
+    
     @IBAction func checkAvailabilityClicked(_ sender: Any) {
         activityIndicator.startAnimating()
         if courseCodeField.text?.isEmpty ?? true {
             activityIndicator.stopAnimating()
             let message = "Looks like you forgot to enter your course code. Let's try again!"
-            self.displayError(title: "Uh Oh.", message: message)
+            self.displayError(title: "Empty Field", message: message)
             return }
         
         if courseCodeField.text?.count != 5  || courseCodeField.text?.isOnlyNumeric ?? true {
             activityIndicator.stopAnimating()
             let message = "Make sure you enter a 5 digit course! Ex. 34250 or 14723"
-            self.displayError(title: "Invalid Entry.", message: message)
+            self.displayError(title: "Invalid Entry", message: message)
             return }
         
         if Course.getCodes(courses: courses).contains(courseCodeField.text ?? "") {
             activityIndicator.stopAnimating()
             let message = "You've already added this course! Check the availibility of a different class before adding again."
-            self.displayError(title: "Duplicate Course.", message: message)
+            self.displayError(title: "Duplicate Course", message: message)
             return }
         
         makeConnection()

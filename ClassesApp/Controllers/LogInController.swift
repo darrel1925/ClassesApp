@@ -24,6 +24,11 @@ class LogInController: UIViewController {
         super.viewDidLoad()
         emailField.delegate = self
         passwordField.delegate = self
+        setScreenName()
+    }
+    
+    func setScreenName() {
+        Stats.setScreenName(screenName: "LogIn", screenClass: "LogInController")
     }
     
     func presentHomePage() {

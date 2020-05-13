@@ -217,7 +217,8 @@ final class _ServerService {
         let quarterQueryItem = URLQueryItem(name: DataBase.quarter, value: AppConstants.quarter)
         let courseCodeQueryItem = URLQueryItem(name: DataBase.code, value: course_code)
         let yearCodeQueryItem = URLQueryItem(name: DataBase.year, value: AppConstants.year)
-        components.queryItems = [schoolQueryItem, quarterQueryItem, courseCodeQueryItem,yearCodeQueryItem]
+//        let emailCodeQueryItem = URLQueryItem(name: DataBase.email, value: UserService.user.email)
+        components.queryItems = [ schoolQueryItem, quarterQueryItem, courseCodeQueryItem,yearCodeQueryItem]
         
         // Full url with all parameters included
         guard let url = components.url else { return }
@@ -241,5 +242,40 @@ final class _ServerService {
             }
         }
         task.resume()
+    }
+    
+    func sendSupportEmail(subject: String, message: String, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+    
+        var components = URLComponents()
+        components.scheme = Routes.scheme
+        components.host = AppConstants.server_ip
+        components.path = "/\(Routes.send_email ?? "")"
+        
+        let subjectQueryItem = URLQueryItem(name: DataBase.subject, value: subject)
+        let messageQueryItem = URLQueryItem(name: DataBase.message, value: message)
+
+        components.queryItems = [subjectQueryItem, messageQueryItem]
+
+        guard let url = components.url else { return }
+
+        let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+            if let error = error {
+                print("WE HAVE ERROR", error.localizedDescription)
+                completionHandler(nil, error)
+            }
+            
+            print("no error")
+            guard let data = data else { return }
+            print(data)
+            do {
+                let json =  try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                completionHandler(json, nil)
+            }
+            catch {
+                completionHandler(nil, error)
+            }
+        }
+        task.resume()
+
     }
 }

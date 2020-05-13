@@ -111,6 +111,7 @@ class ChangeSchoolController: UIViewController {
                 self.displayError(title: "Error Updating School", message: "There was an error you school please try again later.")
                 return
             }
+            Stats.setUserProperty(school: self.schoolField.text ?? UserService.user.school)
             self.activityIndicator.stopAnimating()
             self.settingsVC.tableView.reloadData()
             self.handleDismiss()

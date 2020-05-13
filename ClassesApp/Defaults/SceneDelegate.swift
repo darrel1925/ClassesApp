@@ -36,6 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             UserService.getCurrentUser(email: user?.email ?? "no email found at start") // leaves dispatch group
             
             UserService.dispatchGroup.notify(queue: .main, execute: {
+                print("storyboard = UIStoryboard")
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 
                 guard let rootVC = storyboard.instantiateViewController(identifier: "HomePageController") as? HomePageController else {
@@ -84,12 +85,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func isUserDisabled(user: FirebaseAuth.User) {
-        user.reload(completion: { (error) in
-            if error != nil {
-                print("Error reloading user \(error?.localizedDescription ?? "")")
-            }
-        })
-        print("checked disabled")
+//        user.reload(completion: { (error) in
+//            if error != nil {
+//                print("Error reloading user \(error?.localizedDescription ?? "")")
+//            }
+//        })
+//        print("checked disabled")
     }
     
     
@@ -155,6 +156,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
+    func reloadUser() {
+        /*
+        If user just verified their email without closing the app, this will refresh their user object to reflect that
+        */
+        
+        // if user has not been logged in
+        if UserService.user == nil { return }
+
+        let isVerified = UserService.user.isEmailVerified
+        if isVerified { return }
+        print("not verified")
+        
+        guard let user = Auth.auth().currentUser else { return }
+        user.reload(completion: {error in
+            if let err = error {
+                print("error reloading user", err.localizedDescription)
+            }
+            print("reload successful")
+        })
+    }
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
@@ -165,8 +187,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-        UserService.isLoggedIn = false // <- to allow user logon into new account and have fcm update automatically
+        UserService.isLoggedIn = false // <- to allow user login into new account and have fcm update automatically
         
+        if UserService.user == nil { return }
+
+        reloadUser() // <-- to refresh user object for email verifications
+        Stats.logAppOpened() // <-- log each time a user opens app
     }
     
     func sceneWillResignActive(_ scene: UIScene) {

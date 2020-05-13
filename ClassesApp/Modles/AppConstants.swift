@@ -27,21 +27,26 @@ class _AppConstants {
     var supported_schools: [String] = ["UCI", "UCLA"]
     var appConstantListener: ListenerRegistration? = nil
     var registration_pages: [String: String] = [:]
+    var class_look_up_pages: [String: String] = [:]
     var referral_info: [String: String] = [:]
     var routes: [String: String] = [:]
     
     func initalizeConstants() {
+        // Need settings bc
+        let settings = FirestoreSettings()
+        settings.isPersistenceEnabled = false
         let db = Firestore.firestore()
-        let userRef = db.collection(DataBase.AppConstants).document(DataBase.Constants)
+        db.settings = settings
+        let constanatsRef = db.collection(DataBase.AppConstants).document(DataBase.Constants)
         // if i change an app constant document, it will always be up to date in our app
-        appConstantListener = userRef.addSnapshotListener({ (snap, error) in
+        appConstantListener = constanatsRef.addSnapshotListener({ (snap, error) in
             if let _ = error {
                 print("could not add snapShotListener :/")
                 return
             }
             // if we can get app info from the server
             guard let data = snap?.data() else { return }
-            
+//            print(data)
             // add it to out self so we can access it globally
             self.year = data[DataBase.year] as? String ?? "2020"
             self.quarter = data[DataBase.quarter] as? String ?? "fall"
@@ -58,6 +63,7 @@ class _AppConstants {
             self.referral_info = data[DataBase.referral_info] as? [String: String] ?? [:]
             self.supported_schools = data[DataBase.supported_schools] as? [String] ?? ["UCI", "UCLA"]
             self.registration_pages = data[DataBase.registration_pages] as? [String: String] ?? [:]
+            self.class_look_up_pages = data[DataBase.class_look_up_pages] as? [String: String] ?? [:]
             self.routes = data[DataBase.routes] as? [String: String] ?? [:]
             Stripe.setDefaultPublishableKey(self.stripe_pk)
 

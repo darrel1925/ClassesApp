@@ -130,6 +130,7 @@ class AddToListController: UIViewController {
         dg.notify(queue: .main) {
             print("dispatched finished")
             AudioServicesPlaySystemSound(1519)
+            Stats.logTrackedClass(course: self.course)
             self.handleDismiss()
             self.addClassVC.navigationController?.popViewController(animated: true)
 //            self.presentSuccessAlert()

@@ -46,7 +46,9 @@ final class _UserService {
         })
         
         dispatchGroup.notify(queue: .main) {
+            print("updateFirebaseWithUpdatedVars")
             UserService.updateFirebaseWithUpdatedVars()
+            print("checkForShortLink")
             UserService.checkForShortLink()
         }
 
@@ -60,25 +62,31 @@ final class _UserService {
     }
     
     func checkForShortLink() {
+        print("if user.hasShortReferral", user.hasShortReferral)
         if user.hasShortReferral { return }
         generateReferralLink()
     }
     
     func generateReferralLink() {
         // Create url that will get parsed and give you the parameters
+        print(ReferralLink.scheme)
+        print(ReferralLink.host)
+        print(ReferralLink.path)
+        
         var components = URLComponents()
         components.scheme = ReferralLink.scheme
         components.host = ReferralLink.host // should be appstore link
-        components.path = ReferralLink.path ?? "/"
+        components.path = ReferralLink.path
         
+        print("components.path")
         let userInfoQueryItem = URLQueryItem(name: "email", value: UserService.user.email)
         components.queryItems = [userInfoQueryItem]
         
         // Full url with all parameters included
         guard let linkParameter = components.url else { return }
-        
+        print("let linkParameter",  linkParameter)
         // Create the big dynamic link
-        guard let shareLink = DynamicLinkComponents.init(link: linkParameter, domainURIPrefix: ReferralLink.domainURIPrefix ?? "") else { return }
+        guard let shareLink = DynamicLinkComponents.init(link: linkParameter, domainURIPrefix: ReferralLink.domainURIPrefix ) else { return }
         
         if let bundleId = Bundle.main.bundleIdentifier {
             shareLink.iOSParameters = DynamicLinkIOSParameters(bundleID: bundleId)
@@ -92,7 +100,7 @@ final class _UserService {
         shareLink.socialMetaTagParameters?.title = ReferralLink.metaTagTitle
         shareLink.socialMetaTagParameters?.descriptionText = ReferralLink.metaTagDescription
         
-        if let imageURL = URL(string: ReferralLink.imageURL ?? "") {
+        if let imageURL = URL(string: ReferralLink.imageURL ) {
             shareLink.socialMetaTagParameters?.imageURL = imageURL
         }
         

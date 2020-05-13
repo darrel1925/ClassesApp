@@ -22,6 +22,11 @@ class ShareController: UIViewController {
         setLabels()
         setRedeemButton()
         setUpGestures()
+        setScreenName()
+    }
+    
+    func setScreenName() {
+        Stats.setScreenName(screenName: "ShareController", screenClass: "ShareController")
     }
     
     func setLabels() {
@@ -70,8 +75,20 @@ class ShareController: UIViewController {
     }
     
     func presentShareController() {
+        print("entered")
         let shareStr = ReferralLink.message
         let sharingController = UIActivityViewController(activityItems: [shareStr], applicationActivities: nil)
+        sharingController.completionWithItemsHandler = {(activityType: UIActivity.ActivityType?, completed: Bool, returnedItems: [Any]?, error: Error?) in
+            if let error = error {
+                print("error sending referral link", error.localizedDescription)
+                return
+            }
+            else if !completed { // User canceled
+                return
+            }
+            // User completed activity
+            Stats.logLinkShared()
+        }
         self.present(sharingController, animated: true, completion: nil)
     }
     
@@ -107,9 +124,12 @@ class ShareController: UIViewController {
     @IBAction func copyButtonClicked(_ sender: Any) {
         UIPasteboard.general.string = "\(UserService.user.referralLink)"
         copyButton.setTitle("✓ Copied", for: .normal)
+        Stats.logCopiedLinkToClip()
     }
     
     @IBAction func shareButtonClicked(_ sender: Any) {
         presentShareController()
     }
 }
+
+

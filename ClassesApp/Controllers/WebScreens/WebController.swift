@@ -10,15 +10,15 @@ import UIKit
 import WebKit
 
 class WebController: UIViewController {
-        
+            
     var urlStr: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpGestures()
-        
-        
         presentWebView()
+        Stats.logSignUpClicked()
+  
     }
     
     fileprivate func setUpGestures() {
@@ -28,8 +28,7 @@ class WebController: UIViewController {
     }
     
     fileprivate func presentWebView() {
-        if let urlStr =  AppConstants.registration_pages[UserService.user.school] {
-            if urlStr == "" { return }
+        if urlStr == nil { return }
             
             let webView = WKWebView(frame: view.frame)
             view.addSubview(webView)
@@ -37,17 +36,16 @@ class WebController: UIViewController {
             let url = URL(string: urlStr)!
             let request = URLRequest(url: url)
             webView.load(request)
-        }
-        else {
-            print("Did not pass in a string")
-        }
+
     }
     
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil)
     }
+
     
     @IBAction func exitClicked(_ sender: Any) {
+        print("pressed")
         dismiss(animated: true, completion: nil)
     }
     

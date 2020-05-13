@@ -97,7 +97,7 @@ class ClassDetailController: UIViewController {
         let vc = homeVC.storyboard?.instantiateViewController(withIdentifier: "WebController") as! WebController
         let navController = UINavigationController(rootViewController: vc)
         navController.modalPresentationStyle = .fullScreen
-        
+        vc.urlStr = AppConstants.registration_pages[UserService.user.school] 
         
         UIView.animate(withDuration: 0.5, animations: {
             self.backgroundView.alpha = 0

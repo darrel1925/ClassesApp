@@ -13,8 +13,10 @@ target 'ClassesApp' do
 	pod 'Firebase/Messaging'
 	pod 'Firebase/DynamicLinks'
 
+	pod 'Firebase/Analytics'
+	pod 'Firebase/Crashlytics'
 	
-	pod 'Firebase/Auth' # firebase auth
+	pod 'Firebase/Auth' 
 	
 	pod 'Stripe', '15.0.1'
 

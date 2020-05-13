@@ -12,6 +12,7 @@ import AudioToolbox
 import FirebaseFunctions
 import FirebaseFirestore
 
+
 class StorePopUpController: UIViewController {
     
     @IBOutlet weak var trackClassesLabel: UILabel!
@@ -29,7 +30,7 @@ class StorePopUpController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        Stats.logPremiumShown()
         setUpStripeConfig()
         animateViewDownward()
         setLabels()
@@ -140,13 +141,13 @@ class StorePopUpController: UIViewController {
     }
     
     func presentSuccessAlert() {
-//        ServerService.updatePurchaseHistory(numCreditsBought: AppConstants.premium_price, totalPrice: AppConstants.premium_price) // <-- UPDATE
-        if !applePayPresented { AudioServicesPlaySystemSound(1519) } // vibrate phone 
+        if !applePayPresented { AudioServicesPlaySystemSound(1519) } // vibrate phone
         let message = "Thank you for your support!"
         let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
         let okay = UIAlertAction(title: "Okay", style: .default, handler: {(action) in
             self.storeController.setLabels()
             self.handleDismiss2()
+            Stats.logPurchase()
         })
         
         alertController.addAction(okay)
@@ -162,6 +163,7 @@ class StorePopUpController: UIViewController {
         alertController.addAction(okay)
         self.present(alertController, animated: true)
     }
+
     
     func enablePaymentButton() {
         UIView.animate(withDuration: 0.6) {
@@ -291,17 +293,24 @@ extension StorePopUpController: STPPaymentContextDelegate {
     func paymentContext(_ paymentContext: STPPaymentContext, didFailToLoadWithError error: Error) {
         activityIndicator.stopAnimating()
         
-        let alertContoller = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        let message = "There was a problem retrieving your payment account info. Please contact support and we'll get this sorted out"
+        let alertContoller = UIAlertController(title: "Payment Error", message: message, preferredStyle: .alert)
         
         let retry = UIAlertAction(title: "Retry", style: .default, handler: {(action) in
             self.paymentContext.retryLoading()
         })
+        let contact = UIAlertAction(title: "Contact Support", style: .default, handler: {(action) in
+            self.dismiss(animated: true) {
+                self.storeController.presentSupport()
+            }
+        })
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: {(action) in
             self.dismiss(animated: true, completion: nil)
         })
-        
-        alertContoller.addAction(cancel)
+        alertContoller.addAction(contact)
         alertContoller.addAction(retry)
+        alertContoller.addAction(cancel)
+        
         present(alertContoller, animated: true, completion: nil)
         
     }
@@ -325,7 +334,7 @@ extension StorePopUpController: STPPaymentContextDelegate {
         Functions.functions().httpsCallable("createCharge").call(data) { (result, error) in
             if let error = error {
                 print("Error makeing charge: \(error.localizedDescription)")
-                self.displayError(title: "Error", message: "Unable to make charge")
+                self.displayError(title: "Payment Error", message: "Unable to make charge. If this continues please contact support.")
                 completion(error)
                 return
             }
@@ -373,3 +382,4 @@ extension StorePopUpController: PKPaymentAuthorizationViewControllerDelegate  {
         
     }
 }
+

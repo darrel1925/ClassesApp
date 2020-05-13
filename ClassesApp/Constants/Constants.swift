@@ -37,6 +37,8 @@ struct DataBase {
     static let has_short_referral    = "has_short_referral"
     static let notifications_enabled = "notifications_enabled"
     
+    static let has_set_user_poperty = "has_set_user_poperty"
+    
     // Notifications & Purchase History
     static let date   = "date"
     static let price  = "price"
@@ -49,10 +51,14 @@ struct DataBase {
 
     // App Constants
     static let routes          = "routes"
+    static let subject         = "subject"
+    static let message         = "message"
     static let class_info      = "class_info"
+    static let send_email      = "send_email"
     static let display_terms   = "display_terms"
     static let display_privacy = "display_privacy"
-    
+    static let did_send_email  = "did_send_email"
+
     static let path          = "path"
     static let host          = "host"
     static let scheme        = "scheme"
@@ -76,7 +82,9 @@ struct DataBase {
     static let supported_schools   = "supported_schools"
     static let support_email_pswd  = "support_email_pswd"
     static let registration_pages  = "registration_pages"
-    
+    static let class_look_up_pages = "class_look_up_pages"
+
+
     // Class
     static let year    = "year"
     static let emails  = "emails"
@@ -95,6 +103,15 @@ struct DataBase {
     static let section   = "section"
     static let professor = "professor"
     static let dis_and_labs = "dis_and_labs"
+        
+    // Analytics
+    static let faq_viewed          = "faq_viewed"
+    static let num_courses         = "num_courses"
+    static let class_tracked       = "class_tracked"
+    static let email_verified      = "email_verified"
+    static let sign_up_clicked     = "sign_up_clicked"
+    static let num_classes_tracked = "num_classes_tracked"
+    static let copied_link_to_clip = "copied_link_to_clip"
     
     // Animations
     static let seen_home_tap_directions = "seen_home_tap_directions"
@@ -115,22 +132,22 @@ struct Schools {
 }
 
 struct ReferralLink {
-    static let path = AppConstants.referral_info[DataBase.path]
-    static let host = AppConstants.referral_info[DataBase.host]
-    static let scheme = AppConstants.referral_info[DataBase.scheme]
-    static let routes = AppConstants.referral_info[DataBase.routes]
-    static let imageURL = AppConstants.referral_info[DataBase.imageURL]
-    static let appStoreID = AppConstants.referral_info[DataBase.appStoreID]
-    static let metaTagTitle = AppConstants.referral_info[DataBase.metaTagTitle]
-    static let domainURIPrefix = AppConstants.referral_info[DataBase.domainURIPrefix]
-    static let metaTagDescription = AppConstants.referral_info[DataBase.metaTagDescription]
-    static let message = "TrackMy tracks your classes and notifies you when they open up! Check it out! \(UserService.user.referralLink)"
+    static var path: String { return AppConstants.referral_info[DataBase.path] ?? ""}
+    static var host: String { return AppConstants.referral_info[DataBase.host] ?? ""}
+    static var scheme: String { return AppConstants.referral_info[DataBase.scheme] ?? ""}
+    static var imageURL: String { return AppConstants.referral_info[DataBase.imageURL] ?? ""}
+    static var appStoreID: String { return AppConstants.referral_info[DataBase.appStoreID] ?? ""}
+    static var metaTagTitle: String { return AppConstants.referral_info[DataBase.metaTagTitle] ?? ""}
+    static var domainURIPrefix: String { return AppConstants.referral_info[DataBase.domainURIPrefix] ?? ""}
+    static var metaTagDescription: String { return AppConstants.referral_info[DataBase.metaTagDescription] ?? ""}
+    static var message: String = "TrackMy tracks your classes and notifies you when they open up! Check it out! \(UserService.user.referralLink)"
     }
 
 struct Routes {
-    static let scheme = AppConstants.routes[DataBase.scheme]
-    static let class_info = AppConstants.routes[DataBase.class_info]
-    static let display_terms = AppConstants.routes[DataBase.display_terms]
+    static let scheme          = AppConstants.routes[DataBase.scheme]
+    static let class_info      = AppConstants.routes[DataBase.class_info]
+    static let send_email      = AppConstants.routes[DataBase.send_email]
+    static let display_terms   = AppConstants.routes[DataBase.display_terms]
     static let display_privacy = AppConstants.routes[DataBase.display_privacy]
 }
 

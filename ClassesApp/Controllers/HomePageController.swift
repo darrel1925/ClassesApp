@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseCrashlytics
 import FirebaseAuth
 import FirebaseFirestore
 import MessageUI
@@ -39,14 +40,34 @@ class HomePageController: UIViewController {
         setUpNavController()
         setUpTableView()
         setUpGestures()
+        
+        logNumTrackedClasses()
+        setScreenName()
+        
+        setUserProp()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setLabels()
-        reloadUser() // <-- for when user just verifies their email
         refreshTableView()
         handleShowDirections()
+        UserService.checkForShortLink()
+    }
+    
+    func setUserProp() {
+        if UserService.user.hasSetUserProperty { return }
+        
+        Stats.setUserProperty(school: UserService.user.school)
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
+        docRef.updateData([DataBase.has_set_user_poperty: true])
+
+        
+    }
+    
+    func setScreenName() {
+        Stats.setScreenName(screenName: "HomePage", screenClass: "HomePageController")
     }
     
     func setLabels() {
@@ -84,27 +105,6 @@ class HomePageController: UIViewController {
         
         self.navigationItem.largeTitleDisplayMode = .always
         self.navigationController?.navigationBar.prefersLargeTitles = true
-    }
-    
-    func presentSplashScreen() {
-        let vc = storyboard?.instantiateViewController(withIdentifier: "SplashScreenController") as! SplashScreenController
-        vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
-        self.present(vc, animated: true, completion: nil)
-    }
-    
-    func presentLogoutAlert() {
-        let message = "Are you sure you would like to log out?"
-        
-        let alert = UIAlertController(title: "Logout", message: message, preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
-        let logoutAction = UIAlertAction(title: "Logout", style: .default, handler: {_ in
-            self.logOut()
-        })
-        
-        alert.addAction(cancelAction)
-        alert.addAction(logoutAction)
-        
-        self.present(alert, animated: true, completion: nil)
     }
     
     func removeClass(atIndexPath indexPath: IndexPath) {
@@ -155,9 +155,9 @@ class HomePageController: UIViewController {
     }
     
     func presentSupportOrFeedBack(){
-        let message = "Your sending your Feeback or seeking Support?"
+        let message = "Sending Feedback or seeking Support?"
         let alert = UIAlertController(title: "Feedback or Support", message: message, preferredStyle: .alert)
-        let feebackAction = UIAlertAction(title: "Feeback", style: .default, handler: {_ in
+        let feedbackAction = UIAlertAction(title: "Feedback", style: .default, handler: {_ in
             self.presentSupport(emailType: "Feedback")
         })
         let supportAction = UIAlertAction(title: "Support", style: .default, handler: {_ in
@@ -166,7 +166,7 @@ class HomePageController: UIViewController {
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
-        alert.addAction(feebackAction)
+        alert.addAction(feedbackAction)
         alert.addAction(supportAction)
         alert.addAction(cancelAction)
         present(alert, animated: true, completion: nil)
@@ -174,7 +174,7 @@ class HomePageController: UIViewController {
     
     func presentSupport(emailType: String) {
         guard MFMailComposeViewController.canSendMail() else {
-            let message = "Email account not set up on this device. Head over to Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
+            let message = "Email account not set up on this device. Head over to you device's Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
             self.displayError(title: "Cannot Send Mail", message: message)
             return
         }
@@ -194,35 +194,19 @@ class HomePageController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
-    
-    func presentWebController()
-    {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "WebController") as! WebController
+    func presentEmailSupport() {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "EmailSupportController") as! EmailSupportController
         let navController = UINavigationController(rootViewController: vc)
         navController.modalPresentationStyle = .fullScreen
         self.present(navController, animated: true, completion: nil)
     }
-
-    func presentWebControllerAlert()
-    {
-        let title = "Present Your Sign Up Page"
-        let alert = UIAlertController(title: title, message: "", preferredStyle: .alert)
-        let yesAction = UIAlertAction(title: "Yes!", style: .default, handler: {_ in
-            self.presentWebController()
-        })
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
-        
-        alert.addAction(cancelAction)
-        alert.addAction(yesAction)
-        present(alert, animated: true, completion: nil)
-    }
     
     func presentVerificationSentAlert() {
-        let message = "You'll need to verify your email first! \n\nNote: You may need to restart the app if you just verified."
-        let alert = UIAlertController(title: "Email Not Verified", message: message, preferredStyle: .alert)
+        let message = "Click below to resend your email verification.\n\nNote: YOU MAY NEED TO RESTART THE APP IF YOU JUST VERIFIED."
+        let alert = UIAlertController(title: "Email Not Verified.", message: message, preferredStyle: .alert)
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
-        let resendAction = UIAlertAction(title: "Resend", style: .default, handler: {_ in
+        let resendAction = UIAlertAction(title: "Resend", style: .default, handler: { _ in
             self.sendVerificationEmail()
         })
         
@@ -236,7 +220,7 @@ class HomePageController: UIViewController {
         
         user.sendEmailVerification { err in
             if let _ = err {
-                let message = "Error sending your verification email. Sorry about that. Try restarting the app it fix it!"
+                let message = "Error sending your verification email. Sorry about that. Try restarting the app or contacting customer support!"
                 self.displayError(title: "Verification Email Error", message: message)
                 return
             }
@@ -250,12 +234,13 @@ class HomePageController: UIViewController {
         if UserService.user.isEmailVerified { return true }
         
         guard let user = Auth.auth().currentUser else { return false }
-//        user.reload(completion: nil)
+        user.reload(completion: nil)
         
         if user.isEmailVerified {
             let db = Firestore.firestore()
             let docRef = db.collection(DataBase.User).document(UserService.user.email)
             docRef.updateData([DataBase.is_email_verified: true])
+            Stats.logEmailVerified()
             return true
         }
         
@@ -288,6 +273,10 @@ class HomePageController: UIViewController {
             if !self.labelHasBeenPresented { self.setUpAddLabel() }
             self.noClassLabel.isHidden = false
         }
+    }
+    
+    func logNumTrackedClasses() {
+        Stats.logNumClassesTracked(numCourses: UserService.user.courseCodes.count)
     }
     
     func setUpAddLabel() {
@@ -327,6 +316,7 @@ class HomePageController: UIViewController {
         docRef.getDocument { (document, error) in
             if let error = error {
                 print("Error getting document for referral", error.localizedDescription)
+                return
             }
             let data = document?.data()
             
@@ -342,7 +332,6 @@ class HomePageController: UIViewController {
     }
     
     func handleShowDirections() {
-        print(UserService.user.seenHomeTapDirections, courses.count)
         if UserService.user.seenHomeTapDirections { return }
         if UserService.user.courseCodes.count != 1 { return }
         
@@ -352,37 +341,12 @@ class HomePageController: UIViewController {
         docRef.updateData([DataBase.seen_home_tap_directions  : true])
     }
     
-    func logOut() {
-        // if user is signed in
-        if let _ = Auth.auth().currentUser {
-            do {
-                try Auth.auth().signOut()
-                let dg = DispatchGroup()
-                UserService.logoutUser(disaptchGroup: dg)
-                print("sign out successful")
-                dg.notify(queue: .main) {
-                    self.presentSplashScreen()
-                }
-            }
-            catch let signOutError as NSError {
-                print ("Error signing out: %@", signOutError)
-                return
-            }
-        }
-        else { // if user is not signed in
-            print("user not signed in")
-            presentSplashScreen()
-        }
-    }
-    
     func slideInMenu() {
         guard let menuVC = storyboard?.instantiateViewController(identifier: "MenuController") as? MenuController else { return }
         menuVC.didTapMenuType = { menuType in
             let menuTypeString = String(describing: menuType)
             
             switch menuTypeString {
-            case "Logout":
-                self.presentLogoutAlert()
                 
             case "Notifications":
                 self.presentNotifications()
@@ -400,7 +364,8 @@ class HomePageController: UIViewController {
                 self.presentShareController()
                 
             case "Support":
-                self.presentSupportOrFeedBack()
+                self.presentEmailSupport()
+//                self.presentSupportOrFeedBack()
                 
             case "Credits":
                 self.presentCredits()
@@ -434,7 +399,7 @@ class HomePageController: UIViewController {
         }
     }
     
-    @IBAction func addClassClicked(_ sender: Any) {
+    @IBAction func addClassClicked(_ sender: Any) {        
         if !emailIsVerified() { presentVerificationSentAlert();  return }
         if UserService.user.hasPremium || UserService.user.courseCodes.count <  1{
             presentAddClassesController()
@@ -546,7 +511,7 @@ extension HomePageController: MFMailComposeViewControllerDelegate {
             })
             print("sent")
         case .failed:
-            controller.displaySimpleError(title: "Error", message: "Could not send you email. You can also send an email to \(AppConstants.support_email)", completion: {_ in
+            controller.displaySimpleError(title: "Error Sending Email", message: "Could not send you email. You can also send an email to \(AppConstants.support_email)", completion: {_ in
                 controller.dismiss(animated: true, completion: nil)
             })
             print("failed")

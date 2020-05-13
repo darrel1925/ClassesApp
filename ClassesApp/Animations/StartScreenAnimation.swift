@@ -30,7 +30,7 @@ class AnimateStartPage {
     
     func continueAnimation(){
         dispatchGroup.enter()
-        UIView.animate(withDuration: 5, animations:{
+        UIView.animate(withDuration: 3.5, animations:{
             let toImage = UIImage(named:"stars3")
            UIView.transition(with: self.startVC.backgroundImageView,
                               duration: 10,
@@ -51,7 +51,7 @@ class AnimateStartPage {
 
     func animate1(){
          self.dispatchGroup.enter()
-         UIView.animate(withDuration: 4, animations:{
+        UIView.animate(withDuration: 3.5, animations:{
              let toImage = UIImage(named:"stars2")
             UIView.transition(with: self.startVC.backgroundImageView,
                                duration: 10,
@@ -74,7 +74,7 @@ class AnimateStartPage {
      func animate2(){
             self.dispatchGroup.enter()
 
-            UIView.animate(withDuration: 4, animations:{
+        UIView.animate(withDuration: 3.3, animations:{
                 let toImage = UIImage(named:"stars1")
                 UIView.transition(with: self.startVC.backgroundImageView,
                                   duration: 10,

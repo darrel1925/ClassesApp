@@ -16,7 +16,6 @@ enum MenuType: Int {
     case Share
     case HowItWorks
     case Support
-    case Logout
     case Credits
 }
 
@@ -32,7 +31,7 @@ class MenuController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 9
+        return 8
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -145,7 +145,7 @@ class SignUpController: UIViewController {
     func credentialsAreValid() -> Bool {
         if !(emailField.text!.isValidSchoolEmail) {
             let message = "Email must be a valid school email address ending in 'edu' /n/n Ex. panteatr@uci.edu, bbears@ucla.edu"
-            self.displayError(title: "Whoops.", message: message)
+            self.displayError(title: "Invalid School Email.", message: message)
             return false
         }
         else if !(schoolField.text?.count ?? 0 > 0) {
@@ -157,12 +157,12 @@ class SignUpController: UIViewController {
             print(passwordField.text!.count < 6)
             print(passwordField.text!.containsWhitespace)
             let message = "Password must be at least 6 charaters and contain no spaces."
-            self.displayError(title: "Whoops.", message: message)
+            self.displayError(title: "Weak Password.", message: message)
             return false
         }
         else if !(passwordField.text! == confirmPasswordField.text) {
             let message = "Looks like your passwords don't match. Let's give it another shot."
-            self.displayError(title: "Uh Oh.", message: message)
+            self.displayError(title: "Passwords don't match.", message: message)
             return false
         }
         let email = emailField.text!
@@ -174,7 +174,7 @@ class SignUpController: UIViewController {
         // Chose .ucsf is not in the schoolExtDict values
         if !Array(schoolExtDict.values).contains(schoolExtenstion) {
             let message = "Email must be a valid school email address ending in '.edu' /n/n Ex. panteatr@uci.edu, bbears@ucla.edu"
-            self.displayError(title: "Invalid Email.", message: message)
+            self.displayError(title: "School Email Required.", message: message)
             return false
         }
         
@@ -208,6 +208,8 @@ class SignUpController: UIViewController {
             UserService.dispatchGroup.notify(queue: .main) {
                 self.presentVerificationSentAlert(user: fireUser)
                 UserService.generateReferralLink()
+                Stats.logSignUp()
+                Stats.setUserProperty(school: UserService.user.school)
             }
         }
     }

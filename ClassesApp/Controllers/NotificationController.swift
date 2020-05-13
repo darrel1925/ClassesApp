@@ -47,10 +47,16 @@ class NotificationController: UIViewController {
     }
 
     func displayClearNotificationsAlert() {
-        let message = "Click Okay to confirm and clear your notifications."
-        displayError(title: "Clear Notifications", message: message) { (_) in
-            self.clearNotifications()
-        }
+
+        let alert = UIAlertController(title: "Clear Notifications", message: "", preferredStyle: .alert)
+        let clearAction = UIAlertAction(title: "Clear", style: .default, handler: {_ in             self.clearNotifications()
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(clearAction)
+        present(alert, animated: true, completion: nil)
+        
     }
     
     func addLabel() {
@@ -93,6 +99,7 @@ class NotificationController: UIViewController {
         toggleNoClassLabel()
         tableView.reloadData()
         self.refreshControl?.endRefreshing()
+        
     }
     
     @IBAction func exitButtonClicked(_ sender: Any) {
@@ -133,6 +140,10 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
+    }
+    
     func removeNotification(AtIndex index: Int) {
         let dispatchGroup = DispatchGroup()
         let db = Firestore.firestore()
@@ -151,6 +162,7 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
                 return
             }
             print("notificaitons updated")
+            self.toggleNoClassLabel()
             dispatchGroup.customLeave()
         }
     }
@@ -170,6 +182,7 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
             UserService.user.notifications = []
             self.tableView.reloadData()
             dispatchGroup.customLeave()
+            self.toggleNoClassLabel()
         }
     }
 }
