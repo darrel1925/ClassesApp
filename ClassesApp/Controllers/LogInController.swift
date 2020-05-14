@@ -31,6 +31,13 @@ class LogInController: UIViewController {
         Stats.setScreenName(screenName: "LogIn", screenClass: "LogInController")
     }
     
+    func presentEmailSupport() {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "EmailSupportController") as! EmailSupportController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
+    }
+    
     func presentHomePage() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "HomePageController") as! HomePageController
         let navController = UINavigationController(rootViewController: vc)
@@ -141,11 +148,16 @@ class LogInController: UIViewController {
         present(forgotPassVC, animated: true, completion: nil)
     }
     
+    @IBAction func contactSupportClicked(_ sender: Any) {
+        presentEmailSupport()
+    }
+    
     @IBAction func eyeButtonClicked(_ sender: Any) {
         // make text secured
         if securityTextVisible {
             securityTextVisible = false
             passwordField.isSecureTextEntry = false
+            passwordField.keyboardType = .asciiCapable
             let image = UIImage(named:"openedEye")!
             eyeButton.setImage(image, for: .normal)
         }

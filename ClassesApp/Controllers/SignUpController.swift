@@ -19,7 +19,6 @@ class SignUpController: UIViewController {
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var confirmPasswordField: UITextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var passwordEyeButton: UIButton!
     @IBOutlet weak var confirmEyeButton: UIButton!
     
@@ -39,7 +38,6 @@ class SignUpController: UIViewController {
         setUpSchoolPicker()
         setUpToolBar()
         setDelegates()
-        termsAndConditionsLabels()
     }
     
     func setUpSchoolPicker() {
@@ -69,24 +67,6 @@ class SignUpController: UIViewController {
         schoolField.text = "UCI"
     }
     
-    func termsAndConditionsLabels() {
-        self.textView.delegate = self
-        let labelText = "By tapping Sign Up, you agree to our Terms and Conditions and Privacy Statement"
-        let termsString = NSMutableAttributedString(string: labelText)
-        
-        let termsRange = termsString.mutableString.range(of: "Terms and Conditions")
-        let privacyRange = termsString.mutableString.range(of: "Privacy Statement")
-        
-        termsLowerBound = termsRange.lowerBound
-        privacyLowerBound = privacyRange.lowerBound
-        
-        termsString.addAttribute(.link, value: "https://google.com", range: termsRange)
-        termsString.addAttribute(.link, value: "https://google.com", range: privacyRange)
-        
-        textView.attributedText = termsString
-    }
-    
-    
     func presentTermsController() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "TermsController") as! TermsController
         let navController = UINavigationController(rootViewController: vc)
@@ -101,31 +81,23 @@ class SignUpController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
-    func presentVerificationSentAlert(user: FirebaseAuth.User) {
+    func presentVerificationSentAlert() {
         let message = "Verify your email to begin tracking!"
         let alert = UIAlertController(title: "Verification Email Sent", message: message, preferredStyle: .alert)
 
         let okayAction = UIAlertAction(title: "Okay", style: .default, handler: {_ in
-            self.presentNextPage(user: user)
+            self.presentHomePage()
         })
 
         alert.addAction(okayAction)
         present(alert, animated: true, completion: nil)
     }
     
-    func presentWelcomeScreen() {
-        let vc = storyboard?.instantiateViewController(withIdentifier: "PageController") as! PageController
-        vc.modalPresentationStyle = .fullScreen
-        self.present(vc, animated: true, completion: nil)
-    }
-    
-    func presentNextPage(user: FirebaseAuth.User) {
-        // If user has not seen welcome page
-        let db = Firestore.firestore()
-        let docRef = db.collection(DataBase.User).document(UserService.user.email)
-        docRef.updateData([DataBase.seen_welcome_page: true])
-        presentWelcomeScreen()
-        return
+    func presentHomePage() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "HomePageController") as! HomePageController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
     }
     
     func sendVerificationEmail(user: FirebaseAuth.User) {
@@ -206,7 +178,7 @@ class SignUpController: UIViewController {
             UserService.getCurrentUser(email: user.email) // <--- calls dispatchGroup.leave()
             
             UserService.dispatchGroup.notify(queue: .main) {
-                self.presentVerificationSentAlert(user: fireUser)
+                self.presentVerificationSentAlert()
                 UserService.generateReferralLink()
                 Stats.logSignUp()
                 Stats.setUserProperty(school: UserService.user.school)
@@ -234,12 +206,22 @@ class SignUpController: UIViewController {
         }
     }
     
+    @IBAction func termsClicked(_ sender: Any) {
+        presentTermsController()
+    }
+    
+    @IBAction func privacyClicked(_ sender: Any) {
+        presentPrivacyController()
+    }
+    
     @IBAction func eyeButtonClicked(_ sender: Any) {
         // make text secured
         if securityTextVisible {
             securityTextVisible = false
             passwordField.isSecureTextEntry = false
             confirmPasswordField.isSecureTextEntry = false
+            passwordField.keyboardType = .asciiCapable
+            confirmPasswordField.keyboardType = .asciiCapable
             let image = UIImage(named:"openedEye")!
             passwordEyeButton.setImage(image, for: .normal)
             confirmEyeButton.setImage(image, for: .normal)
@@ -250,6 +232,8 @@ class SignUpController: UIViewController {
             securityTextVisible = true
             passwordField.isSecureTextEntry = true
             confirmPasswordField.isSecureTextEntry = true
+            passwordField.keyboardType = .asciiCapable
+            confirmPasswordField.keyboardType = .asciiCapable
             let image = UIImage(named:"closedEye")!
             passwordEyeButton.setImage(image, for: .normal)
             confirmEyeButton.setImage(image, for: .normal)
@@ -326,20 +310,5 @@ extension SignUpController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         schoolField.text = AppConstants.supported_schools[row]
-    }
-}
-
-extension SignUpController: UITextViewDelegate {
-    
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        print(characterRange.lowerBound)
-        if (characterRange.lowerBound == termsLowerBound) {// == "Terms and Conditions"
-            presentTermsController()
-        }
-        else if (characterRange.lowerBound == privacyLowerBound){ // "Privacy Statment"
-            presentPrivacyController()
-        }
-        
-        return false
     }
 }

@@ -52,7 +52,7 @@ final class _ServerService {
             }
         }
     }
-        
+    
     func addClassToFirebase(withCourse course: Course, viewController controller: UIViewController, withDiscussions discussions: [String] = [], withLabs labs: [String] = []) -> Bool {
         dispatchGroup.enter()
         let db = Firestore.firestore()
@@ -217,7 +217,7 @@ final class _ServerService {
         let quarterQueryItem = URLQueryItem(name: DataBase.quarter, value: AppConstants.quarter)
         let courseCodeQueryItem = URLQueryItem(name: DataBase.code, value: course_code)
         let yearCodeQueryItem = URLQueryItem(name: DataBase.year, value: AppConstants.year)
-//        let emailCodeQueryItem = URLQueryItem(name: DataBase.email, value: UserService.user.email)
+        //        let emailCodeQueryItem = URLQueryItem(name: DataBase.email, value: UserService.user.email)
         components.queryItems = [ schoolQueryItem, quarterQueryItem, courseCodeQueryItem,yearCodeQueryItem]
         
         // Full url with all parameters included
@@ -245,19 +245,19 @@ final class _ServerService {
     }
     
     func sendSupportEmail(subject: String, message: String, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
-    
+        
         var components = URLComponents()
         components.scheme = Routes.scheme
         components.host = AppConstants.server_ip
-        components.path = "/\(Routes.send_email ?? "")"
+        components.path = "/\(Routes.send_email_route ?? "")"
         
         let subjectQueryItem = URLQueryItem(name: DataBase.subject, value: subject)
         let messageQueryItem = URLQueryItem(name: DataBase.message, value: message)
-
+        
         components.queryItems = [subjectQueryItem, messageQueryItem]
-
+        
         guard let url = components.url else { return }
-
+        
         let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
             if let error = error {
                 print("WE HAVE ERROR", error.localizedDescription)
@@ -276,6 +276,52 @@ final class _ServerService {
             }
         }
         task.resume()
+        
+    }
+    
+    
+    // UNUSED
+    func sendSupportEmailPost(subject: String, message: String, completion: @escaping ([String: Any]?, Error?) -> Void ){
+        
+        var components = URLComponents()
+        components.scheme = Routes.scheme
+        components.host = AppConstants.server_ip
+        components.path = "/\(Routes.send_email_route ?? "")"
+                
+        guard let url = components.url else { return }
 
+        var request = URLRequest(url: url)
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        let parameters: [String: Any] = [
+            DataBase.subject: subject,
+            DataBase.message: message
+        ]
+        request.httpBody = parameters.percentEncoded()
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("WE HAVE ERROR", error.localizedDescription)
+                completion(nil, error)
+            }
+            
+            print("no error")
+            guard let data = data else { return }
+            print(data)
+            do {
+                let json =  try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                completion(json, nil)
+            }
+            catch {
+                completion(nil, error)
+            }
+
+            
+            let responseString = String(data: data, encoding: .utf8)
+            print("responseString = \(responseString)")
+        }
+        
+        task.resume()
+        
     }
 }

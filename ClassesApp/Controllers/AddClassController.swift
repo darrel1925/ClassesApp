@@ -61,6 +61,7 @@ class AddClassController: UIViewController {
                 DispatchQueue.main.async { // Correct
                     let message = "\(code) not offered. Double check the course code you entered and try again."
                     self.displayError(title: "Class Not Found", message: message)
+                    self.activityIndicator.stopAnimating()
                 }
                 return
             }
@@ -68,6 +69,7 @@ class AddClassController: UIViewController {
                 DispatchQueue.main.async { // Correct
                     let message = "Looks like there is a connection issue. Things to try:\n\n1. Restart the app\n2. Check that you have a reliable internet connection\n3. Contact support."
                     self.displayError(title: "Connection Error", message: message)
+                    self.activityIndicator.stopAnimating()
                 }
             }
             

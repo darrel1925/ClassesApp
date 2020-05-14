@@ -154,39 +154,6 @@ class HomePageController: UIViewController {
         self.present(vc, animated: true, completion: nil)
     }
     
-    func presentSupportOrFeedBack(){
-        let message = "Sending Feedback or seeking Support?"
-        let alert = UIAlertController(title: "Feedback or Support", message: message, preferredStyle: .alert)
-        let feedbackAction = UIAlertAction(title: "Feedback", style: .default, handler: {_ in
-            self.presentSupport(emailType: "Feedback")
-        })
-        let supportAction = UIAlertAction(title: "Support", style: .default, handler: {_ in
-            self.presentSupport(emailType: "Support")
-        })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        alert.addAction(feedbackAction)
-        alert.addAction(supportAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func presentSupport(emailType: String) {
-        guard MFMailComposeViewController.canSendMail() else {
-            let message = "Email account not set up on this device. Head over to you device's Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
-            self.displayError(title: "Cannot Send Mail", message: message)
-            return
-        }
-        
-        let composer = MFMailComposeViewController()
-        composer.mailComposeDelegate = self
-        composer.setSubject(emailType)
-        composer.setToRecipients([AppConstants.support_email])
-        print(AppConstants.support_email)
-        present(composer, animated: true)
-    }
-    
     func presentCredits() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "CreditsController") as! CreditsController
         let navController = UINavigationController(rootViewController: vc)
@@ -279,6 +246,30 @@ class HomePageController: UIViewController {
         Stats.logNumClassesTracked(numCourses: UserService.user.courseCodes.count)
     }
     
+    func sortClasses() {
+        var openClasses: [Course] = []
+        var fullClasses: [Course] = []
+        var waitlClasses: [Course] = []
+        var newOnlyClasses: [Course] = []
+        
+        // separate class by status
+        for course in courses {
+            if course.status == Status.OPEN { openClasses.append(course) }
+            else if course.status == Status.FULL { fullClasses.append(course) }
+            else if course.status == Status.Waitl { waitlClasses.append(course) }
+            else { newOnlyClasses.append(course) }
+        }
+        
+        // sort classes
+        openClasses = openClasses.sorted(by: { $0.course_name < $1.course_name })
+        fullClasses = fullClasses.sorted(by: { $0.course_name < $1.course_name })
+        waitlClasses = waitlClasses.sorted(by: { $0.course_name < $1.course_name })
+        newOnlyClasses = newOnlyClasses.sorted(by: { $0.course_name < $1.course_name })
+        
+        // join together
+        courses = openClasses + waitlClasses + newOnlyClasses + fullClasses
+    }
+    
     func setUpAddLabel() {
         guard let window = UIApplication.shared.keyWindow else { return }
         
@@ -365,7 +356,6 @@ class HomePageController: UIViewController {
                 
             case "Support":
                 self.presentEmailSupport()
-//                self.presentSupportOrFeedBack()
                 
             case "Credits":
                 self.presentCredits()
@@ -387,6 +377,7 @@ class HomePageController: UIViewController {
         dispatchGroup.notify(queue: .main) {
             print("reloading")
             self.refreshControl?.endRefreshing()
+            self.sortClasses()
             self.tableView.reloadData()
             self.toggleNoClassLabel()
         }

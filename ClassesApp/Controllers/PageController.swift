@@ -13,7 +13,7 @@ class PageController: UIPageViewController {
     lazy var orderedViewControllers : [UIViewController] = {
         return [createVC(identifier: "WelcomeScreen1"),
                 createVC(identifier: "WelcomeScreen2"),
-                createVC(identifier: "WelcomeScreen3.5"),
+                createVC(identifier: "WelcomeScreen3"),
                 createVC(identifier: "WelcomeScreen4")]
     }()
     

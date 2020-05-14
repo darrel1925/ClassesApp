@@ -47,14 +47,14 @@ class WelcomeScreen4: UIViewController {
             
         UIView.animate(withDuration: 1, delay: 1, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
-            self.shareButton.alpha = 1
+            self.continueButton.alpha = 1
             self.stackView.center.y = self.view.frame.maxY - 108
             
         }, completion: { _ in
         
             UIView.animate(withDuration: 1.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
-                self.continueButton.alpha = 1
+                self.shareButton.alpha = 1
                 
             }, completion: nil )
         })
@@ -89,6 +89,6 @@ class WelcomeScreen4: UIViewController {
     }
     
     @IBAction func continueButtonClicked(_ sender: Any) {
-        presentHomePage()
+        self.dismiss(animated: true, completion: nil)
     }
 }

@@ -18,7 +18,7 @@ class EmailSupportController: UIViewController {
     
     
     var placeholderLabel : UILabel!
-    var placeHolderText: String = "Sending feedback? Seeking support? Whatever your needs are, want to hear from you. Let us know what we can do for you!"
+    var placeHolderText: String = "Sending feedback? Seeking support? Want to see a new feature? Whatever your needs are, we want to hear from you. Let us know what we can do for you!"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,24 +27,43 @@ class EmailSupportController: UIViewController {
         textView.textColor = #colorLiteral(red: 0.7685185075, green: 0.7685293555, blue: 0.7766974568, alpha: 1)
         textView.delegate = self
         textView.returnKeyType = .done
+        
+        textView.layer.borderColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        textView.layer.borderWidth = 1
+        textView.layer.cornerRadius = 10
+        setUpGestures()
+        
     }
     
     func setUpGestures() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        let tap1: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        let tap2: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
         let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
-        let swipe2: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
+        let swipe2: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        let swipe3: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        let swipe4: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
         swipe1.direction = .down
-        swipe2.direction = .down
-        backgroundView.addGestureRecognizer(swipe1)
-        navigationController?.navigationBar.addGestureRecognizer(swipe2)
-        view.addGestureRecognizer(tap)
-        //Uncomment the line below if you want the tap not not interfere and cancel other interactions.
-        //tap.cancelsTouchesInView = false
+        
+        navigationController?.navigationBar.addGestureRecognizer(swipe1)
+        navigationController?.navigationBar.addGestureRecognizer(tap2)
+        view.addGestureRecognizer(swipe2)
+        view.addGestureRecognizer(tap1)
+        textView.addGestureRecognizer(swipe3)
+        textField.addGestureRecognizer(swipe4)
+
+        
     }
     
     func send_email(){
-    
-        let subject = "\(textField.text ?? "") / \(UserService.user.school)"
+        var subject: String!
+        if UserService.user == nil {
+            subject = "\(textField.text ?? "") / Not Logged In"
+        }
+        else {
+            subject = "\(textField.text ?? "") / \(UserService.user.school)"
+        }
+        
+        
         let message = textView.text ?? ""
         ServerService.sendSupportEmail(subject: subject, message: message) { (json, error) in
             print("json", json)
@@ -62,7 +81,7 @@ class EmailSupportController: UIViewController {
             if didSendEmail {
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
-                    self.displaySimpleError(title: "Message Received", message: "") { (_) in
+                    self.displaySimpleError(title: "Message Sent", message: "") { (_) in
                         self.handleDismiss()
                     }
                 }
@@ -80,6 +99,7 @@ class EmailSupportController: UIViewController {
     }
     
     @objc func dismissKeyboard() {
+        print("dis")
         view.endEditing(true)
     }
     
@@ -92,7 +112,7 @@ class EmailSupportController: UIViewController {
     }
     
     @IBAction func sendMessageClicked(_ sender: Any) {
-        if textView.text == placeHolderText {
+        if textView.text ?? placeHolderText == placeHolderText {
             self.displayError(title: "Please enter a message", message: "")
             return
         }

@@ -43,4 +43,8 @@ class WelcomeScreen1: UIViewController {
             self.animateIn()
         }
     }
+    
+    @IBAction func skipClicked(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
 }

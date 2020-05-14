@@ -158,5 +158,6 @@ final class _UserService {
         userListener?.remove()
         userListener = nil
         user = nil
+        isLoggedIn = false
     }
 }

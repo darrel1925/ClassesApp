@@ -44,10 +44,11 @@ class User {
     
     var revNotifications: [ [String: String] ] { return notifications.reversed()}
     var revPurchaseHistory: [ [String: String] ] { return purchaseHistory.reversed()}
-    var courseCodes: [String] { return Array(classes.keys) }
+    var courseCodes: [String] { return Array(classes.keys)
+    }
     
     // User is Signing Up
-    init(id: String = "", email: String = "", webReg: Bool = false, webRegPswd: String = "",
+    init(id: String = "", email: String = "\n", webReg: Bool = false, webRegPswd: String = "",
          stripeId: String = "", classes: [String: [Any]] = [:], school: String = "",
          hasShortReferral: Bool  = false, fcm_token: String = "", numReferrals: Int = 0,
          hasPremium: Bool = false, receiveEmails: Bool = true, seenWelcomePage: Bool = false,
@@ -175,7 +176,7 @@ class User {
     }
     
     private func setFCMTokenAndUpdateDB() {
-        if UserService.fcm_token_has_set  { print("fcm_token_has_set = \(UserService.fcm_token_has_set) "); return }
+        if UserService.fcm_token_has_set { print("fcm_token_has_set = \(UserService.fcm_token_has_set) "); return }
         
         print("fcm_token_has_set = \(UserService.fcm_token_has_set) ")
         UserService.fcm_token_has_set = true

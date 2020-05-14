@@ -50,14 +50,14 @@ struct DataBase {
     static let Constants = "Constants"
 
     // App Constants
-    static let routes          = "routes"
-    static let subject         = "subject"
-    static let message         = "message"
-    static let class_info      = "class_info"
-    static let send_email      = "send_email"
-    static let display_terms   = "display_terms"
-    static let display_privacy = "display_privacy"
-    static let did_send_email  = "did_send_email"
+    static let routes           = "routes"
+    static let subject          = "subject"
+    static let message          = "message"
+    static let class_info       = "class_info"
+    static let display_terms    = "display_terms"
+    static let did_send_email   = "did_send_email"
+    static let display_privacy  = "display_privacy"    
+    static let send_email_route = "send_email_route"
 
     static let path          = "path"
     static let host          = "host"
@@ -144,16 +144,16 @@ struct ReferralLink {
     }
 
 struct Routes {
-    static let scheme          = AppConstants.routes[DataBase.scheme]
-    static let class_info      = AppConstants.routes[DataBase.class_info]
-    static let send_email      = AppConstants.routes[DataBase.send_email]
-    static let display_terms   = AppConstants.routes[DataBase.display_terms]
-    static let display_privacy = AppConstants.routes[DataBase.display_privacy]
+    static let scheme           = AppConstants.routes[DataBase.scheme]
+    static let class_info       = AppConstants.routes[DataBase.class_info]
+    static let display_terms    = AppConstants.routes[DataBase.display_terms]
+    static let display_privacy  = AppConstants.routes[DataBase.display_privacy]
+    static let send_email_route = AppConstants.routes[DataBase.send_email_route]
 }
 
 struct Defaults {
     static let wasReferred   = "wasReferred"
     static let referralEmail = "referralEmail"
-    static let hasUsedOneReferral = "hasUsedOneReferral"
+    static let hasUsedOneReferral   = "hasUsedOneReferral"
+    static let hasSeenWelcomeScreen = "hasSeenWelcomeScreen"
 }
-
