@@ -17,10 +17,9 @@ target 'ClassesApp' do
 	pod 'Firebase/Crashlytics'
 	
 	pod 'Firebase/Auth' 
-	
-	pod 'Stripe', '15.0.1'
 
-        pod 'BlueSocket'
+	pod 'Stripe', '15.0.2'
+
 
   target 'ClassesAppTests' do
     inherit! :search_paths

@@ -158,7 +158,6 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
-  - BlueSocket (1.0.52)
   - BoringSSL-GRPC (0.0.3):
     - BoringSSL-GRPC/Implementation (= 0.0.3)
     - BoringSSL-GRPC/Interface (= 0.0.3)
@@ -318,10 +317,9 @@ PODS:
   - nanopb/encode (0.3.9011)
   - PromisesObjC (1.2.8)
   - Protobuf (3.11.4)
-  - Stripe (15.0.1)
+  - Stripe (15.0.2)
 
 DEPENDENCIES:
-  - BlueSocket
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Crashlytics
@@ -329,12 +327,11 @@ DEPENDENCIES:
   - Firebase/Firestore
   - Firebase/Functions
   - Firebase/Messaging
-  - Stripe (= 15.0.1)
+  - Stripe (= 15.0.2)
 
 SPEC REPOS:
   trunk:
     - abseil
-    - BlueSocket
     - BoringSSL-GRPC
     - Firebase
     - FirebaseAnalytics
@@ -366,7 +363,6 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
-  BlueSocket: 1acd943acb07b55905291d608649fcfbf8cbd57d
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
   Firebase: f378c80340dd41c0ad0914af740c021eb282a04b
   FirebaseAnalytics: a1a0b3327ceb5cd5b4bacffdb293f6c909aa087d
@@ -394,8 +390,8 @@ SPEC CHECKSUMS:
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
-  Stripe: 2c4d0a88817361a102886315ff452d90f65e898b
+  Stripe: 40b542089231348ec40fa5e7cd69a7c2716a32e8
 
-PODFILE CHECKSUM: b73743c19db7c536b49ace70fb767c22dbeadee5
+PODFILE CHECKSUM: 42bfbedb474b328577d6b15620bd6146a56d4f18
 
 COCOAPODS: 1.8.4

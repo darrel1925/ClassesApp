@@ -20,8 +20,8 @@ class FAQController: UIViewController {
             "Unfortunaly not, purchasing premium will allow you to track as many classes as you want for Fall quarter only. "
         ],
         [
-            "Will my card be automatically charded next quarter?",
-            "No, your purchase is a one time purcase and your card WILL NOT ever be automatically charged in following quarters."
+            "Will my card be automatically charged next quarter?",
+            "No, your purchase is a one time purchase and your card WILL NOT ever be automatically charged in following quarters."
         ],
         [
             "When exactly will my premium be reset?",
