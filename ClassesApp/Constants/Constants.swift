@@ -82,7 +82,10 @@ struct DataBase {
     static let supported_schools   = "supported_schools"
     static let support_email_pswd  = "support_email_pswd"
     static let registration_pages  = "registration_pages"
+    static let premium_product_id  = "premium_product_id"
     static let class_look_up_pages = "class_look_up_pages"
+    static let has_confirmed_email = "has_confirmed_email"
+    static let has_not_purchased   = "has_not_purchased"
 
 
     // Class

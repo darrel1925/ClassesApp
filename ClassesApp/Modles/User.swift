@@ -44,6 +44,8 @@ class User {
     
     var revNotifications: [ [String: String] ] { return notifications.reversed()}
     var revPurchaseHistory: [ [String: String] ] { return purchaseHistory.reversed()}
+    var hasConfirmedEmail: Bool { return AppConstants.has_confirmed_email }
+    var hasNotPurchased: Bool { return AppConstants.has_not_purchased }
     var courseCodes: [String] { return Array(classes.keys)
     }
     

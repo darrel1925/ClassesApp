@@ -1784,7 +1784,7 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="NnR-sR-glp">
                                                 <rect key="frame" x="0.0" y="33" width="354" height="84"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Refer 3 people and your subscription is on us when they download from your link and track their first class." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yiC-l9-lBW">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Refer 3 people and your purchase is on us when they download from your link and track their first class." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yiC-l9-lBW">
                                                         <rect key="frame" x="0.0" y="0.0" width="286" height="84"/>
                                                         <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="16"/>
                                                         <nil key="textColor"/>
@@ -1993,7 +1993,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="swipe" translatesAutoresizingMaskIntoConstraints="NO" id="TFg-2H-PYv">
-                                <rect key="frame" x="184.5" y="808" width="45" height="45"/>
+                                <rect key="frame" x="184.5" y="793" width="45" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="45" id="LlO-cZ-NjT"/>
                                     <constraint firstAttribute="height" constant="45" id="dyb-0s-1BA"/>
@@ -2006,14 +2006,13 @@
                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="shareButtonClicked:" destination="wFa-GM-SYC" eventType="touchUpInside" id="EIq-C1-07r"/>
-                                    <action selector="skipClicked:" destination="8QS-8c-Jde" eventType="touchUpInside" id="faQ-4X-cfM"/>
+                                    <action selector="skipClicked:" destination="8QS-8c-Jde" eventType="touchUpInside" id="XYh-PX-DaO"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="3rv-LP-G7n" firstAttribute="bottom" secondItem="TFg-2H-PYv" secondAttribute="bottom" constant="9" id="FhO-ZV-wsF"/>
+                            <constraint firstItem="3rv-LP-G7n" firstAttribute="bottom" secondItem="TFg-2H-PYv" secondAttribute="bottom" constant="24" id="FhO-ZV-wsF"/>
                             <constraint firstItem="K4m-dS-7Py" firstAttribute="top" secondItem="EU1-85-cf3" secondAttribute="top" id="b9J-kb-D8G"/>
                             <constraint firstItem="TFg-2H-PYv" firstAttribute="centerX" secondItem="EU1-85-cf3" secondAttribute="centerX" id="eg6-EQ-tSL"/>
                             <constraint firstItem="K4m-dS-7Py" firstAttribute="leading" secondItem="3rv-LP-G7n" secondAttribute="leading" id="ejx-K2-RRQ"/>
@@ -2050,8 +2049,7 @@
                                     <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="shareButtonClicked:" destination="wFa-GM-SYC" eventType="touchUpInside" id="vu7-Zw-16H"/>
-                                    <action selector="skipClicked:" destination="MDD-pd-jZT" eventType="touchUpInside" id="NwY-Zf-245"/>
+                                    <action selector="skipClicked:" destination="MDD-pd-jZT" eventType="touchUpInside" id="vWP-5j-zXe"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -2155,8 +2153,7 @@
                                     <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="shareButtonClicked:" destination="wFa-GM-SYC" eventType="touchUpInside" id="dgm-Mo-wNA"/>
-                                    <action selector="skipClicked:" destination="41D-oc-gjq" eventType="touchUpInside" id="FXB-Q4-VW1"/>
+                                    <action selector="skipClicked:" destination="41D-oc-gjq" eventType="touchUpInside" id="FJJ-B1-0wl"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -2766,7 +2763,7 @@
         <image name="support" width="256" height="256"/>
         <image name="swipe" width="512" height="512"/>
         <image name="welcomePage1" width="800" height="2000"/>
-        <image name="welcomePage2" width="800" height="2000"/>
+        <image name="welcomePage2" width="1125" height="2436"/>
         <image name="welcomePage3.5" width="600" height="1500"/>
         <image name="welcomePage4" width="800" height="2000"/>
         <image name="x" width="16" height="16"/>

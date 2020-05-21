@@ -67,6 +67,10 @@ final class _UserService {
         generateReferralLink()
     }
     
+    func createDummyUser() {
+        user = User.init(school: "UCI")
+    }
+    
     func generateReferralLink() {
         // Create url that will get parsed and give you the parameters
         print(ReferralLink.scheme)
@@ -159,5 +163,6 @@ final class _UserService {
         userListener = nil
         user = nil
         isLoggedIn = false
+        fcm_token_has_set = false
     }
 }

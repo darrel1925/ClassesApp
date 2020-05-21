@@ -8,6 +8,7 @@
 
 import UIKit
 import Stripe
+import StoreKit
 import AudioToolbox
 import FirebaseFunctions
 import FirebaseFirestore
@@ -23,10 +24,12 @@ class StorePopUpController: UIViewController {
     @IBOutlet weak var backgroundView: UIView!
     @IBOutlet weak var containerView: RoundedView!
     
+    var storeController: StoreController!
     var paymentContext: STPPaymentContext!
     var applePayPresented = false
-    
-    var storeController: StoreController!
+
+    var productId: String = "com.darrelmuonekwu.ClassesApp.TrackMyPremium"
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,18 +38,29 @@ class StorePopUpController: UIViewController {
         animateViewDownward()
         setLabels()
         setUpGestures()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animateViewUpwards()
-//        setPaymentInfo() // <--- must be here bc purchasingCredits isnt init until view loads
+        
+    }
+    
+    func setUpStoreKitPayments() {
+        StoreObserver.shared.getProducts() // <- loades in products from apple
+//        StoreObserver.shared.storeVC = self
+    }
+    
+    func makeStoreKitPayments() {
+        StoreObserver.shared.purchasePremium()
     }
     
     func showApplePay() {
         // Pay
         let merchantId = AppConstants.merchant_id
         let paymentRequest = Stripe.paymentRequest(withMerchantIdentifier: merchantId, country: "US", currency: "USD")
+        
         let price: Double = Double(AppConstants.premium_price) / 100.0
         let decimal = NSDecimalNumber(value: price)
         paymentRequest.paymentSummaryItems = [
@@ -102,10 +116,11 @@ class StorePopUpController: UIViewController {
         config.requiredBillingAddressFields = .none
         config.requiredShippingAddressFields = .none
         if Stripe.deviceSupportsApplePay() {
+            print("supports apple pay")
             config.additionalPaymentOptions = .applePay
             config.appleMerchantIdentifier = AppConstants.merchant_id
         }
-        
+        print("supports not apple pay")
         // invokes cloud function to get ephemeral key and customers stripe paymemt info
         let customerContext = STPCustomerContext(keyProvider: StripeAPI)
         paymentContext = STPPaymentContext(customerContext: customerContext, configuration: config, theme: .default())
@@ -119,20 +134,13 @@ class StorePopUpController: UIViewController {
         paymentContext.paymentAmount = AppConstants.premium_price
     }
     
-    func presentHomePage() {
-        let vc = storyboard?.instantiateViewController(withIdentifier: "HomePageController") as! HomePageController
-        let navController = UINavigationController(rootViewController: vc)
-        navController.modalPresentationStyle = .fullScreen
-        self.present(navController, animated: true, completion: nil)
-    }
-    
     func updatePremium() {
         let db = Firestore.firestore()
         let docRef = db.collection(DataBase.User).document(UserService.user.email)
         docRef.updateData([DataBase.has_premium: true]) { (err) in
             if let err = err {
                 print("Error updating getting premium", err.localizedDescription)
-                self.presentPaymentErrorAlert(error: err)
+                self.presentPaymentErrorAlert()
                 return
             }
             print("Success getting premium")
@@ -154,7 +162,7 @@ class StorePopUpController: UIViewController {
         self.present(alertController, animated: true)
     }
     
-    func presentPaymentErrorAlert(error: Error?) {
+    func presentPaymentErrorAlert() {
         let message = "There was an error completing you payment. Your card was not charged"
         
         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
@@ -347,7 +355,7 @@ extension StorePopUpController: STPPaymentContextDelegate {
         
         switch status {
         case .error:
-            presentPaymentErrorAlert(error: error)
+            presentPaymentErrorAlert()
             return
         case .success:
             updatePremium()
@@ -372,7 +380,7 @@ extension StorePopUpController: PKPaymentAuthorizationViewControllerDelegate  {
         self.activityIndicator.startAnimating()
         print("payment authorized by user")
 
-        self.activityIndicator.startAnimating()
+        
         processPayment(paymentContext: paymentContext)
         completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
     }
@@ -382,4 +390,3 @@ extension StorePopUpController: PKPaymentAuthorizationViewControllerDelegate  {
         
     }
 }
-

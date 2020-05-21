@@ -23,16 +23,13 @@ class ClassLookUpController: UIViewController {
         containerView.layer.cornerRadius = 20
         webView.layer.cornerRadius = 20
         webView.navigationDelegate = self
-        webView.layer.masksToBounds = true
-        
-        
+        webView.layer.masksToBounds = true        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animateViewUpwards()
     }
-    
     
     
     func setUpGestures() {

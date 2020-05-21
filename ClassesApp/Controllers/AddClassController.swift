@@ -23,7 +23,6 @@ class AddClassController: UIViewController {
     
     var courses = [Course]()
     
-    
     // Change store to get credits or go premium
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +43,9 @@ class AddClassController: UIViewController {
         addToListVC.modalPresentationStyle = .overFullScreen
         addToListVC.course = course
         addToListVC.addClassVC = self
+        
+        let signUp = SignUpPopUpController()
+        signUp.modalPresentationStyle = .overFullScreen
         self.present(addToListVC, animated: true, completion: nil)
     }
     

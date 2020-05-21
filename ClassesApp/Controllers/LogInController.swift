@@ -74,13 +74,13 @@ class LogInController: UIViewController {
     func presentNextPage(user: FirebaseAuth.User) {
         
         // If user has not seen welcome page
-        if !UserService.user.seenWelcomePage {
-            let db = Firestore.firestore()
-            let docRef = db.collection(DataBase.User).document(UserService.user.email)
-            docRef.updateData([DataBase.seen_welcome_page: true])
-            presentWelcomeScreen()
-            return
-        }
+//        if !UserService.user.seenWelcomePage {
+//            let db = Firestore.firestore()
+//            let docRef = db.collection(DataBase.User).document(UserService.user.email)
+//            docRef.updateData([DataBase.seen_welcome_page: true])
+//            presentWelcomeScreen()
+//            return
+//        }
         
         presentHomePage()
     }

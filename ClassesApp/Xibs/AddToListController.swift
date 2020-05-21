@@ -66,7 +66,7 @@ class AddToListController: UIViewController {
     func animateViewUpwards() {
         guard let window = UIApplication.shared.keyWindow else { return }
         
-        let height: CGFloat = 430
+        let height: CGFloat = containerView.frame.height
         let y = window.frame.height - height
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
@@ -93,6 +93,13 @@ class AddToListController: UIViewController {
         alertController.addAction(okay)
         self.present(alertController, animated: true)
 
+    }
+    
+    func presentSignUp() {
+        let signUp = SignUpPopUpController()
+        signUp.modalPresentationStyle = .overFullScreen
+        signUp.addToListVC = self
+        self.present(signUp, animated: true, completion: nil)
     }
     
     func alreadyTrackingClasses() -> Bool {
@@ -133,7 +140,6 @@ class AddToListController: UIViewController {
             Stats.logTrackedClass(course: self.course)
             self.handleDismiss()
             self.addClassVC.navigationController?.popViewController(animated: true)
-//            self.presentSuccessAlert()
         }
     }
     
@@ -152,14 +158,9 @@ class AddToListController: UIViewController {
     }
     
     @IBAction func addButtonClicked(_ sender: Any) {
-//        addClassVC.courseCodeField.text = ""
-//        addClassVC.courses.append(course)
-//        addClassVC.updateTrackClassLabel()
-//        addClassVC.tableView.reloadData()
-//        handleDismiss()
+        if alreadyTrackingClasses() { return }
+//        if UserService.user.email == "" { presentSignUp(); return }
         
-        if  alreadyTrackingClasses() { return }
-              
         trackClasses()
     }
 }

@@ -83,6 +83,20 @@ class SettingsController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
+    func presentSignUp() {
+        let signUp = SignUpPopUpController()
+        signUp.modalPresentationStyle = .overFullScreen
+        self.present(signUp, animated: true, completion: nil)
+    }
+    
+    func userIsLoggedIn() -> Bool {
+        if UserService.user.email == "" {
+            presentSignUp()
+            return false
+        }
+        return true
+    }
+    
     func logOut() {
          // if user is signed in
          if let _ = Auth.auth().currentUser {
@@ -238,6 +252,7 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         let row = indexPath.row
         let section = indexPath.section
         tableView.deselectRow(at: indexPath, animated: true)
+        
         switch section {
         case 1:
             switch row {
@@ -248,6 +263,7 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
                 self.present(changeSchoolVC, animated: true, completion: nil)
                 return
             case 2:
+                
                 presentForgotPassword()
                 return
             default:

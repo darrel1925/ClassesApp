@@ -12,6 +12,8 @@
 		387A636A0B5683E30416CBC1 /* Pods_ClassesAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CD1F71F095CCBA58547F6AB /* Pods_ClassesAppTests.framework */; };
 		9A08BCA22446102C00DC4B40 /* StorePopUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A08BCA02446102C00DC4B40 /* StorePopUpController.swift */; };
 		9A08BCA32446102C00DC4B40 /* StorePopUpController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A08BCA12446102C00DC4B40 /* StorePopUpController.xib */; };
+		9A17D8E8246E28E400E3BA6B /* SignUpPopUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */; };
+		9A17D8E9246E28E400E3BA6B /* SignUpPopUpController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */; };
 		9A1BA9EB243420400087622D /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1BA9EA243420400087622D /* SettingsController.swift */; };
 		9A21C7EA2452A7D000355CC2 /* NotifcationStatusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A21C7E82452A7D000355CC2 /* NotifcationStatusController.swift */; };
 		9A21C7EB2452A7D000355CC2 /* NotifcationStatusController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */; };
@@ -69,6 +71,8 @@
 		9AC6292E24589FAA00B793C0 /* ShareController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC6292D24589FAA00B793C0 /* ShareController.swift */; };
 		9AC62931245957B700B793C0 /* ClassDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC6292F245957B700B793C0 /* ClassDetailController.swift */; };
 		9AC62932245957B700B793C0 /* ClassDetailController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AC62930245957B700B793C0 /* ClassDetailController.xib */; };
+		9ACDE3AF24711CC000B52FDD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ACDE3AE24711CC000B52FDD /* StoreKit.framework */; };
+		9ACDE3B1247126CE00B52FDD /* StoreObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACDE3B0247126CE00B52FDD /* StoreObserver.swift */; };
 		9AE8D758243E7D050049B090 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE8D757243E7D050049B090 /* Constants.swift */; };
 		9AEEB595243C515900F5E6FE /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEEB594243C515900F5E6FE /* NotificationCell.swift */; };
 		9AEEB597243C527E00F5E6FE /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEEB596243C527E00F5E6FE /* NotificationController.swift */; };
@@ -107,6 +111,8 @@
 		8AC04124D54E938C8E6F9737 /* Pods-ClassesApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesApp.release.xcconfig"; path = "Target Support Files/Pods-ClassesApp/Pods-ClassesApp.release.xcconfig"; sourceTree = "<group>"; };
 		9A08BCA02446102C00DC4B40 /* StorePopUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePopUpController.swift; sourceTree = "<group>"; };
 		9A08BCA12446102C00DC4B40 /* StorePopUpController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StorePopUpController.xib; sourceTree = "<group>"; };
+		9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpPopUpController.swift; sourceTree = "<group>"; };
+		9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SignUpPopUpController.xib; sourceTree = "<group>"; };
 		9A1BA9EA243420400087622D /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		9A21C7E82452A7D000355CC2 /* NotifcationStatusController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifcationStatusController.swift; sourceTree = "<group>"; };
 		9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotifcationStatusController.xib; sourceTree = "<group>"; };
@@ -171,6 +177,8 @@
 		9AC6292D24589FAA00B793C0 /* ShareController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareController.swift; sourceTree = "<group>"; };
 		9AC6292F245957B700B793C0 /* ClassDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassDetailController.swift; sourceTree = "<group>"; };
 		9AC62930245957B700B793C0 /* ClassDetailController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ClassDetailController.xib; sourceTree = "<group>"; };
+		9ACDE3AE24711CC000B52FDD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		9ACDE3B0247126CE00B52FDD /* StoreObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreObserver.swift; sourceTree = "<group>"; };
 		9AE8D757243E7D050049B090 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9AEEB594243C515900F5E6FE /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		9AEEB596243C527E00F5E6FE /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
@@ -188,6 +196,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				130A4E3A3754589CBD111E59 /* Pods_ClassesApp.framework in Frameworks */,
+				9ACDE3AF24711CC000B52FDD /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +229,6 @@
 				F332B3B0C8712692DA7AF6B0 /* Pods-ClassesAppTests.debug.xcconfig */,
 				23F45C00119B7A7A5143428F /* Pods-ClassesAppTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -261,6 +269,8 @@
 				9A445620245B2ED50054521A /* ChangeSchoolController.xib */,
 				9AEF54D12465441D002AA3B6 /* ClassLookUpController.swift */,
 				9AEF54D22465441D002AA3B6 /* ClassLookUpController.xib */,
+				9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */,
+				9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */,
 			);
 			path = Xibs;
 			sourceTree = "<group>";
@@ -280,6 +290,7 @@
 				9A8CF97B242C58C7008D0DC6 /* Extensions.swift */,
 				9AAD828E2431C66C00C66838 /* AddClassLauncher.swift */,
 				9AAD82972432901F00C66838 /* Styles.swift */,
+				9ACDE3B0247126CE00B52FDD /* StoreObserver.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -454,6 +465,7 @@
 		E6717EC372AE7CD978FC59AB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9ACDE3AE24711CC000B52FDD /* StoreKit.framework */,
 				1DF89CD07824847B175A2BFA /* Pods_ClassesApp.framework */,
 				2AC36A4D936BE7CD3B984084 /* Pods_ClassesApp_ClassesAppUITests.framework */,
 				1CD1F71F095CCBA58547F6AB /* Pods_ClassesAppTests.framework */,
@@ -578,6 +590,7 @@
 				9A445622245B2ED50054521A /* ChangeSchoolController.xib in Resources */,
 				9A3D4A0A245776A30073C0F7 /* AddToListController.xib in Resources */,
 				9A8533F7243D6BF300F7197F /* ForgotPasswordController.xib in Resources */,
+				9A17D8E9246E28E400E3BA6B /* SignUpPopUpController.xib in Resources */,
 				9A9472B4242C1E7C004927DD /* Assets.xcassets in Resources */,
 				9A8CF979242C4BEA008D0DC6 /* GoogleService-Info.plist in Resources */,
 				9A21C7EB2452A7D000355CC2 /* NotifcationStatusController.xib in Resources */,
@@ -740,6 +753,7 @@
 				9A8CF973242C3F43008D0DC6 /* SplashScreenController.swift in Sources */,
 				9A8CF975242C48FA008D0DC6 /* LogInController.swift in Sources */,
 				9A7E051D244189E8002E9803 /* ServerService.swift in Sources */,
+				9A17D8E8246E28E400E3BA6B /* SignUpPopUpController.swift in Sources */,
 				9A8533FD243D7F2700F7197F /* PurchaseHistoryCell.swift in Sources */,
 				9AEF54D32465441E002AA3B6 /* ClassLookUpController.swift in Sources */,
 				9AC6292E24589FAA00B793C0 /* ShareController.swift in Sources */,
@@ -753,6 +767,7 @@
 				9A9472AB242C1E76004927DD /* AppDelegate.swift in Sources */,
 				9AC4A957244B92540019921F /* WelcomeScreen3.swift in Sources */,
 				9A8533F6243D6BF300F7197F /* ForgotPasswordController.swift in Sources */,
+				9ACDE3B1247126CE00B52FDD /* StoreObserver.swift in Sources */,
 				9A1BA9EB243420400087622D /* SettingsController.swift in Sources */,
 				9A3D4A0624576A100073C0F7 /* Course.swift in Sources */,
 				9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */,
@@ -957,7 +972,7 @@
 				CODE_SIGN_ENTITLEMENTS = ClassesApp/ClassesApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -981,7 +996,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -49,6 +49,8 @@ class HomePageController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // if user is not logged in
+        if UserService.user.email == "" { return }
         setLabels()
         refreshTableView()
         handleShowDirections()

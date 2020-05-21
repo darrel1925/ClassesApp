@@ -54,7 +54,15 @@ class WelcomeScreen4: UIViewController {
         
             UIView.animate(withDuration: 1.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
-                self.shareButton.alpha = 1
+                let email = UserService.user.email.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                print("email", email, email == "")
+                
+                if email != "" {
+                    print("sharing")
+                    self.shareButton.alpha = 1
+                }
+                
                 
             }, completion: nil )
         })

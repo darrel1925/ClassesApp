@@ -29,8 +29,6 @@ class SignUpController: UIViewController {
         "SJSU": "sjsu"
     ]
     
-    var termsLowerBound: Int!
-    var privacyLowerBound: Int!
     var securityTextVisible = false
     
     override func viewDidLoad(){

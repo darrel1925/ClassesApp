@@ -51,9 +51,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         else {
             print("user is NOT already logged in\n\n")
+            UserService.createDummyUser()
         }
- 
-    }
+     }
     
     
     func checkIfUserLoggedIn() {

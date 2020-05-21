@@ -123,7 +123,7 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell") as! NotificationCell
 
         cell.selectionStyle = .none
-        cell.courseNumberLabel.text = notification[DataBase.code]
+        cell.courseNumberLabel.text = notification[DataBase.name]
         cell.courseDescriptionLabel.text = "Status changed from \(notification[DataBase.old_status] ?? "") to \(notification[DataBase.new_status] ?? "")"
         
         cell.timeLabel.text = notification[DataBase.date]?.toDate().toStringInWords()

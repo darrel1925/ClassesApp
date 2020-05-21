@@ -24,6 +24,9 @@ class _AppConstants {
     var support_email = ""
     var premium_price = 499
     var support_email_pswd = ""
+    var premium_product_id = ""
+    var has_confirmed_email = false
+    var has_not_purchased = false
     var supported_schools: [String] = ["UCI", "UCLA"]
     var appConstantListener: ListenerRegistration? = nil
     var registration_pages: [String: String] = [:]
@@ -59,8 +62,11 @@ class _AppConstants {
             self.merchant_id = data[DataBase.merchant_id] as? String ?? ""
             self.domain_name = data[DataBase.domain_name] as? String ?? ""
             self.support_email = data[DataBase.support_email] as? String ?? ""
+            self.premium_product_id = data[DataBase.premium_product_id] as? String ?? ""
             self.support_email_pswd = data[DataBase.support_email_pswd] as? String ?? ""
             self.referral_info = data[DataBase.referral_info] as? [String: String] ?? [:]
+            self.has_confirmed_email = data[DataBase.has_confirmed_email] as? Bool ?? false
+            self.has_not_purchased = data[DataBase.has_not_purchased] as? Bool ?? false
             self.supported_schools = data[DataBase.supported_schools] as? [String] ?? ["UCI", "UCLA"]
             self.registration_pages = data[DataBase.registration_pages] as? [String: String] ?? [:]
             self.class_look_up_pages = data[DataBase.class_look_up_pages] as? [String: String] ?? [:]

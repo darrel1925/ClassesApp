@@ -94,18 +94,21 @@ class ClassDetailController: UIViewController {
     
     func presentWebController()
     {
-        let vc = homeVC.storyboard?.instantiateViewController(withIdentifier: "WebController") as! WebController
-        let navController = UINavigationController(rootViewController: vc)
-        navController.modalPresentationStyle = .fullScreen
-        vc.urlStr = AppConstants.registration_pages[UserService.user.school] 
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            self.backgroundView.alpha = 0
-        }) { _ in
-            self.dismiss(animated: true, completion: {
-                self.homeVC.present(navController, animated: true, completion: nil)
-            })
+//        let vc = homeVC.storyboard?.instantiateViewController(withIdentifier: "WebController") as! WebController
+//        let navController = UINavigationController(rootViewController: vc)
+//        navController.modalPresentationStyle = .fullScreen
+//        vc.urlStr = AppConstants.registration_pages[UserService.user.school]
+        let url_str = AppConstants.registration_pages[UserService.user.school]
+        if let url = URL(string: url_str!) {
+          UIApplication.shared.open(url)
         }
+//        UIView.animate(withDuration: 0.5, animations: {
+//            self.backgroundView.alpha = 0
+//        }) { _ in
+//            self.dismiss(animated: true, completion: {
+//                self.homeVC.present(navController, animated: true, completion: nil)
+//            })
+//        }
     }
     
     func removeClass(atIndexPath indexPath: IndexPath) {

@@ -39,7 +39,6 @@ class ChangeSchoolController: UIViewController {
     func setUpSchoolPicker() {
         let schoolPicker = UIPickerView()
         schoolPicker.delegate = self
-        schoolField.delegate = self
         schoolField.inputView = schoolPicker
     }
     
@@ -163,6 +162,3 @@ extension ChangeSchoolController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
 }
 
-extension ChangeSchoolController: UITextFieldDelegate {
-
-}

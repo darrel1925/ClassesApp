@@ -38,13 +38,13 @@ class SplashScreenController: UIViewController {
     
     func presentWelcomeScreen() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "PageController") as! PageController
-        vc.modalPresentationStyle = .fullScreen
+        vc.modalPresentationStyle = .overFullScreen
         self.present(vc, animated: true, completion: nil)
     }
     
     func checkWelcomeScreen() {
         // Has not seen welcome screen
-        print("welson", UserDefaults.standard.bool(forKey: Defaults.hasSeenWelcomeScreen))
+        print("welcome", UserDefaults.standard.bool(forKey: Defaults.hasSeenWelcomeScreen))
         if !UserDefaults.standard.bool(forKey: Defaults.hasSeenWelcomeScreen) {
             UserDefaults.standard.set(true, forKey: Defaults.hasSeenWelcomeScreen)
             presentWelcomeScreen()
