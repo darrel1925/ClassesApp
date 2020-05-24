@@ -12,8 +12,8 @@ enum MenuType: Int {
     case Title
     case Notifications
     case Premium
-    case Settings
     case Share
+    case Settings
     case HowItWorks
     case Support
     case Credits

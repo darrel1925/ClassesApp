@@ -43,7 +43,6 @@ class HomePageController: UIViewController {
         
         logNumTrackedClasses()
         setScreenName()
-        
         setUserProp()
     }
     
@@ -320,6 +319,7 @@ class HomePageController: UIViewController {
             // This device will not be able to send anyone else a referral link
             UserDefaults.standard.set(true, forKey: Defaults.hasUsedOneReferral)
             docRef.updateData([DataBase.num_referrals: num_referrals + 1 ])
+            Stats.logSignedUpFromReferral()
             print("Num referrals updated successfully ")
         }
     }

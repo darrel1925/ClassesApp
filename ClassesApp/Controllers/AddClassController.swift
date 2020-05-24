@@ -50,9 +50,10 @@ class AddClassController: UIViewController {
     }
     
     func presentClassDetailController() {
-        let classLookUplVC = ClassLookUpController()
-        classLookUplVC.modalPresentationStyle = .overFullScreen
-        self.present(classLookUplVC, animated: true, completion: nil)
+        let url_str = AppConstants.class_look_up_pages[UserService.user.school] 
+        if let url = URL(string: url_str!) {
+          UIApplication.shared.open(url)
+        }
     }
 
     func makeConnection() {

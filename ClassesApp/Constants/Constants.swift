@@ -14,6 +14,7 @@ struct DataBase {
     static let User  = "User"
     static let Class = "Class"
     static let AppConstants = "AppConstants"
+    static let Analytics = "Analytics"
 
     // User
     static let id        = "id"
@@ -68,8 +69,8 @@ struct DataBase {
     static let referral_info = "referral_info"
     static let domainURIPrefix    = "domainURIPrefix"
     static let metaTagDescription = "metaTagDescription"
-
     
+    static let my_email      = "my_email"
     static let server_ip     = "server_ip"
     static let terms_url     = "terms_url"
     static let stripe_pk     = "stripe_pk"
@@ -86,7 +87,6 @@ struct DataBase {
     static let class_look_up_pages = "class_look_up_pages"
     static let has_confirmed_email = "has_confirmed_email"
     static let has_not_purchased   = "has_not_purchased"
-
 
     // Class
     static let year    = "year"
@@ -113,12 +113,14 @@ struct DataBase {
     static let class_tracked       = "class_tracked"
     static let email_verified      = "email_verified"
     static let sign_up_clicked     = "sign_up_clicked"
-    static let num_classes_tracked = "num_classes_tracked"
-    static let copied_link_to_clip = "copied_link_to_clip"
+    static let num_classes_tracked     = "num_classes_tracked"
+    static let copied_link_to_clip     = "copied_link_to_clip"
+    static let signed_up_from_referral = "signed_up_from_referral"
+    static let premium = "premium"
+    static let purchases = "purchases"
     
     // Animations
     static let seen_home_tap_directions = "seen_home_tap_directions"
-
 }
 
 struct Status {

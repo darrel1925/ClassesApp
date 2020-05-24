@@ -8,11 +8,10 @@
 
 import Foundation
 import StoreKit
-import PassKit
-
 
 class StoreObserver: NSObject {
     
+    var didTapMenuType: ((Bool) -> Void)?
     var products = [SKProduct]()
     var storeVC: StoreController!
     let paymentQueue = SKPaymentQueue.default()
@@ -35,27 +34,21 @@ class StoreObserver: NSObject {
     func purchasePremium() {
         // We could not find products ids in app store connect
         if products.count == 0 {
+            print("no items found")
             storeVC.presentPaymentErrorAlert()
+            storeVC.activityIndicator.stopAnimating()
             return
         }
         
         let productToPurchase = products[0]
         let payment = SKPayment(product: productToPurchase)
         paymentQueue.add(payment)
-        
     }
     
-    func purchasePremiumWithApplePay() {
-        // We could not find products ids in app store connect
-        if products.count == 0 {
-            storeVC.presentPaymentErrorAlert()
-            return
-        }
-        
-        let productToPurchase = products[0]
-        let payment = SKPayment(product: productToPurchase)
-        paymentQueue.add(payment)
+    var isAuthorizedForPayments: Bool {
+        return SKPaymentQueue.canMakePayments()
     }
+    
 }
 
 
@@ -70,40 +63,73 @@ extension StoreObserver: SKProductsRequestDelegate {
 extension StoreObserver: SKPaymentTransactionObserver {
     // called each time something is add to transaction queue
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        print("updated called")
         for transaction in queue.transactions {
-            print("-->",transaction.transactionState.status(), transaction.payment.productIdentifier)
             switch transaction.transactionState {
             case .purchasing:
-                print("finishing4", transaction.transactionState.status(), transaction.payment.productIdentifier)
-                continue
-                
+                handlePurchasing(transaction: transaction, queue: queue)
             case .purchased:
-                print("finishing5", transaction.transactionState.status(), transaction.payment.productIdentifier)
-                queue.finishTransaction(transaction)
-                storeVC.updatePremium()
-                
+                handlePurchased(transaction: transaction, queue: queue)
             case .failed:
-                let errString = transaction.error?.localizedDescription
-                print(errString ?? "no err")
-                if errString ?? "" == "Cannot connect to iTunes Store" {
-                    print("user canceled")
-                    print("finishing3", transaction.transactionState.status(), transaction.payment.productIdentifier)
-                }
-                else {
-                    queue.finishTransaction(transaction)
-                    print("finishing1", transaction.transactionState.status(),  transaction.payment.productIdentifier)
-
-                    storeVC.presentPaymentErrorAlert()
-                }
-                queue.finishTransaction(transaction)
-
-                
+                handleFailed(transaction: transaction, queue: queue)
             default:
-                print(transaction.transactionState.status())
-                queue.finishTransaction(transaction)
-                print("finishing2", transaction.transactionState.status(), transaction.payment.productIdentifier)
+                handleDefault(transaction: transaction, queue: queue)
             }
         }
+    }
+    
+    func handlePurchasing(transaction: SKPaymentTransaction, queue: SKPaymentQueue){
+        print("4", transaction.transactionState.status(), transaction.payment.productIdentifier)
+    }
+    
+    func handlePurchased(transaction: SKPaymentTransaction, queue: SKPaymentQueue){
+        print("5", transaction.transactionState.status(), transaction.payment.productIdentifier)
+        storeVC.activityIndicator.stopAnimating()
+        queue.finishTransaction(transaction)
+        storeVC.updatePremium()
+    }
+    
+    func handleFailed(transaction: SKPaymentTransaction, queue: SKPaymentQueue){
+        storeVC.activityIndicator.stopAnimating()
+
+        // there was an actual error
+        if (transaction.error as? SKError)?.code != .paymentCancelled {
+            DispatchQueue.main.async {
+                print("pay error")
+                self.storeVC.displayError(title: "Payment Error", message: "There was an issue processing your purchase. Plase contact support if this continues.")
+                self.storeVC.activityIndicator.stopAnimating()
+                queue.finishTransaction(transaction)
+                //storeVC.presentPaymentErrorAlert()
+            }
+            return
+        }
+        print("User cancelled purchase")
+        queue.finishTransaction(transaction)
+    }
+    
+    func handleDefault (transaction: SKPaymentTransaction, queue: SKPaymentQueue){
+        storeVC.activityIndicator.stopAnimating()
+        queue.finishTransaction(transaction)
+        print(1, transaction.transactionState.status())
+    }
+    
+    func handleRestored(queue: SKPaymentQueue) {
+        print("restore...")
+        if queue.transactions.count == 0 {
+            self.didTapMenuType?(false)
+            return
+        }
+    
+        print("restore... ", queue.transactions.count)
+        self.didTapMenuType?(true)
+     }
+    
+    func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
+        handleRestored(queue: queue)
+    }
+    
+    func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
+        handleRestored(queue: queue)
     }
     
     func paymentQueue(_ queue: SKPaymentQueue, removedTransactions transactions: [SKPaymentTransaction]) {

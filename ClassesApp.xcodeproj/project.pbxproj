@@ -62,6 +62,8 @@
 		9AAD829A243295E700C66838 /* AddClassController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD8299243295E700C66838 /* AddClassController.swift */; };
 		9AAD829E24329E4D00C66838 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD829D24329E4D00C66838 /* MenuController.swift */; };
 		9AAD82A12432A47300C66838 /* SlideInTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD82A02432A47300C66838 /* SlideInTransition.swift */; };
+		9AADB83024750D4900A79586 /* RestorePurchaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AADB82E24750D4900A79586 /* RestorePurchaseController.swift */; };
+		9AADB83124750D4900A79586 /* RestorePurchaseController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AADB82F24750D4900A79586 /* RestorePurchaseController.xib */; };
 		9ABA572E245FFBF900C865D0 /* EmailSupportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABA572D245FFBF800C865D0 /* EmailSupportController.swift */; };
 		9ABA5730246165AE00C865D0 /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABA572F246165AE00C865D0 /* Stats.swift */; };
 		9AC4A953244B92360019921F /* WelcomeScreen1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4A952244B92360019921F /* WelcomeScreen1.swift */; };
@@ -168,6 +170,8 @@
 		9AAD8299243295E700C66838 /* AddClassController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddClassController.swift; sourceTree = "<group>"; };
 		9AAD829D24329E4D00C66838 /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
 		9AAD82A02432A47300C66838 /* SlideInTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInTransition.swift; sourceTree = "<group>"; };
+		9AADB82E24750D4900A79586 /* RestorePurchaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestorePurchaseController.swift; sourceTree = "<group>"; };
+		9AADB82F24750D4900A79586 /* RestorePurchaseController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RestorePurchaseController.xib; sourceTree = "<group>"; };
 		9ABA572D245FFBF800C865D0 /* EmailSupportController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSupportController.swift; sourceTree = "<group>"; };
 		9ABA572F246165AE00C865D0 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		9AC4A952244B92360019921F /* WelcomeScreen1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen1.swift; sourceTree = "<group>"; };
@@ -271,6 +275,8 @@
 				9AEF54D22465441D002AA3B6 /* ClassLookUpController.xib */,
 				9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */,
 				9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */,
+				9AADB82E24750D4900A79586 /* RestorePurchaseController.swift */,
+				9AADB82F24750D4900A79586 /* RestorePurchaseController.xib */,
 			);
 			path = Xibs;
 			sourceTree = "<group>";
@@ -590,6 +596,7 @@
 				9A445622245B2ED50054521A /* ChangeSchoolController.xib in Resources */,
 				9A3D4A0A245776A30073C0F7 /* AddToListController.xib in Resources */,
 				9A8533F7243D6BF300F7197F /* ForgotPasswordController.xib in Resources */,
+				9AADB83124750D4900A79586 /* RestorePurchaseController.xib in Resources */,
 				9A17D8E9246E28E400E3BA6B /* SignUpPopUpController.xib in Resources */,
 				9A9472B4242C1E7C004927DD /* Assets.xcassets in Resources */,
 				9A8CF979242C4BEA008D0DC6 /* GoogleService-Info.plist in Resources */,
@@ -770,6 +777,7 @@
 				9ACDE3B1247126CE00B52FDD /* StoreObserver.swift in Sources */,
 				9A1BA9EB243420400087622D /* SettingsController.swift in Sources */,
 				9A3D4A0624576A100073C0F7 /* Course.swift in Sources */,
+				9AADB83024750D4900A79586 /* RestorePurchaseController.swift in Sources */,
 				9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */,
 				9A445621245B2ED50054521A /* ChangeSchoolController.swift in Sources */,
 				9A652A31244CCA6200366229 /* AppConstants.swift in Sources */,
@@ -972,7 +980,7 @@
 				CODE_SIGN_ENTITLEMENTS = ClassesApp/ClassesApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -996,7 +1004,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

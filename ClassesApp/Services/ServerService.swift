@@ -8,6 +8,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseFunctions
 
 let ServerService = _ServerService()
 
@@ -37,7 +38,7 @@ final class _ServerService {
                 if let document = document, document.exists {
                     guard let data = document.data() else { print("couldn't do it"); return }
                     
-                    print(data)
+//                    print(data)
                     let course = Course(courseDict: data)
                     homeVC.courses.append(course)
                     
@@ -286,9 +287,9 @@ final class _ServerService {
         components.scheme = Routes.scheme
         components.host = AppConstants.server_ip
         components.path = "/\(Routes.send_email_route ?? "")"
-                
+        
         guard let url = components.url else { return }
-
+        
         var request = URLRequest(url: url)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
@@ -314,13 +315,75 @@ final class _ServerService {
             catch {
                 completion(nil, error)
             }
-
+            
             
             let responseString = String(data: data, encoding: .utf8)
             print("responseString = \(responseString)")
         }
-        
         task.resume()
+    }
+    
+    fileprivate func getToken(forEmail email: String, completion: @escaping (String?) -> Void ) {
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(email)
+
+        docRef.getDocument { (doc, error) in
+            if error != nil {
+                completion(nil)
+                return
+            }
+            guard let token = doc?[DataBase.fcm_token] as? String else { return }
+            completion(token)
+        }
+    }
+    
+    func updatePurchaseMade() {
+        Stats.logPurchase()
+        getToken(forEmail: AppConstants.my_email) { (token) in
+            guard let token = token else { print("no token"); return }
         
+            let data: [String : Any] = [
+                DataBase.email: UserService.user.email,
+                DataBase.school: UserService.user.school,
+                DataBase.date: Date().toString(),
+            ]
+            self.sendToPhone(withToken: token, withData: data)
+            self.updatePurchaseAnalytics(data: data)
+        }
+    }
+    
+    fileprivate func sendToPhone(withToken token: String, withData data: [String: Any]) {
+        print("send to token: \(token)")
+        let message: [String : Any] = [
+            "notification": [
+                "title": "New Purchase!!",
+                "body": "Shmoney :D"
+            ],
+            "data": data,
+            "token": token
+        ]
+
+        // sends notification to phone
+        Functions.functions().httpsCallable("sendNotification").call(message) { (result, error) in
+            if let error = error {
+                debugPrint(error.localizedDescription)
+                return
+            }
+        }
+    }
+        
+    fileprivate func updatePurchaseAnalytics(data: [String: Any]) {
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.Analytics).document(DataBase.purchases)
+
+        docRef.getDocument { (doc, error) in
+            if error != nil {
+                return
+            }
+
+            guard var premiumArr = doc?[DataBase.premium] as? [[String: Any]] else { return }
+            premiumArr.append(data)
+            docRef.setData([DataBase.premium: premiumArr], merge: true)
+        }
     }
 }

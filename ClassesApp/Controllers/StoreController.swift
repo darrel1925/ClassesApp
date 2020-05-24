@@ -7,9 +7,7 @@
 //
 
 import UIKit
-import Stripe
 import StoreKit
-import PassKit
 import MessageUI
 import AudioToolbox
 import FirebaseFunctions
@@ -18,6 +16,7 @@ import FirebaseFirestore
 
 class StoreController: UIViewController {
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var shareDescriptionLabel: UILabel!
     @IBOutlet weak var buyButton: RoundedButton!
@@ -26,9 +25,10 @@ class StoreController: UIViewController {
     @IBOutlet weak var redeemButton: UIButton!
     @IBOutlet weak var toGoLabel: UILabel!
     @IBOutlet weak var wantPremiumLabel: UILabel!
+    @IBOutlet weak var stackView: UIStackView!
     
     // Supported payments
-    let paymentNetworks = [PKPaymentNetwork.visa, PKPaymentNetwork.masterCard, PKPaymentNetwork.amex, PKPaymentNetwork.discover]
+//    let paymentNetworks = [PKPaymentNetwork.visa, PKPaymentNetwork.masterCard, PKPaymentNetwork.amex, PKPaymentNetwork.discover]
     // Add in any extra support payments.
     let ApplePayMerchantID = AppConstants.merchant_id
     // Fill in your merchant ID here!
@@ -57,36 +57,6 @@ class StoreController: UIViewController {
         StoreObserver.shared.purchasePremium()
     }
     
-    func apple_pay() {
-        // If user cannot make payments with one of our supported payments
-        if !PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentNetworks) {
-            print("No apple pay")
-//            displayError(title: "Cannot complete purchase", message: "Please contact support.")
-            makeStoreKitPayment()
-            return
-        }
-        
-        let price: Double = Double(AppConstants.premium_price) / 100.0
-        let decimal = NSDecimalNumber(value: price)
-        let paymentItem = PKPaymentSummaryItem.init(label: "TrackMy Premium", amount: decimal)
-        
-        let request = PKPaymentRequest()
-        request.currencyCode = "USD"
-        request.countryCode = "US"
-        request.merchantIdentifier = AppConstants.merchant_id
-        request.merchantCapabilities = PKMerchantCapability.capability3DS
-        request.supportedNetworks = paymentNetworks
-        request.paymentSummaryItems = [paymentItem]
-        
-        guard let paymentVC = PKPaymentAuthorizationViewController(paymentRequest: request) else {
-            displayError(title: "Cannot display payment", message: "Please contact support.")
-            return
-        }
-        paymentVC.delegate = self
-        self.present(paymentVC, animated: true, completion: nil)
-
-    }
-    
     func setLabels() {
         let price = AppConstants.premium_price.penniesToFormattedDollars()
         buyButton.setTitle(price, for: .normal)
@@ -109,6 +79,7 @@ class StoreController: UIViewController {
         if UserService.user.hasPremium {
             shareDescriptionLabel.text =  "If you're enjoying the app, we would love for you to share. It only takes one click!"
         }
+        stackView.isHidden = UserService.user.authenticated
     }
     
     func setUpGestures() {
@@ -172,26 +143,49 @@ class StoreController: UIViewController {
         })
     }
     
-    func presentSupport() {
-        guard MFMailComposeViewController.canSendMail() else {
-            let message = "Email account not set up on this device. Head over to you device's Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
-            self.displayError(title: "Cannot Send Mail", message: message)
-            return
-        }
-        
-        let composer = MFMailComposeViewController()
-        composer.mailComposeDelegate = self
-        composer.setSubject("Support - Payments")
-        composer.setToRecipients([AppConstants.support_email])
-        print(AppConstants.support_email)
-        present(composer, animated: true)
+    
+    func presentEmailSupport() {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "EmailSupportController") as! EmailSupportController
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .fullScreen
+        self.present(navController, animated: true, completion: nil)
     }
+    
+//    func presentSupport() {
+//        guard MFMailComposeViewController.canSendMail() else {
+//            let message = "Email account not set up on this device. Head over to you device's Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
+//            self.displayError(title: "Cannot Send Mail", message: message)
+//            return
+//        }
+//
+//        let composer = MFMailComposeViewController()
+//        composer.mailComposeDelegate = self
+//        composer.setSubject("Support - Payments")
+//        composer.setToRecipients([AppConstants.support_email])
+//        print(AppConstants.support_email)
+//        present(composer, animated: true)
+//    }
     
     func presentLearnMore() {
             let vc = self.storyboard?.instantiateViewController(withIdentifier: "FAQController") as! FAQController
             vc.modalPresentationStyle = .overFullScreen
             self.present(vc, animated: true, completion: nil)
         }
+    
+    func presentPaymentErrorAlert() {
+        let message = "There was a problem retrieving the payment info. Sorry about that! You can try:\n\n1. Restart the app\n2. Contact Support"
+        let alertContoller = UIAlertController(title: "Payment Error", message: message, preferredStyle: .alert)
+        
+        let contact = UIAlertAction(title: "Contact Support", style: .default, handler: {(action) in
+                self.presentEmailSupport()
+        })
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alertContoller.addAction(contact)
+        alertContoller.addAction(cancel)
+        present(alertContoller, animated: true)
+    }
     
     func checkForPremium() {
         if UserService.user.hasConfirmedEmail && UserService.user.hasNotPurchased {
@@ -205,7 +199,7 @@ class StoreController: UIViewController {
             return
         }
         else if !UserService.user.hasConfirmedEmail && UserService.user.hasNotPurchased {
-            displayError(title: "Please cofirm email", message: "You already have premium") { (finished) in
+            displayError(title: "Please confirm email", message: "Please confirm your email. If it is confirmed please contact support.") { (finished) in
                 self.dismiss(animated: true, completion: nil)
             }
             return
@@ -230,6 +224,7 @@ class StoreController: UIViewController {
     }
 
     func presentSuccessAlert() {
+        ServerService.updatePurchaseMade()
         AudioServicesPlaySystemSound(1519) // vibrate phone
         let message = "Thank you for your support!"
         let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)
@@ -238,16 +233,6 @@ class StoreController: UIViewController {
             self.handleDismiss()
             Stats.logPurchase()
         })
-        
-        alertController.addAction(okay)
-        self.present(alertController, animated: true)
-    }
-    
-    func presentPaymentErrorAlert() {
-        let message = "There was an error completing you payment. Your card was not charged"
-        
-        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        let okay = UIAlertAction(title: "Okay", style: .default, handler: nil)
         
         alertController.addAction(okay)
         self.present(alertController, animated: true)
@@ -280,8 +265,8 @@ class StoreController: UIViewController {
             dismiss(animated: true, completion: nil)
             return
         }
-        apple_pay()
-//        checkForPremium()
+        activityIndicator.startAnimating()
+        makeStoreKitPayment()
     }
     
     @IBAction func shareClicked(_ sender: Any) {
@@ -329,49 +314,3 @@ extension StoreController: MFMailComposeViewControllerDelegate {
     }
 }
 
-extension StoreController: PKPaymentAuthorizationViewControllerDelegate {
-    
-    // if authorization finishes, this will dismiss the payment view contoller
-        // when its finished
-    func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
-        print(payment.token.paymentData.base64EncodedString())
-        print(payment.token.paymentMethod.displayName)
-                
-        STPAPIClient.shared().createToken(with: payment) { (token, error) in
-            if let _ = error {
-                self.displayError(title: "Payment error", message: "There was a problem processing your payment. Please contact support")
-                return
-            }
-            print("got token")
-            print("stripe id= \(UserService.user.stripeId)")
-            print("payment amount = \(payment.token.paymentMethod.displayName ?? "no payment amt")")
-            // unique string to add to payment to ensure no payment request is made twice
-            let idempotency = UUID().uuidString.replacingOccurrences(of: "-", with: "")
-            let data: [String: Any] = [
-                "email": UserService.user.email,
-                "total": AppConstants.premium_price,
-                "customer_id": UserService.user.stripeId,
-                "idempotency": idempotency,
-                "source": token?.tokenId
-            ]
-            
-            Functions.functions().httpsCallable("createApplePayCharge").call(data) { (result, error) in
-                if let error = error {
-                    print("Error makeing charge: \(error.localizedDescription)")
-                    self.displayError(title: "Payment Error", message: "Unable to make charge. If this continues please contact support.")
-                    let failedResult = PKPaymentAuthorizationResult(status: .failure, errors: [error])
-                    
-                    completion(failedResult)
-                    return
-                }
-                print("charge successful")
-                let successResult = PKPaymentAuthorizationResult(status: .success, errors: nil)
-                completion(successResult)
-            }
-        }
-    }
-}

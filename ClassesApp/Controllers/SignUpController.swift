@@ -143,7 +143,7 @@ class SignUpController: UIViewController {
         
         // Chose .ucsf is not in the schoolExtDict values
         if !Array(schoolExtDict.values).contains(schoolExtenstion) {
-            let message = "Email must be a valid school email address ending in '.edu' /n/n Ex. panteatr@uci.edu, bbears@ucla.edu"
+            let message = "Email must be a valid school email address ending in '.edu' \n\n Ex. panteatr@uci.edu, bbears@ucla.edu"
             self.displayError(title: "School Email Required.", message: message)
             return false
         }

@@ -67,6 +67,31 @@ class SettingsController: UIViewController {
         forgotPassVC.modalPresentationStyle = .overCurrentContext
         present(forgotPassVC, animated: true, completion: nil)
     }
+
+    func presentChangeSchool() {
+        let changeSchoolVC = ChangeSchoolController()
+        changeSchoolVC.modalPresentationStyle = .overFullScreen
+        changeSchoolVC.settingsVC = self
+        self.present(changeSchoolVC, animated: true, completion: nil)
+    }
+
+    func presentRestorePurchase() {
+        let restorePurchaseVC = RestorePurchaseController()
+        restorePurchaseVC.modalPresentationStyle = .overFullScreen
+        self.present(restorePurchaseVC, animated: true, completion: nil)
+    }
+    
+    func presentToggleEmail() {
+        let toggleEmailVC = ToggleEmailsController()
+        toggleEmailVC.modalPresentationStyle = .overFullScreen
+        self.present(toggleEmailVC, animated: true, completion: nil)
+    }
+    
+    func presentToggleNotifications() {
+        let notifStatusVC = NotifcationStatusController()
+        notifStatusVC.modalPresentationStyle = .overFullScreen
+        self.present(notifStatusVC, animated: true, completion: nil)
+    }
     
     func presentLogOutAlert() {
         let message = "Are you sure you would like to log out?"
@@ -139,8 +164,8 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         switch section {
         case 0: // Account Info
             return 1
-        case 1: // Email, School, Change Password
-            return 3
+        case 1: // Email, School, Change Password, Restore Purchase
+            return 4
         case 2: // Preferences title
             return 1
         case 3: // Email Preferences, Notifiations
@@ -182,6 +207,12 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
                 return cell
             case 2:
                 cell.titleLabel.text = "Change Password"
+                cell.infoLabel.text = ""
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .gray
+                return cell
+            case 3:
+                cell.titleLabel.text = "Restore Purchase"
                 cell.infoLabel.text = ""
                 cell.accessoryType = .disclosureIndicator
                 cell.selectionStyle = .gray
@@ -257,28 +288,20 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
         case 1:
             switch row {
             case 1:
-                let changeSchoolVC = ChangeSchoolController()
-                changeSchoolVC.modalPresentationStyle = .overFullScreen
-                changeSchoolVC.settingsVC = self
-                self.present(changeSchoolVC, animated: true, completion: nil)
-                return
+                presentChangeSchool()
             case 2:
-                
                 presentForgotPassword()
-                return
+            case 3:
+                presentRestorePurchase()
             default:
                 return
             }
         case 3:
             switch row {
             case 0:
-                let toggleEmailsVC = ToggleEmailsController()
-                toggleEmailsVC.modalPresentationStyle = .overFullScreen
-                self.present(toggleEmailsVC, animated: true, completion: nil)
+                presentToggleEmail()
             case 1:
-                let notifStatusVC = NotifcationStatusController()
-                notifStatusVC.modalPresentationStyle = .overFullScreen
-                self.present(notifStatusVC, animated: true, completion: nil)
+                presentToggleNotifications()
             default:
                 return
             }

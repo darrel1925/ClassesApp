@@ -16,8 +16,6 @@ target 'ClassesApp' do
 	pod 'Firebase/Analytics'
 	pod 'Firebase/Crashlytics'
 	
-	pod 'Firebase/Auth' 
-
 	pod 'Stripe', '15.0.2'
 
 

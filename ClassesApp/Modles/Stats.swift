@@ -43,6 +43,7 @@ final class _Stats {
         Analytics.logEvent(AnalyticsEventPresentOffer, parameters: nil)
     }
     
+    
     func logRevievedNotification() {
 
     }
@@ -59,9 +60,12 @@ final class _Stats {
         Analytics.logEvent(DataBase.sign_up_clicked, parameters: nil)
     }
     
-    
     func logCopiedLinkToClip() {
         Analytics.logEvent(DataBase.copied_link_to_clip, parameters: nil)
+    }
+    
+    func logSignedUpFromReferral() {
+        Analytics.logEvent(DataBase.signed_up_from_referral, parameters: nil)
     }
     
     func logEmailVerified() {

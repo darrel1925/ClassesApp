@@ -41,14 +41,19 @@ class ShareController: UIViewController {
             else {
                 toGoLabel.text = "\(UserService.user.numReferrals) referrals, so far!"
             }
-            
         }
         
-        if UserService.user.hasPremium {
+        if UserService.user.hasPremium || UserService.user.authenticated {
             descriptionLabel.text =  "If you're enjoying the app, we would love for you to share. It only takes one click!"
+        } else {
+            descriptionLabel.text =  "Get free premium for Fall 2020 when 3 people download the app from your link and track their first class!"
         }
         
+        
+        toGoLabel.isHidden = UserService.user.authenticated
         referralLabel.text = UserService.user.referralLink
+        toGoLabel.isHidden = UserService.user.authenticated
+        redeemButton.isHidden = UserService.user.authenticated
     }
     
     func setUpGestures() {
