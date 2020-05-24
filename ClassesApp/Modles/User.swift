@@ -53,7 +53,7 @@ class User {
     init(id: String = "", email: String = "\n", webReg: Bool = false, webRegPswd: String = "",
          stripeId: String = "", classes: [String: [Any]] = [:], school: String = "",
          hasShortReferral: Bool  = false, fcm_token: String = "", numReferrals: Int = 0,
-         hasPremium: Bool = false, receiveEmails: Bool = true, seenWelcomePage: Bool = false,
+         hasPremium: Bool = false, receiveEmails: Bool = false, seenWelcomePage: Bool = false,
          isLoggedIn: Bool = true, isEmailVerified: Bool = false, referralLink: String = "",
          seenHomeTapDirections: Bool = false, hasSetUserProperty: Bool = false,
          notificationsEnabled: Bool = true, purchaseHistory: [[String: String]] = [],

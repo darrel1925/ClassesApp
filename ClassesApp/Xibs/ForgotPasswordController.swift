@@ -23,8 +23,8 @@ class ForgotPasswordController: UIViewController {
     }
     
     func presentAllDoneAlert() {
-        let message = "Your email should arrive in a few seconds :)"
-        let alert = UIAlertController(title: "All Done", message: message, preferredStyle: .alert)
+        let message = "Your email should arrive in yout inbox in a few seconds!"
+        let alert = UIAlertController(title: "Email Sent", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "Okay", style: .default, handler: {_ in
             self.dismiss(animated: true, completion: nil)
         })

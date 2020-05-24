@@ -48,7 +48,7 @@ class ToggleEmailsController: UIViewController {
         let height: CGFloat = 225
         let y = window.frame.height - height
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
             self.backgroundView.alpha = 0.5
             self.containerView.frame = CGRect(x: 0, y: y, width: window.frame.width, height: height)
@@ -134,12 +134,12 @@ class ToggleEmailsController: UIViewController {
     
     @objc func handleDismiss() {
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
-            self.view.alpha = 0
+            self.backgroundView.alpha = 0
             
         }, completion: {_ in
-            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
                 self.dismiss(animated: true, completion: nil)
                 

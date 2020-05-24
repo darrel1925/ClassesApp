@@ -18,7 +18,7 @@ class EmailSupportController: UIViewController {
     
     
     var placeholderLabel : UILabel!
-    var placeHolderText: String = "Sending feedback? Seeking support? Want to see a new feature? Whatever your needs are, we want to hear from you. Let us know what we can do for you!"
+    var placeHolderText: String = "Sending feedback? Seeking support? Want to see a new feature? Find a bug? Whatever it is, we want to hear from you. Let us know what we can do for you!"
     
     override func viewDidLoad() {
         super.viewDidLoad()

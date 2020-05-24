@@ -373,7 +373,6 @@ class HomePageController: UIViewController {
     
     @objc func refreshTableView() {
         let dispatchGroup = DispatchGroup()
-        courses.removeAll()
         ServerService.getClassStatus(withGroup:dispatchGroup, homeVC: self)
         
         dispatchGroup.notify(queue: .main) {

@@ -78,21 +78,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         switch dynamicaLink.matchType {
         case .unique:
             // 100% sure this is the link your user clicked on
-            print("Unique")
+            print("--> Unique")
             AppDelegate.addToUserDefaults(email: email)
             break
         case .default:
             // Pretty sure this is the link the user clicked on but dont know for sure
-            print("default")
+            print("--> default")
             AppDelegate.addToUserDefaults(email: email)
             break
         case .weak:
-            print("weak")
+            print("--> weak")
             AppDelegate.addToUserDefaults(email: email)
             // Guessing that this might be the correct link but tbh we dont know for sure
             break
         case .none:
-            print("none")
+            print("--> none")
             // There is nothing in this dynamic link
             break
         }

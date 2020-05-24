@@ -43,9 +43,9 @@ class RestorePurchaseController: UIViewController {
         let height: CGFloat = containerView.frame.height
         let y = window.frame.height - height
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
-            self.backgroundView.alpha = 0.5
+            self.backgroundView.alpha = 0.3
             self.containerView.frame = CGRect(x: 0, y: y, width: window.frame.width, height: height)
             
         }, completion: nil)

@@ -246,13 +246,14 @@ final class _ServerService {
     
     func sendSupportEmail(subject: String, message: String, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
         
+        let newMessage = "\(message) bought by \(UserService.user.email) from \(UserService.user.school)"
         var components = URLComponents()
         components.scheme = Routes.scheme
         components.host = AppConstants.server_ip
         components.path = "/\(Routes.send_email_route ?? "")"
         
         let subjectQueryItem = URLQueryItem(name: DataBase.subject, value: subject)
-        let messageQueryItem = URLQueryItem(name: DataBase.message, value: message)
+        let messageQueryItem = URLQueryItem(name: DataBase.message, value: newMessage)
         
         components.queryItems = [subjectQueryItem, messageQueryItem]
         

@@ -88,7 +88,7 @@ final class _UserService {
         
         // Full url with all parameters included
         guard let linkParameter = components.url else { return }
-        print("let linkParameter",  linkParameter)
+        print("let linkParameter",  linkParameter.absoluteString)
         // Create the big dynamic link
         guard let shareLink = DynamicLinkComponents.init(link: linkParameter, domainURIPrefix: ReferralLink.domainURIPrefix ) else { return }
         

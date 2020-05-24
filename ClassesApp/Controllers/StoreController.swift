@@ -28,7 +28,7 @@ class StoreController: UIViewController {
     @IBOutlet weak var stackView: UIStackView!
     
     // Supported payments
-//    let paymentNetworks = [PKPaymentNetwork.visa, PKPaymentNetwork.masterCard, PKPaymentNetwork.amex, PKPaymentNetwork.discover]
+    //    let paymentNetworks = [PKPaymentNetwork.visa, PKPaymentNetwork.masterCard, PKPaymentNetwork.amex, PKPaymentNetwork.discover]
     // Add in any extra support payments.
     let ApplePayMerchantID = AppConstants.merchant_id
     // Fill in your merchant ID here!
@@ -90,21 +90,26 @@ class StoreController: UIViewController {
     
     func setRedeemButton() {
         var image: UIImage!
-
+        
         switch UserService.user.numReferrals {
         case 0:
-              image = UIImage(named: "zeroThirds")
-          case 1:
-              image = UIImage(named: "oneThird")
-          case 2:
-              image = UIImage(named: "twoThirds")
-          case 3:
-              image = UIImage(named: "threeThirds")
+            image = UIImage(named: "zeroThirds")
+        case 1:
+            image = UIImage(named: "oneThird")
+        case 2:
+            image = UIImage(named: "twoThirds")
+        case 3:
+            image = UIImage(named: "threeThirds")
         default:
-            redeemButton.isHidden = true
-            return
+            if UserService.user.hasPremium {
+                redeemButton.isHidden = true
+                toGoLabel.isHidden = true
+            }
+            else {
+                image = UIImage(named: "threeThirds")
+            }
         }
-
+        
         redeemButton.setImage(image, for: .normal)
     }
     
@@ -122,7 +127,7 @@ class StoreController: UIViewController {
             // User completed activity
             Stats.logLinkShared()
         }
-
+        
         self.present(sharingController, animated: true, completion: nil)
     }
     
@@ -151,33 +156,33 @@ class StoreController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
-//    func presentSupport() {
-//        guard MFMailComposeViewController.canSendMail() else {
-//            let message = "Email account not set up on this device. Head over to you device's Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
-//            self.displayError(title: "Cannot Send Mail", message: message)
-//            return
-//        }
-//
-//        let composer = MFMailComposeViewController()
-//        composer.mailComposeDelegate = self
-//        composer.setSubject("Support - Payments")
-//        composer.setToRecipients([AppConstants.support_email])
-//        print(AppConstants.support_email)
-//        present(composer, animated: true)
-//    }
+    //    func presentSupport() {
+    //        guard MFMailComposeViewController.canSendMail() else {
+    //            let message = "Email account not set up on this device. Head over to you device's Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
+    //            self.displayError(title: "Cannot Send Mail", message: message)
+    //            return
+    //        }
+    //
+    //        let composer = MFMailComposeViewController()
+    //        composer.mailComposeDelegate = self
+    //        composer.setSubject("Support - Payments")
+    //        composer.setToRecipients([AppConstants.support_email])
+    //        print(AppConstants.support_email)
+    //        present(composer, animated: true)
+    //    }
     
     func presentLearnMore() {
-            let vc = self.storyboard?.instantiateViewController(withIdentifier: "FAQController") as! FAQController
-            vc.modalPresentationStyle = .overFullScreen
-            self.present(vc, animated: true, completion: nil)
-        }
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "FAQController") as! FAQController
+        vc.modalPresentationStyle = .overFullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
     
     func presentPaymentErrorAlert() {
         let message = "There was a problem retrieving the payment info. Sorry about that! You can try:\n\n1. Restart the app\n2. Contact Support"
         let alertContoller = UIAlertController(title: "Payment Error", message: message, preferredStyle: .alert)
         
         let contact = UIAlertAction(title: "Contact Support", style: .default, handler: {(action) in
-                self.presentEmailSupport()
+            self.presentEmailSupport()
         })
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -222,9 +227,12 @@ class StoreController: UIViewController {
             self.presentSuccessAlert()
         }
     }
-
+    
     func presentSuccessAlert() {
-        ServerService.updatePurchaseMade()
+        ServerService.sendSupportEmail(subject: "Purchase!! :D", message: "Hella moniess") { (json, err) in
+            
+        }
+        
         AudioServicesPlaySystemSound(1519) // vibrate phone
         let message = "Thank you for your support!"
         let alertController = UIAlertController(title: "Success!", message: message, preferredStyle: .alert)

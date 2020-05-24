@@ -258,7 +258,7 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
                 cell.selectionStyle = .gray
                 return cell
             case 1:
-                cell.titleLabel.text = "Terms and Agreements"
+                cell.titleLabel.text = "Terms and Conditions"
                 cell.infoLabel.text = ""
                 cell.accessoryType = .disclosureIndicator
                 cell.selectionStyle = .gray
