@@ -22,29 +22,30 @@ class Course{
     var class_time: String = ""
     var status: String = ""
     var room: String = ""
+    var restrictions: [String] = []
     var school: String = UserService.user.school
     var year: String = AppConstants.year
     var quarter: String = AppConstants.quarter
     
-    init(serverInput: String){
-        let inputArr = serverInput.components(separatedBy: ",")
-        if inputArr.count < 11 {
-            self.status = Status.Error
-            return
-        }
-        
-        self.code = inputArr[0]
-        self.course_name = inputArr[1]
-        self.course_title = inputArr[2]
-        self.course_type = inputArr[3]
-        self.section = inputArr[4]
-        self.units = inputArr[5]
-        self.professor = inputArr[6]
-        self.days = inputArr[7]
-        self.class_time = inputArr[8]
-        self.status = inputArr[9]
-        self.room = inputArr[10]
-    }
+//    init(serverInput: String){
+//        let inputArr = serverInput.components(separatedBy: ",")
+//        if inputArr.count < 11 {
+//            self.status = Status.Error
+//            return
+//        }
+//
+//        self.code = inputArr[0]
+//        self.course_name = inputArr[1]
+//        self.course_title = inputArr[2]
+//        self.course_type = inputArr[3]
+//        self.section = inputArr[4]
+//        self.units = inputArr[5]
+//        self.professor = inputArr[6]
+//        self.days = inputArr[7]
+//        self.class_time = inputArr[8]
+//        self.status = inputArr[9]
+//        self.room = inputArr[10]
+//    }
     
     init(courseDict: [String: Any]) {
         
@@ -59,7 +60,7 @@ class Course{
         self.class_time = courseDict[DataBase.time] as? String ?? ""
         self.status = courseDict[DataBase.status] as? String ?? ""
         self.room = courseDict[DataBase.room] as? String ?? ""
-        
+        self.restrictions = courseDict[DataBase.restrictions] as? [String] ?? []
     }
     
     
@@ -76,6 +77,7 @@ class Course{
             DataBase.time: self.class_time,
             DataBase.status: self.status,
             DataBase.room: self.room,
+            DataBase.restrictions: self.restrictions,
             
             DataBase.school: self.school,
             DataBase.year: self.year,

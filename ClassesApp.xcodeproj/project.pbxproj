@@ -15,6 +15,7 @@
 		9A17D8E8246E28E400E3BA6B /* SignUpPopUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */; };
 		9A17D8E9246E28E400E3BA6B /* SignUpPopUpController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */; };
 		9A1BA9EB243420400087622D /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1BA9EA243420400087622D /* SettingsController.swift */; };
+		9A1D0901247B675600095F6F /* ClassDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1D0900247B675500095F6F /* ClassDetailsController.swift */; };
 		9A21C7EA2452A7D000355CC2 /* NotifcationStatusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A21C7E82452A7D000355CC2 /* NotifcationStatusController.swift */; };
 		9A21C7EB2452A7D000355CC2 /* NotifcationStatusController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */; };
 		9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */; };
@@ -82,6 +83,7 @@
 		9AEF54D42465441E002AA3B6 /* ClassLookUpController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AEF54D22465441D002AA3B6 /* ClassLookUpController.xib */; };
 		9AF3AEC3244E534100D690C7 /* TermsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF3AEC2244E534000D690C7 /* TermsController.swift */; };
 		9AFB0C22245CC849008D1297 /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB0C21245CC849008D1297 /* Animations.swift */; };
+		9AFB5E17247B5D64003D3BE7 /* RestrictionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB5E16247B5D64003D3BE7 /* RestrictionsController.swift */; };
 		9AFCD2B5244B987E009D2081 /* PageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFCD2B4244B987E009D2081 /* PageController.swift */; };
 /* End PBXBuildFile section */
 
@@ -116,6 +118,7 @@
 		9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpPopUpController.swift; sourceTree = "<group>"; };
 		9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SignUpPopUpController.xib; sourceTree = "<group>"; };
 		9A1BA9EA243420400087622D /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
+		9A1D0900247B675500095F6F /* ClassDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassDetailsController.swift; sourceTree = "<group>"; };
 		9A21C7E82452A7D000355CC2 /* NotifcationStatusController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifcationStatusController.swift; sourceTree = "<group>"; };
 		9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotifcationStatusController.xib; sourceTree = "<group>"; };
 		9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenAnimation.swift; sourceTree = "<group>"; };
@@ -190,6 +193,7 @@
 		9AEF54D22465441D002AA3B6 /* ClassLookUpController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ClassLookUpController.xib; sourceTree = "<group>"; };
 		9AF3AEC2244E534000D690C7 /* TermsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsController.swift; sourceTree = "<group>"; };
 		9AFB0C21245CC849008D1297 /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
+		9AFB5E16247B5D64003D3BE7 /* RestrictionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionsController.swift; sourceTree = "<group>"; };
 		9AFCD2B4244B987E009D2081 /* PageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageController.swift; sourceTree = "<group>"; };
 		F332B3B0C8712692DA7AF6B0 /* Pods-ClassesAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesAppTests.debug.xcconfig"; path = "Target Support Files/Pods-ClassesAppTests/Pods-ClassesAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -411,6 +415,8 @@
 				9ABA572D245FFBF800C865D0 /* EmailSupportController.swift */,
 				9A4D254D246692C700CC6B2A /* FAQController.swift */,
 				9AFCD2B4244B987E009D2081 /* PageController.swift */,
+				9AFB5E16247B5D64003D3BE7 /* RestrictionsController.swift */,
+				9A1D0900247B675500095F6F /* ClassDetailsController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -784,6 +790,7 @@
 				9A7B46A5244FAB6F00B4D7A0 /* CreditsController.swift in Sources */,
 				9AAD829A243295E700C66838 /* AddClassController.swift in Sources */,
 				9AAD829E24329E4D00C66838 /* MenuController.swift in Sources */,
+				9AFB5E17247B5D64003D3BE7 /* RestrictionsController.swift in Sources */,
 				9A8CF981242C78FE008D0DC6 /* HomePageController.swift in Sources */,
 				9A7B46A3244FAB1100B4D7A0 /* CreditCell.swift in Sources */,
 				9A8533FF243D81D100F7197F /* TitleCell.swift in Sources */,
@@ -804,6 +811,7 @@
 				9A3D4A09245776A30073C0F7 /* AddToListController.swift in Sources */,
 				9A40E7F2243857B90070A410 /* StripeAPI.swift in Sources */,
 				9AE8D758243E7D050049B090 /* Constants.swift in Sources */,
+				9A1D0901247B675600095F6F /* ClassDetailsController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -980,7 +988,7 @@
 				CODE_SIGN_ENTITLEMENTS = ClassesApp/ClassesApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -988,7 +996,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
 				PRODUCT_NAME = TrackMy;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1006,7 +1014,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1014,7 +1022,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
 				PRODUCT_NAME = TrackMy;
 				PROVISIONING_PROFILE_SPECIFIER = "";

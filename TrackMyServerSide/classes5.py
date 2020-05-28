@@ -111,8 +111,6 @@ def check_for_course(class_dict):
     if is_open:
         # list of people who have auto-enroll enabled
         will_auto_enroll = []
-        # send emails to people
-        email_class_pairs = {}
         emails = helpers.get_emails_tracking_this_class(code, quarter, school)
 
         for email in emails:
@@ -123,14 +121,11 @@ def check_for_course(class_dict):
             helpers.send_push_notification_to_user(user_doc_dict, notif_info)
             helpers.update_user_notification_list(email, old_status, new_status, code, name)
 
-            # get discussions/labs that this person wants to sign up for
-            dis_and_labs = helpers.get_dis_and_labs_for_user(user_doc_dict, code)
-            # add then to dictionary
-            email_class_pairs.update({email: dis_and_labs})
             # send email to student who are tracking this class
             if user_doc_dict["receive_emails"]:
                 helpers.send_email_for_notif(email, code, name ,old_status, new_status)
-                # send_email(email, code, name ,old_status, new_status)
+            
+            # sign users up who have paid for webreg
             if user_doc_dict["web_reg"]:
                 print("auto-enroll_waiting")
                 will_auto_enroll.append(user_doc_dict)

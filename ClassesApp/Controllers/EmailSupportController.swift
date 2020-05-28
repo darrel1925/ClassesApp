@@ -63,8 +63,8 @@ class EmailSupportController: UIViewController {
             subject = "\(textField.text ?? "") / \(UserService.user.school)"
         }
         
-        
-        let message = textView.text ?? ""
+        let email = UserService.user.email
+        let message = "\(textView.text ?? "")  -(hidden: \(email))" 
         ServerService.sendSupportEmail(subject: subject, message: message) { (json, error) in
             print("json", json)
             if let _ = error {

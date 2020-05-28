@@ -138,32 +138,6 @@ def logout_of_webreg(driver):
     print("My program took", time.time() - start_time, "to run")
     driver.quit()
 
-def add_classes(code: str , email_class_pairs: dict):
-
-    print("email class pairs", email_class_pairs)
-
-    for email, dis_and_labs in email_class_pairs.items():
-        # if user has web reg enabled
-        if helpers.user_has_webreg_enabled(email):
-            print(email, "has web reg enabled")
-            
-            # open web reg
-            driver = log_into_web_reg(email)
-            # if log in was successfull
-            if driver:
-                # add class
-                add_class(driver, code)
-                for code in dis_and_labs:
-                    add_class(driver, code)
-            # if log in was not successful
-            # else:
-                # print("there was an error while trying to register")
-                # send_email(email, "error", code)
-
-            logout_of_webreg(driver)
-    # time.sleep(120) # remove class from list or something <---- figure out what to do
-
-
 def add_class(driver, code):
     """
     Takes in a WebReg driver and cousrse code then adds that course

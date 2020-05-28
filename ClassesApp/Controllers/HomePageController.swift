@@ -54,6 +54,7 @@ class HomePageController: UIViewController {
         refreshTableView()
         handleShowDirections()
         UserService.checkForShortLink()
+        UserService.ensureFCMIsSet()
     }
     
     func setUserProp() {
@@ -162,6 +163,24 @@ class HomePageController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
+    func presentClassDetailController(course: Course, indexPath: IndexPath) {
+        let classDetailVC = ClassDetailController()
+        classDetailVC.modalPresentationStyle = .overFullScreen
+        classDetailVC.course = course
+        classDetailVC.indexPath = indexPath
+        classDetailVC.homeVC = self
+        self.present(classDetailVC, animated: true, completion: nil)
+    }
+
+    func presentClassDetailsController(course: Course, indexPath: IndexPath) {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ClassDetailsController") as! ClassDetailsController
+        vc.modalPresentationStyle = .overFullScreen
+        vc.course = course
+        vc.indexPath = indexPath
+        vc.homeVC = self
+        self.present(vc, animated: true, completion: nil)
+    }
+    
     func presentEmailSupport() {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "EmailSupportController") as! EmailSupportController
         let navController = UINavigationController(rootViewController: vc)
@@ -222,15 +241,6 @@ class HomePageController: UIViewController {
         if UserService.user.isEmailVerified { return }
         guard let user = Auth.auth().currentUser else { return }
         user.reload(completion: nil)
-    }
-    
-    func presentClassDetailController(course: Course, indexPath: IndexPath) {
-        let classDetailVC = ClassDetailController()
-        classDetailVC.modalPresentationStyle = .overFullScreen
-        classDetailVC.course = course
-        classDetailVC.indexPath = indexPath
-        classDetailVC.homeVC = self
-        self.present(classDetailVC, animated: true, completion: nil)
     }
     
     func toggleNoClassLabel(){
@@ -436,7 +446,8 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        presentClassDetailController(course: courses[indexPath.row], indexPath: indexPath)
+//        presentClassDetailController(course: courses[indexPath.row], indexPath: indexPath)
+        presentClassDetailsController(course: courses[indexPath.row], indexPath: indexPath)
     }
     
     func didTapOpenOrWaitlist() -> Bool {

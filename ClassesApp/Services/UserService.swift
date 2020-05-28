@@ -71,6 +71,22 @@ final class _UserService {
         user = User.init(school: "UCI")
     }
     
+    func ensureFCMIsSet() {
+        if user.fcm_token ==  Messaging.messaging().fcmToken { print("fcm is good"); return }
+        
+        let new_fcm = Messaging.messaging().fcmToken ?? "couldnt get fcm token"
+        
+        let db = Firestore.firestore()
+        db.collection(DataBase.User).document(user.email).setData([DataBase.fcm_token: new_fcm, DataBase.is_logged_in: true], merge: true) { err in
+            if let err = err {
+                print("COULD NOT UPDATE FCM TOKEN: \(err.localizedDescription)")
+            }
+            else {
+                print("Customer fcm Token was updated!")
+            }
+        }
+    }
+    
     func generateReferralLink() {
         // Create url that will get parsed and give you the parameters
         print(ReferralLink.scheme)

@@ -44,8 +44,8 @@ class AddClassController: UIViewController {
         addToListVC.course = course
         addToListVC.addClassVC = self
         
-        let signUp = SignUpPopUpController()
-        signUp.modalPresentationStyle = .overFullScreen
+//        let signUp = SignUpPopUpController()
+//        signUp.modalPresentationStyle = .overFullScreen
         self.present(addToListVC, animated: true, completion: nil)
     }
     

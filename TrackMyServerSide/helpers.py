@@ -114,6 +114,12 @@ def get_full_class_info_uci(web_address):
         if len(professor_arr[-1]) == 1:
             professor += "."
 
+    # print(status_row)
+    restrictions = []
+    for restriction in status_row[24].text.split():
+        if len(restriction) == 1:
+            restrictions.append(restriction)
+    # print("restrictions", restrictions)
     # print("Prof", professor)
 
     code = status_row[12].text
@@ -139,6 +145,7 @@ def get_full_class_info_uci(web_address):
         "time": class_time,
         "room": room,
         "type": course_type,
+        "restrictions": restrictions
     }
     return json
 
@@ -198,79 +205,6 @@ def initialize_firebase():
     cred = credentials.Certificate("myclasses.json")
     firebase_admin.initialize_app(cred) # initialize app
 
-def parse_input(input_str):
-    input_str = input_str.split(",")
-
-    email = input_str[0]
-    quarter = input_str[1]
-    year = input_str[2]
-    code = input_str[3]
-    school = input_str[4]
-    dis_sections = input_str[5].split()
-    lab_sections = input_str[6].split()
-
-    return email, quarter, year, code, school, dis_sections, lab_sections
-
-def add_class_to_fb(server_input):
-    emails = []
-    email, quarter, year, code, school, dis_sections, lab_sections =  parse_input(server_input)
-
-    db = firestore.client()
-    school_param = format_school(school)
-    doc_list = list(db.collection(school_param).where('code', '==', code).where('quarter', '==', quarter).stream())
-
-    # doc is in the db
-    if len(doc_list) > 0: 
-        print("Class is already in db")
-        
-        doc = doc_list[0]
-        emails = doc.to_dict()["emails"]
-        if email not in emails:
-            emails.append(email)
-
-        doc.reference.set({ "emails": emails, }, merge=True)
-    
-    else:
-        # Old, need to update to use again
-        print('Class does not already exist in db!')
-        doc_id = format_doc_id(code, quarter)
-        school_param = format_school(school)
-        doc_ref = db.collection(school_param).document(doc_id) # create new doc ref
-        doc_ref.set({
-            "status": "FULL", # needs to ALWAYS start out is FULL to send first email!
-            "code": code,
-            "quarter": quarter,
-            "emails": emails,
-            "year": year
-        }, merge=True)
-
-    print("found emails for", format_doc_id(code, quarter), "=", emails)
-    # add user to class document
-    if email not in emails:
-        emails.append(email)
-
-        doc_ref.set({
-            "status": "FULL", # <-- needs to ALWAYS start out is FULL to send first email!
-            "code": code,
-            "quarter": quarter,
-            "emails": emails,
-            "year": year
-        }, merge=True)
-
-
-    # add class/discussions/labs to users document
-    doc_ref = db.collection("User").document(email)
-    try:
-        doc = doc_ref.get()
-        classes = doc.to_dict()["classes"]
-        print(u'emails: {}'.format(emails))
-        classes.update({code: dis_sections + lab_sections})
-        doc_ref.update({"classes": classes}) # if user is in data base
-    except Exception as e:
-        print(str(e))
-        print(u'User not found in db!')
-        classes.update({code: dis_sections + lab_sections})
-        doc_ref.set({"classes": classes}, merge=True) # if user is not in data base
 
 def get_classes_to_search_for(): 
     """
@@ -394,8 +328,15 @@ def send_push_notification_to_user(doc_dict, notif_info):
 
         # send
         messaging.send(notif)
-    except:
+
+    except Exception as e:
         print("Could not send push notification")
+        body = "Could not send push notification: " + str(e)
+        send_email_error("ERR SENDING NOTIF", body)
+        return
+
+    body = doc_dict["email"] + " " + title + " " + message
+    send_email_error("Notif Sent:)", body)
 
 def update_user_notification_list(email, old_status, new_status, code, name):
     db = firestore.client()
@@ -500,5 +441,5 @@ def format_school(school):
 
 # formatted date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# print(get_full_class_info_uci("https://www.reg.uci.edu/perl/WebSoc?YearTerm=2020-92&ShowFinals=0&ShowComments=0&CourseCodes=05551"))
+# print(get_full_class_info_uci("https://www.reg.uci.edu/perl/WebSoc?YearTerm=2020-92&ShowFinals=0&ShowComments=0&CourseCodes=34140"))
 # 68210

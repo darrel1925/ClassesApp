@@ -103,9 +103,10 @@ struct DataBase {
     static let type  = "type"
     static let title = "title"
     static let units = "units"
-    static let section   = "section"
-    static let professor = "professor"
+    static let section      = "section"
+    static let professor    = "professor"
     static let dis_and_labs = "dis_and_labs"
+    static let restrictions = "restrictions"
         
     // Analytics
     static let faq_viewed          = "faq_viewed"
@@ -161,4 +162,46 @@ struct Defaults {
     static let referralEmail = "referralEmail"
     static let hasUsedOneReferral   = "hasUsedOneReferral"
     static let hasSeenWelcomeScreen = "hasSeenWelcomeScreen"
+}
+
+struct Restrictions {
+    static let A = "Prerequisite required"
+    static let B = "Authorization required"
+    static let C = "Fee required"
+    static let D = "Pass/not pass option only"
+    static let E = "Freshmen only"
+    static let F = "Sophomores only"
+    static let G = "Lower-division only"
+    static let H = "Juniors only"
+    static let I = "Seniors only"
+    static let J = "Upper-division only"
+    static let K = "Graduate only"
+    static let L = "Major only"
+    static let M = "Non-major only"
+    static let N = "School major only"
+    static let O = "Non-school major only"
+    static let S = "Satisfactory/unsatisfactory only"
+    static let R = "Biomedical pass/fail course (School of Medicine only)"
+    static let X = "Separate authorization codes required to add, drop, or change"
+    
+    static let restrictions: [String] = [
+        "A - Prerequisite required",
+        "B - Authorization required",
+        "C - Fee required",
+        "D - Pass/not pass option only",
+        "E - Freshmen only",
+        "F - Sophomores only",
+        "G - Lower-division only",
+        "H - Juniors only",
+        "I - Seniors only",
+        "J - Upper-division only",
+        "K - Graduate only",
+        "L - Major only",
+        "M - Non-major only",
+        "N - School major only",
+        "O - Non-school major only",
+        "S - Satisfactory/unsatisfactory only",
+        "R - Biomedical pass/fail course (School of Medicine only)",
+        "X - Separate authorization codes required to add, drop, or change",
+        ]
 }

@@ -13,11 +13,17 @@ def get_all_classes():
 
         if school == "UCI":
             web_address = helpers.get_class_url(code, quarter, year)
-            new_dict = helpers.get_full_class_info_uci(web_address)
+            updated_dict = helpers.get_full_class_info_uci(web_address)
         
             # if course info has changed 
-            if new_dict !=  course:
+            if updated_dict !=  course:
                 # add back in removed info
+                # print(updated_dict)
+                # print()
+                # print(course)
+                # print(updated_dict["code"])
+                # print(course["code"])
+                # return
                 course["year"]    = year
                 course["emails"]  = emails 
                 course["school"]  = school
@@ -26,28 +32,38 @@ def get_all_classes():
                 db = helpers.firestore.client()
                 school_param = helpers.format_school(school)
                 doc_ref = db.collection(school_param).document(code)
-                if doc_ref.exists:
+                doc = doc_ref.get() 
+
+                # if the last person tracking this class deletes it from db after we pulled our info
+                # and before we have checked it, it will not exsist
+                if not doc.exists:
                     print("doc didnt exists")
+                    continue
 
                 # add in the new info
                 doc_ref.set({
                     # don't change the status 
-                    "title": new_dict["title"],
-                    "name": new_dict["name"],
-                    "professor": new_dict["professor"],
-                    "code": new_dict["code"],
-                    "section": new_dict["section"],
-                    "units": new_dict["units"],
-                    "days": new_dict["days"],
-                    "time": new_dict["time"],
-                    "room": new_dict["room"],
-                    "type": new_dict["type"],
+                    "title": updated_dict["title"],
+                    "name": updated_dict["name"],
+                    "professor": updated_dict["professor"],
+                    "code": updated_dict["code"],
+                    "section": updated_dict["section"],
+                    "units": updated_dict["units"],
+                    "days": updated_dict["days"],
+                    "time": updated_dict["time"],
+                    "room": updated_dict["room"],
+                    "type": updated_dict["type"],
+                    "restrictions": updated_dict["restrictions"],
                     "year": year,
                     "school": school,
                     "quarter": quarter,
                     
                 }, merge=True)
-    
-                print("course", course, "replaced info", new_dict)
+                print("false")
+
+
+            print("true")
+
+                # print("course", course, "replaced info", updated_dict)
 
 get_all_classes()
