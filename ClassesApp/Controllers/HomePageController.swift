@@ -21,7 +21,6 @@ class HomePageController: UIViewController {
     @IBOutlet weak var unlimitedLabel: UILabel!
     @IBOutlet weak var courseCodeLabel: UILabel!
     
-    let addClassLauncher = AddClassLauncher()
     let transition = SlideInTransition()
     
     var noClassLabel: UILabel!
@@ -43,29 +42,41 @@ class HomePageController: UIViewController {
         
         logNumTrackedClasses()
         setScreenName()
-        setUserProp()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // if user is not logged in
-        if UserService.user.email == "" { return }
         setLabels()
         refreshTableView()
         handleShowDirections()
         UserService.checkForShortLink()
         UserService.ensureFCMIsSet()
+        handleUpdatePrompt()
     }
     
-    func setUserProp() {
-        if UserService.user.hasSetUserProperty { return }
+    func handleUpdatePrompt() {
+        if !AppConstants.should_prompt_update { return }
         
-        Stats.setUserProperty(school: UserService.user.school)
-        let db = Firestore.firestore()
-        let docRef = db.collection(DataBase.User).document(UserService.user.email)
-        docRef.updateData([DataBase.has_set_user_poperty: true])
-
-        
+        let frequency = AppConstants.should_prompt_update_frequency
+        let promptForUpdate = UserDefaults.standard.integer(forKey: Defaults.promptForUpdate)
+        print("promptForUpdate", promptForUpdate)
+        if promptForUpdate % frequency == 0 {
+            checkForUpdate()
+        }
+        UserDefaults.standard.set(promptForUpdate + 1, forKey: Defaults.promptForUpdate)
+    }
+    
+    func checkForUpdate() {
+        _ = try? ServerService.isUpdateAvailable(completion: { (update, error) in
+            if let error = error {
+                print("error", error)
+            } else if let update = update {
+                print("needs update", update)
+                DispatchQueue.main.async {
+                    self.presentUpdateAvailible()
+                }
+            }
+        })
     }
     
     func setScreenName() {
@@ -116,6 +127,25 @@ class HomePageController: UIViewController {
         toggleNoClassLabel()
     }
     
+    func presentUpdateAvailible() {
+        let message = "Please update this app to recieve the newest features and to avoid any problem that may occur with older versions."
+        let alert = UIAlertController(title: "Update Available", message: message, preferredStyle: .alert)
+        let updateAction = UIAlertAction(title: "Update", style: .default) { (_) in
+            if let url = URL(string: "itms-apps://itunes.apple.com/app/id\(ReferralLink.appStoreID)"),
+                UIApplication.shared.canOpenURL(url)
+            {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+            print("navigate to app store")
+        }
+        let laterAction = UIAlertAction.init(title: "Later", style: .default, handler: nil)
+        
+        alert.addAction(laterAction)
+        alert.addAction(updateAction)
+        
+        present(alert, animated: true)
+    }
+    
     func presentNotifications() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "NotificationController") as! NotificationController
         let navController = UINavigationController(rootViewController: vc)
@@ -161,15 +191,6 @@ class HomePageController: UIViewController {
         let navController = UINavigationController(rootViewController: vc)
         navController.modalPresentationStyle = .fullScreen
         self.present(navController, animated: true, completion: nil)
-    }
-    
-    func presentClassDetailController(course: Course, indexPath: IndexPath) {
-        let classDetailVC = ClassDetailController()
-        classDetailVC.modalPresentationStyle = .overFullScreen
-        classDetailVC.course = course
-        classDetailVC.indexPath = indexPath
-        classDetailVC.homeVC = self
-        self.present(classDetailVC, animated: true, completion: nil)
     }
 
     func presentClassDetailsController(course: Course, indexPath: IndexPath) {

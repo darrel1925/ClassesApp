@@ -24,10 +24,11 @@ class _AppConstants {
     var domain_name = ""
     var support_email = ""
     var premium_price = 499
-    var support_email_pswd  = ""
-    var premium_product_id  = ""
-    var has_not_purchased   = true
-    var has_confirmed_email = false
+    var support_email_pswd   = ""
+    var premium_product_id   = ""
+    var has_confirmed_email  = true
+    var should_prompt_update = false
+    var should_prompt_update_frequency = 10
     
     var authenticated: Bool { return (my_email == UserService.user.email) && has_confirmed_email }
     var supported_schools: [String] = ["UCI", "UCLA"]
@@ -68,8 +69,8 @@ class _AppConstants {
             self.support_email = data[DataBase.support_email] as? String ?? ""
             self.premium_product_id = data[DataBase.premium_product_id] as? String ?? ""
             self.support_email_pswd = data[DataBase.support_email_pswd] as? String ?? ""
-            self.has_not_purchased = data[DataBase.has_not_purchased] as? Bool ?? false
-            self.has_confirmed_email = data[DataBase.has_confirmed_email] as? Bool ?? false
+            self.should_prompt_update = data[DataBase.should_prompt_update] as? Bool ?? false
+            self.should_prompt_update_frequency = data[DataBase.should_prompt_update_frequency] as? Int ?? 10
             self.referral_info = data[DataBase.referral_info] as? [String: String] ?? [:]
             self.supported_schools = data[DataBase.supported_schools] as? [String] ?? ["UCI", "UCLA"]
             self.registration_pages = data[DataBase.registration_pages] as? [String: String] ?? [:]

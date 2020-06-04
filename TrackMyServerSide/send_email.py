@@ -1,14 +1,31 @@
 import smtplib
+from constants import Restrictions
+
 WEB_REG_URL = "https://www.reg.uci.edu/cgi-bin/webreg-redirect.sh"
 
-def send_email(reciever_email, code, name,  old_status, new_status):
-    old_status, new_status = _format_status(old_status, new_status)
+# def send_email(reciever_email, code, name,  old_status, new_status):
+#     old_status, new_status = _format_status(old_status, new_status)
+#     try:
+#         server = smtplib.SMTP('smtp.gmail.com:587')
+#         server.ehlo()
+#         server.starttls()
+#         server.login("classnotify1@gmail.com", "class123!")
+#         # message = _contruct_email_message(old_status, new_status, code, name)
+#         server.sendmail("classnotify1@gmail.com", reciever_email, message)
+#         server.quit()
+#         print("Success: Email sent!")
+#         return True
+#     except Exception as e:
+#         print("Email failed to send.")
+#         print("Error:", str(e))
+#         return False
+
+def send_email_with_msg(reciever_email, message):
     try:
         server = smtplib.SMTP('smtp.gmail.com:587')
         server.ehlo()
         server.starttls()
         server.login("classnotify1@gmail.com", "class123!")
-        message = _contruct_email_message(old_status, new_status, code, name)
         server.sendmail("classnotify1@gmail.com", reciever_email, message)
         server.quit()
         print("Success: Email sent!")
@@ -19,7 +36,7 @@ def send_email(reciever_email, code, name,  old_status, new_status):
         return False
 
 
-def _contruct_email_message(old_status, new_status, code, name):
+def contruct_email_message(old_status, new_status, code, name):
     old_status, new_status = _format_status(old_status, new_status)    
     opt_out_info = "\n\nNote: To opt-out of email notifications, change your preferences in your app Settings."
 
@@ -97,3 +114,31 @@ def _format_status(old_status, new_status):
 
     return old_status, new_status
 
+
+def construct_restrictions_email(old_restrictions, new_restrictions, class_dict):
+    old = ""
+    new = ""
+    name = class_dict["name"]
+
+    for restriction in old_restrictions:
+        old += Restrictions.dictionary[restriction] + "\n"
+
+    for restriction in new_restrictions:
+        new += Restrictions.dictionary[restriction] + "\n"
+
+    subject = name + " restrictions have changed!"
+    body =  "Restrictions have changed\n\nFrom:\n" + old  + "\nTo:\n" + new 
+
+    return subject, body
+
+
+def construct_restrictions_message(old_restrictions, new_restrictions, class_dict):
+    old = ", ".join(old_restrictions)
+    new = ", ".join(new_restrictions)
+
+    name = class_dict["name"]
+
+    title = name + " restrictions have changed!"
+    message = "Restrictions have changed from " + old + " to " + new
+    
+    return title, message

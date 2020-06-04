@@ -58,7 +58,6 @@
 		9A9472CD242C1E7C004927DD /* ClassesAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9472CC242C1E7C004927DD /* ClassesAppUITests.swift */; };
 		9AA2116E244EEA6B00A49606 /* PrivacyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA2116D244EEA6B00A49606 /* PrivacyController.swift */; };
 		9AAD828D2431B41600C66838 /* TrackedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD828C2431B41600C66838 /* TrackedCell.swift */; };
-		9AAD828F2431C66C00C66838 /* AddClassLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD828E2431C66C00C66838 /* AddClassLauncher.swift */; };
 		9AAD82982432901F00C66838 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD82972432901F00C66838 /* Styles.swift */; };
 		9AAD829A243295E700C66838 /* AddClassController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD8299243295E700C66838 /* AddClassController.swift */; };
 		9AAD829E24329E4D00C66838 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAD829D24329E4D00C66838 /* MenuController.swift */; };
@@ -72,15 +71,11 @@
 		9AC4A957244B92540019921F /* WelcomeScreen3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4A956244B92540019921F /* WelcomeScreen3.swift */; };
 		9AC4A959244B92620019921F /* WelcomeScreen4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4A958244B92620019921F /* WelcomeScreen4.swift */; };
 		9AC6292E24589FAA00B793C0 /* ShareController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC6292D24589FAA00B793C0 /* ShareController.swift */; };
-		9AC62931245957B700B793C0 /* ClassDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC6292F245957B700B793C0 /* ClassDetailController.swift */; };
-		9AC62932245957B700B793C0 /* ClassDetailController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AC62930245957B700B793C0 /* ClassDetailController.xib */; };
 		9ACDE3AF24711CC000B52FDD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ACDE3AE24711CC000B52FDD /* StoreKit.framework */; };
 		9ACDE3B1247126CE00B52FDD /* StoreObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACDE3B0247126CE00B52FDD /* StoreObserver.swift */; };
 		9AE8D758243E7D050049B090 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE8D757243E7D050049B090 /* Constants.swift */; };
 		9AEEB595243C515900F5E6FE /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEEB594243C515900F5E6FE /* NotificationCell.swift */; };
 		9AEEB597243C527E00F5E6FE /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEEB596243C527E00F5E6FE /* NotificationController.swift */; };
-		9AEF54D32465441E002AA3B6 /* ClassLookUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEF54D12465441D002AA3B6 /* ClassLookUpController.swift */; };
-		9AEF54D42465441E002AA3B6 /* ClassLookUpController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AEF54D22465441D002AA3B6 /* ClassLookUpController.xib */; };
 		9AF3AEC3244E534100D690C7 /* TermsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF3AEC2244E534000D690C7 /* TermsController.swift */; };
 		9AFB0C22245CC849008D1297 /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB0C21245CC849008D1297 /* Animations.swift */; };
 		9AFB5E17247B5D64003D3BE7 /* RestrictionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB5E16247B5D64003D3BE7 /* RestrictionsController.swift */; };
@@ -168,7 +163,6 @@
 		9A9472CE242C1E7C004927DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9AA2116D244EEA6B00A49606 /* PrivacyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyController.swift; sourceTree = "<group>"; };
 		9AAD828C2431B41600C66838 /* TrackedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedCell.swift; sourceTree = "<group>"; };
-		9AAD828E2431C66C00C66838 /* AddClassLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddClassLauncher.swift; sourceTree = "<group>"; };
 		9AAD82972432901F00C66838 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
 		9AAD8299243295E700C66838 /* AddClassController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddClassController.swift; sourceTree = "<group>"; };
 		9AAD829D24329E4D00C66838 /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
@@ -182,15 +176,11 @@
 		9AC4A956244B92540019921F /* WelcomeScreen3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen3.swift; sourceTree = "<group>"; };
 		9AC4A958244B92620019921F /* WelcomeScreen4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen4.swift; sourceTree = "<group>"; };
 		9AC6292D24589FAA00B793C0 /* ShareController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareController.swift; sourceTree = "<group>"; };
-		9AC6292F245957B700B793C0 /* ClassDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassDetailController.swift; sourceTree = "<group>"; };
-		9AC62930245957B700B793C0 /* ClassDetailController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ClassDetailController.xib; sourceTree = "<group>"; };
 		9ACDE3AE24711CC000B52FDD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9ACDE3B0247126CE00B52FDD /* StoreObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreObserver.swift; sourceTree = "<group>"; };
 		9AE8D757243E7D050049B090 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9AEEB594243C515900F5E6FE /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		9AEEB596243C527E00F5E6FE /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
-		9AEF54D12465441D002AA3B6 /* ClassLookUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassLookUpController.swift; sourceTree = "<group>"; };
-		9AEF54D22465441D002AA3B6 /* ClassLookUpController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ClassLookUpController.xib; sourceTree = "<group>"; };
 		9AF3AEC2244E534000D690C7 /* TermsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsController.swift; sourceTree = "<group>"; };
 		9AFB0C21245CC849008D1297 /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		9AFB5E16247B5D64003D3BE7 /* RestrictionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionsController.swift; sourceTree = "<group>"; };
@@ -271,12 +261,8 @@
 				9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */,
 				9A3D4A07245776A30073C0F7 /* AddToListController.swift */,
 				9A3D4A08245776A30073C0F7 /* AddToListController.xib */,
-				9AC6292F245957B700B793C0 /* ClassDetailController.swift */,
-				9AC62930245957B700B793C0 /* ClassDetailController.xib */,
 				9A44561F245B2ED50054521A /* ChangeSchoolController.swift */,
 				9A445620245B2ED50054521A /* ChangeSchoolController.xib */,
-				9AEF54D12465441D002AA3B6 /* ClassLookUpController.swift */,
-				9AEF54D22465441D002AA3B6 /* ClassLookUpController.xib */,
 				9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */,
 				9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */,
 				9AADB82E24750D4900A79586 /* RestorePurchaseController.swift */,
@@ -298,7 +284,6 @@
 			isa = PBXGroup;
 			children = (
 				9A8CF97B242C58C7008D0DC6 /* Extensions.swift */,
-				9AAD828E2431C66C00C66838 /* AddClassLauncher.swift */,
 				9AAD82972432901F00C66838 /* Styles.swift */,
 				9ACDE3B0247126CE00B52FDD /* StoreObserver.swift */,
 			);
@@ -598,7 +583,6 @@
 				9A7E051B244131D2002E9803 /* ToggleEmailsController.xib in Resources */,
 				9A9472B7242C1E7C004927DD /* LaunchScreen.storyboard in Resources */,
 				9A08BCA32446102C00DC4B40 /* StorePopUpController.xib in Resources */,
-				9AC62932245957B700B793C0 /* ClassDetailController.xib in Resources */,
 				9A445622245B2ED50054521A /* ChangeSchoolController.xib in Resources */,
 				9A3D4A0A245776A30073C0F7 /* AddToListController.xib in Resources */,
 				9A8533F7243D6BF300F7197F /* ForgotPasswordController.xib in Resources */,
@@ -607,7 +591,6 @@
 				9A9472B4242C1E7C004927DD /* Assets.xcassets in Resources */,
 				9A8CF979242C4BEA008D0DC6 /* GoogleService-Info.plist in Resources */,
 				9A21C7EB2452A7D000355CC2 /* NotifcationStatusController.xib in Resources */,
-				9AEF54D42465441E002AA3B6 /* ClassLookUpController.xib in Resources */,
 				9A9472B2242C1E76004927DD /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -768,12 +751,10 @@
 				9A7E051D244189E8002E9803 /* ServerService.swift in Sources */,
 				9A17D8E8246E28E400E3BA6B /* SignUpPopUpController.swift in Sources */,
 				9A8533FD243D7F2700F7197F /* PurchaseHistoryCell.swift in Sources */,
-				9AEF54D32465441E002AA3B6 /* ClassLookUpController.swift in Sources */,
 				9AC6292E24589FAA00B793C0 /* ShareController.swift in Sources */,
 				9AA2116E244EEA6B00A49606 /* PrivacyController.swift in Sources */,
 				9A73F1CF2445A5580004AF54 /* StoreCell.swift in Sources */,
 				9AC4A953244B92360019921F /* WelcomeScreen1.swift in Sources */,
-				9AC62931245957B700B793C0 /* ClassDetailController.swift in Sources */,
 				9AF3AEC3244E534100D690C7 /* TermsController.swift in Sources */,
 				9A3D4A042456A4990073C0F7 /* WebController.swift in Sources */,
 				9A4D254A246691F400CC6B2A /* PlainTextCell.swift in Sources */,
@@ -804,7 +785,6 @@
 				9A9472AD242C1E76004927DD /* SceneDelegate.swift in Sources */,
 				9AC4A955244B92410019921F /* WelcomeScreen2.swift in Sources */,
 				9A08BCA22446102C00DC4B40 /* StorePopUpController.swift in Sources */,
-				9AAD828F2431C66C00C66838 /* AddClassLauncher.swift in Sources */,
 				9A8CF97F242C6CCB008D0DC6 /* User.swift in Sources */,
 				9A8533FB243D6CB200F7197F /* SettingsLabelCell.swift in Sources */,
 				9A21C7EA2452A7D000355CC2 /* NotifcationStatusController.swift in Sources */,
@@ -988,7 +968,7 @@
 				CODE_SIGN_ENTITLEMENTS = ClassesApp/ClassesApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -996,7 +976,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
 				PRODUCT_NAME = TrackMy;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1014,7 +994,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1022,7 +1002,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
 				PRODUCT_NAME = TrackMy;
 				PROVISIONING_PROFILE_SPECIFIER = "";

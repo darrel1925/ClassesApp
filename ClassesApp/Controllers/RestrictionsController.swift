@@ -75,13 +75,10 @@ class RestrictionsController: UIViewController {
                     
                     self.classDetailsVC.containerView.center = adjustedCenter
                     self.dismiss(animated: true, completion: nil)
-
             })
         })
     }
 }
-
-
 
 extension RestrictionsController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

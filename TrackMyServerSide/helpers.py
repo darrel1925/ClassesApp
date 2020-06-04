@@ -32,11 +32,9 @@ def get_class_status_for_ios(code, quarter, year, school):
     """
     Get class status with the input from ios device rather than from python script
     """
-    # email, quarter, year, code, school, dis_sections, lab_sections =  parse_input(server_input)
+    # if school == UCI:
     web_address = get_class_url(code, quarter, year)
-    if school:
-        return get_full_class_info_uci(web_address)
-    return get_class_status(code, quarter, school, year)
+    return get_full_class_info_uci(web_address)
 
 def get_full_class_info_uci(web_address):
     # get html for page
@@ -46,6 +44,8 @@ def get_full_class_info_uci(web_address):
     soup = BeautifulSoup(text, 'lxml')
     status_row = soup.find_all("td")
     status = ""
+
+    # dubugging below
     # print()
     # print(status_row)
     # print()
@@ -59,13 +59,11 @@ def get_full_class_info_uci(web_address):
         if element.text in ["OPEN", "FULL", "Waitl", "NewOnly"]:
             status = element.text
             break
-   
     if status == "": # couldnt find the class info
         return "Error"
 
-
-    # CompSci 161 DES&ANALYS OF ALGOR (Co-courses) (Prerequisites)
-    # CompSci 290 RESEARCH SEMINAR
+    # Ex. CompSci 161 DES&ANALYS OF ALGOR (Co-courses) (Prerequisites)
+    # Ex. CompSci 290 RESEARCH SEMINAR
     course_header = status_row[11].text
     course_title = ""
     course_name = ""
@@ -114,13 +112,11 @@ def get_full_class_info_uci(web_address):
         if len(professor_arr[-1]) == 1:
             professor += "."
 
-    # print(status_row)
+    # extract restrictions, always in index 24
     restrictions = []
     for restriction in status_row[24].text.split():
         if len(restriction) == 1:
             restrictions.append(restriction)
-    # print("restrictions", restrictions)
-    # print("Prof", professor)
 
     code = status_row[12].text
     course_type = status_row[13].text
@@ -149,11 +145,15 @@ def get_full_class_info_uci(web_address):
     }
     return json
 
-def get_class_status(code, quarter, school, year):
+def get_class_html(class_dict):
     """
-    Takes in a course code and quarter and returns the status 
-    of that class. Ex. OPEN, FULL, or Waitl
-    """ 
+    Takes in a course code and quarter and returns the status
+    of that class
+    """
+    code = class_dict["code"]
+    quarter = class_dict["quarter"]
+    year = class_dict["year"]
+
     # get websoc url for class
     web_address = get_class_url(code, quarter, year)
     get_full_class_info_uci(web_address)
@@ -165,7 +165,13 @@ def get_class_status(code, quarter, school, year):
     soup = BeautifulSoup(text, 'lxml')
     status_row = soup.find_all("td")
 
-    #####TODO: IF THIS CAUSES AN ERROR, CHANGE STATUS IN DB TO ERROR #####
+    return status_row
+
+def get_class_status(status_row):
+    """
+    Takes in a status_row (html) returns the status 
+    of that class. Ex. OPEN, FULL, or Waitl
+    """ 
     try: 
         for element in status_row:
             if element.text in ["OPEN", "FULL", "Waitl", "NewOnly"]:
@@ -173,7 +179,6 @@ def get_class_status(code, quarter, school, year):
         return "Error" 
     except: # couldnt find the class info
         return "Error"
-
 
 def get_class_url(code, quarter, year):
     """
@@ -231,29 +236,53 @@ def get_classes_to_search_for():
     # print(class_dict_arr)
     return class_dict_arr
     
-def get_users_tracking_this_class(code, quarter, school): 
+# def get_users_tracking_this_class(code, quarter, school): 
+#     """
+#     Returns the emails and passwords for all users that
+#     are tracking this class
+#     """
+#     db = firestore.client()
+#     school_param = format_school(school)
+#     doc_ref = db.collection(school_param).document(code)
+#     doc = doc_ref.get()
+#     doc_dict = doc.to_dict()
+
+#     users_tracking_this_class = doc_dict["emails"]
+#     users_info = []
+
+#     for email in users_tracking_this_class:
+#         formated_email = format_email(email)
+#         pwd = get_pw(email)
+
+#         users_info.append([formated_email, pwd])
+
+#     return users_info
+
+def get_changed_restrictions(status_row, old_restrictions):
     """
-    Returns the emails and passwords for all users that
-    are tracking this class
+    Takes in a status_row (html) and an array of restrictions
+    returns None if there is no change and an array of restrictions
+    that were dropped if there is a change
     """
-    db = firestore.client()
-    school_param = format_school(school)
-    doc_ref = db.collection(school_param).document(code)
-    doc = doc_ref.get()
-    doc_dict = doc.to_dict()
+    # get restrictions from html
+    new_restrictions = []
+    for restriction in status_row[24].text.split():
+        if len(restriction) == 1:
+            new_restrictions.append(restriction)
+    # print("Restriction -->", new_restrictions)
 
-    users_tracking_this_class = doc_dict["emails"]
-    users_info = []
+    if sorted(old_restrictions) != sorted(new_restrictions):
+        print("restrictions changed from", old_restrictions, "-->", new_restrictions)
+        return new_restrictions
+    
+    return None
 
-    for email in users_tracking_this_class:
-        formated_email = format_email(email)
-        pwd = get_pw(email)
 
-        users_info.append([formated_email, pwd])
+def update_course_restrictions(class_dict): 
+    restrictions = class_dict["restrictions"]
+    school = class_dict["school"]
+    code = class_dict["code"]
 
-    return users_info
-
-def update_course_status(code, quarter, new_status, school): 
     db = firestore.client()
     school_param = format_school(school)
     doc_ref = db.collection(school_param).document(code)
@@ -263,15 +292,48 @@ def update_course_status(code, quarter, new_status, school):
     # courses the doc will not exist 
     
     if doc.exists:
+        print("doc does exist")
         doc_ref.set({
-            "status": new_status,
+            "restrictions": restrictions,
+        }, merge=True)
+    else:
+        send_email_error("Doc doesnt Exists Restrictions", "got doc " + code + " " + restrictions + " " + "deostn exist")
+        doc_ref.set({
+            "restrictions": restrictions,
         }, merge=True)
 
-def get_emails_tracking_this_class(code, quarter, school): 
+def update_course_status(class_dict): 
+    school = class_dict["school"]
+    code = class_dict["code"]
+    status = class_dict["status"]
+
+    db = firestore.client()
+    school_param = format_school(school)
+    doc_ref = db.collection(school_param).document(code)
+    doc = doc_ref.get()
+    
+    # if user deletes the course while we are in the middle of tracking the latest list of
+    # courses the doc will not exist 
+    
+    if doc.exists:
+        print("doc does exist")
+        doc_ref.set({
+            "status": status,
+        }, merge=True)
+    else:
+        send_email_error("Doc doesnt Exists", "got doc " + code + " " + status + " " + "deostn exist")
+        doc_ref.set({
+            "status": status,
+        }, merge=True)
+
+def get_emails_tracking_this_class(class_dict): 
     """
     Returns only the emails for all users that
     are tracking this class
     """
+    school = class_dict["school"]
+    code = class_dict["code"]
+    
     db = firestore.client()
     school_param = format_school(school)
     doc_ref = db.collection(school_param).document(code)
@@ -293,19 +355,18 @@ def get_doc_dict_for_user(email):
     doc_dict = doc.to_dict()    
     return doc_dict
 
-def get_dis_and_labs_for_user(doc_dict, code):
-    """
-    Returns all of the labs and discussions that the users wants to sign up for
-    relating to this code
-    """
-    dis_and_labs = doc_dict["classes"][code]
-    return dis_and_labs
+# def get_dis_and_labs_for_user(doc_dict, code): # <-- depricated
+#     """
+#     Returns all of the labs and discussions that the users wants to sign up for
+#     relating to this code
+#     """
+#     dis_and_labs = doc_dict["classes"][code]
+#     return dis_and_labs
 
-def send_push_notification_to_user(doc_dict, notif_info):
+def send_push_notification_to_user(doc_dict, notif_info, notif_type):
     """
     Sends an iOS push notif to fcm in user's doc dict
     """
-
     try:
         print(doc_dict["email"])
         print("is_logged_in ==", doc_dict["is_logged_in"])
@@ -314,7 +375,7 @@ def send_push_notification_to_user(doc_dict, notif_info):
 
         fcm_token = doc_dict["fcm_token"]
         title, message = notif_info
-        notif_data = {"key": "value"}
+        notif_data = {"notif_type": notif_type}
 
         # message
         notif = messaging.Message(
@@ -338,14 +399,14 @@ def send_push_notification_to_user(doc_dict, notif_info):
     body = doc_dict["email"] + " " + title + " " + message
     send_email_error("Notif Sent:)", body)
 
-def update_user_notification_list(email, old_status, new_status, code, name):
+def update_user_notification_list(email, old_status, new_status, code, name, notif_info ,notif_type):
     db = firestore.client()
     doc_ref = db.collection("User").document(email)
     doc = doc_ref.get()
     doc_dict = doc.to_dict()    
 
     # date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
+    _, message = notif_info
     date = get_pst_time()
     print("date", date)
 
@@ -354,7 +415,9 @@ def update_user_notification_list(email, old_status, new_status, code, name):
         "new_status": new_status,
         "old_status": old_status,
         "code": code,
-        "name": name
+        "name": name,
+        "message": message,
+        "notif_type": notif_type
     }
 
     notifications = doc_dict["notifications"]
@@ -373,7 +436,7 @@ def send_email_error(subject, message):
     "message": message,
     }
     r = requests.get(SERVER_IP + "/send_email_route", params=payload)
-    print(r.text, "sent")
+    print(r.text, "sent err")
 
 def send_email_for_notif(reciever_email, code, name ,old_status, new_status):
     payload = {
@@ -384,30 +447,30 @@ def send_email_for_notif(reciever_email, code, name ,old_status, new_status):
     "new_status": new_status,
     }
     r = requests.get(SERVER_IP + "/send_notification_email", params=payload)
-    print(r.text, "sent")
+    print(r.text, "sent notif")
 
 
-def user_has_webreg_enabled(email):
-    """
-    Returns a bool indicating if a user has webreg enabled  
-    """
-    db = firestore.client()
-    doc_ref = db.collection("User").document(email)
-    doc = doc_ref.get()
-    doc_dict = doc.to_dict()    
+# def user_has_webreg_enabled(email): # <-- depricated
+#     """
+#     Returns a bool indicating if a user has webreg enabled  
+#     """
+#     db = firestore.client()
+#     doc_ref = db.collection("User").document(email)
+#     doc = doc_ref.get()
+#     doc_dict = doc.to_dict()    
 
-    try:
-        return doc_dict["web_reg"]
-    except:
-        return False
+#     try:
+#         return doc_dict["web_reg"]
+#     except:
+#         return False
 
-def get_pw(email):
-    db = firestore.client()
-    doc_ref = db.collection("User").document(email)
-    doc = doc_ref.get()
-    doc_dict = doc.to_dict()
+# def get_pw(email): # <-- depricated
+#     db = firestore.client()
+#     doc_ref = db.collection("User").document(email)
+#     doc = doc_ref.get()
+#     doc_dict = doc.to_dict()
 
-    return doc_dict["web_reg_pswd"]
+#     return doc_dict["web_reg_pswd"]
 
 
 def get_pst_time():
@@ -420,8 +483,8 @@ def get_pst_time():
 def format_email(email):
     return email.split("@")[0]
 
-def format_doc_id(code, quarter):
-    return code + " " + quarter
+# def format_doc_id(code, quarter):
+#     return code + " " + quarter
 
 def format_school(school):
     return school + "_Classes"

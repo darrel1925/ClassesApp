@@ -15,7 +15,7 @@ let UserService = _UserService()
 
 final class _UserService {
     var isLoggedIn: Bool = false // <-- to handle updating fcm token in User when same account logged in on two diff devices
-
+    
     var user: User!
     var userListener: ListenerRegistration? = nil // our listener
     var fcm_token_has_set: Bool = false
@@ -24,12 +24,12 @@ final class _UserService {
     
     func getCurrentUser(email: String) {
         // if user is logged in
-
+        
         let userRef = db.collection(DataBase.User).document(email)
         userRef.updateData([DataBase.is_logged_in : true])
         // if user changes something in document, it will always be up to date in our app
         userListener = userRef.addSnapshotListener({ (snap, error) in
-
+            
             if let error = error {
                 print("could not add snapShotListener :/")
                 debugPrint(error.localizedDescription)
@@ -39,7 +39,7 @@ final class _UserService {
             // if we can get user infor from db
             guard let data = snap?.data() else { return }
             // add it to out user so we can access it globally
-//            print("Data is \(data)")
+            //            print("Data is \(data)")
             self.user = User.init(data: data)
             print("user info has been updated")
             self.dispatchGroup.customLeave()
@@ -51,7 +51,7 @@ final class _UserService {
             print("checkForShortLink")
             UserService.checkForShortLink()
         }
-
+        
     }
     
     func updateFirebaseWithUpdatedVars() {
@@ -77,7 +77,7 @@ final class _UserService {
         let new_fcm = Messaging.messaging().fcmToken ?? "couldnt get fcm token"
         
         let db = Firestore.firestore()
-        db.collection(DataBase.User).document(user.email).setData([DataBase.fcm_token: new_fcm, DataBase.is_logged_in: true], merge: true) { err in
+        db.collection(DataBase.User).document(user.email).setData([DataBase.fcm_token: new_fcm], merge: true) { err in
             if let err = err {
                 print("COULD NOT UPDATE FCM TOKEN: \(err.localizedDescription)")
             }
@@ -86,7 +86,7 @@ final class _UserService {
             }
         }
     }
-    
+        
     func generateReferralLink() {
         // Create url that will get parsed and give you the parameters
         print(ReferralLink.scheme)
@@ -145,7 +145,7 @@ final class _UserService {
             let stringShortUrl = "\(shortURL)"
             let userRef = self.db.collection(DataBase.User).document(self.user.email)
             userRef.updateData([DataBase.referral_link : stringShortUrl, DataBase.has_short_referral: true])
-
+            
             return
         }
         

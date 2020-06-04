@@ -31,6 +31,7 @@ struct DataBase {
     static let num_referrals = "num_referrals"
     static let referral_link = "referral_link"
     static let receive_emails    = "receive_emails"
+    static let current_version   = "current_version"
     static let purchase_history  = "purchase_history"
     static let seen_welcome_page = "seen_welcome_page"
     static let course_dict_arr   = "course_dict_arr"
@@ -85,8 +86,6 @@ struct DataBase {
     static let registration_pages  = "registration_pages"
     static let premium_product_id  = "premium_product_id"
     static let class_look_up_pages = "class_look_up_pages"
-    static let has_confirmed_email = "has_confirmed_email"
-    static let has_not_purchased   = "has_not_purchased"
 
     // Class
     static let year    = "year"
@@ -121,7 +120,9 @@ struct DataBase {
     static let purchases = "purchases"
     
     // Animations
-    static let seen_home_tap_directions = "seen_home_tap_directions"
+    static let should_prompt_update_frequency = "should_prompt_update_frequency"
+    static let seen_home_tap_directions       = "seen_home_tap_directions"
+    static let should_prompt_update           = "should_prompt_update"
 }
 
 struct Status {
@@ -158,8 +159,9 @@ struct Routes {
 }
 
 struct Defaults {
-    static let wasReferred   = "wasReferred"
-    static let referralEmail = "referralEmail"
+    static let wasReferred     = "wasReferred"
+    static let referralEmail   = "referralEmail"
+    static let promptForUpdate = "promptForUpdate"
     static let hasUsedOneReferral   = "hasUsedOneReferral"
     static let hasSeenWelcomeScreen = "hasSeenWelcomeScreen"
 }

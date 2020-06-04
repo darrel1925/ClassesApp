@@ -48,7 +48,8 @@ Class -
                       [str] uci_email:
 """
 
-from send_email import send_email, contruct_ios_message
+from send_email import contruct_ios_message, construct_restrictions_message, send_email_with_msg, contruct_email_message, construct_restrictions_email
+from constants import Constants
 import helpers, webreg
 import time, sys, os, signal
 helpers.initialize_firebase()
@@ -57,79 +58,154 @@ count = 0
 classes_to_search_for = []
 
 
-def class_is_open(class_dict):
+def get_course_html(class_dict):
     """
-    Given a cousre code, returns a bool describing whether or not that class is open
+    Given a class, returns the html containing it's most current
+    information
+    """
+
+    # if school == UCI:    
+    status_row = helpers.get_class_html(class_dict)
+    return status_row
+
+def class_is_open(class_dict, status_row):
+    """
+    Given a course dict and html of the course on school's website, 
+    returns a tuple describing whether or not that class is open, and
+    the new and old status' if a class status has changed
     """
     school = class_dict["school"]
     code = class_dict["code"]
-    quarter = class_dict["quarter"]
-    year = class_dict["year"]
-
     old_status = class_dict["status"] 
-    new_status = helpers.get_class_status(code, quarter, school, year)
+    
+    new_status = helpers.get_class_status(status_row)
     class_dict["status"] = new_status # <-- so you wont keep getting emails if class stays open
 
     if old_status in [helpers.Status.FULL, helpers.Status.NewOnly]:
         if new_status in [helpers.Status.OPEN, helpers.Status.Waitl]:
             print("Course", school , code, "status is " + new_status + "!!", end = " | ")
-            helpers.update_course_status(code, quarter, new_status, school) 
+            helpers.update_course_status(class_dict) 
             return True, old_status, new_status
 
     if old_status in [helpers.Status.Waitl]:
         if new_status in [helpers.Status.OPEN]:
             print("Course", school , code, "status is " + new_status + "!!", end = " | ")
-            helpers.update_course_status(code, quarter, new_status, school) 
+            helpers.update_course_status(class_dict) 
             return True, old_status, new_status
 
     # split bottom two if statments so Waitl -> Waitl and NewOnly -> NewOnly
         # do not execute update_course_status and watse my reads
     if old_status in [helpers.Status.OPEN, helpers.Status.Waitl]: 
         if new_status in [helpers.Status.FULL, helpers.Status.NewOnly]:
-            helpers.update_course_status(code, quarter, new_status, school)
+            helpers.update_course_status(class_dict)
 
     if old_status in [helpers.Status.OPEN, helpers.Status.NewOnly]: 
         if new_status in [helpers.Status.FULL, helpers.Status.Waitl]:
-            helpers.update_course_status(code, quarter, new_status, school) 
+            helpers.update_course_status(class_dict) 
             
     print("Course", school, code, "status is " + new_status, end = " | ")
     return False, None, None
 
+def check_for_restriction_change(class_dict, status_row):
+    """
+    Takes in dictionary of class and html of from schools website, checks for change in a
+    the restrictions bewtween db and website, updates db if there is a change, and
+    notifies every who is tracking this class
+    """
+    # incase user has not updated phone and added class to db without adding restrictions
+    try:
+        old_restrictions = class_dict["restrictions"]
+    except:
+        # if restrictions we'e not to db, find the restrictions and add them to db 
+        old_restrictions = helpers.get_changed_restrictions(status_row, [])
+        old_restrictions           = [] if old_restrictions == None else old_restrictions
+        class_dict["restrictions"] = [] if old_restrictions == None else old_restrictions
 
-def check_for_course(class_dict):
-    """
-    Given a driver opened to the correct schedule of clases page, this func will sign you up
-    for the lecture and discussion
-    """
-    school = class_dict["school"]
+        helpers.update_course_restrictions(class_dict)
+    
     code = class_dict["code"]
-    quarter = class_dict["quarter"]
     name = class_dict["name"]
+    will_auto_enroll = []
 
-    is_open, old_status, new_status = class_is_open(class_dict)
-    # if class is open
-    if is_open:
-        # list of people who have auto-enroll enabled
-        will_auto_enroll = []
-        emails = helpers.get_emails_tracking_this_class(code, quarter, school)
+    new_restrictions = helpers.get_changed_restrictions(status_row, old_restrictions)
+    class_dict["restrictions"] = new_restrictions
+
+    # the restrictions have changed
+    if new_restrictions:
+        emails = helpers.get_emails_tracking_this_class(class_dict)
+
+        # update class's restrictions in data base
+        helpers.update_course_restrictions(class_dict)
 
         for email in emails:
-            print("might send to:", email)
-            # sed push notif to user
+            # construct the full subject and body describing which restrictions changed in detail
+            subject, body = construct_restrictions_email(old_restrictions, new_restrictions, class_dict)
+
+            # construct message to send to user's phone
+            user_doc_dict = helpers.get_doc_dict_for_user(email)
+            notif_info = construct_restrictions_message(old_restrictions, new_restrictions, class_dict)
+            
+            # use the detailed body to update user's notification dictionary
+            new_notif_info = (subject, body)
+
+            # send push notificatoin to user's cell phone
+            helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.restriction_changed)
+            
+            # updates user's notification list
+            helpers.update_user_notification_list(email, "", "", code, name, new_notif_info, Constants.restriction_changed)
+           
+            # send email to student who are tracking this class
+            if user_doc_dict["receive_emails"]:
+                print("sending restriction email to", email)
+                full_msg = 'Subject: {}\n\n{}'.format(subject, body)
+                send_email_with_msg(email, full_msg)
+            
+            # add users to list if they have paid for web_reg
+            if user_doc_dict["web_reg"]:
+                print(email, "added to auto-enroll")
+                will_auto_enroll.append(user_doc_dict)
+        
+        # sign users up who have paid for webreg
+        for user_doc_dict in will_auto_enroll:
+            webreg.enroll(user_doc_dict, code)
+
+
+def check_for_status_change(class_dict, status_row):
+    """
+    Takes in dictionary of class and html of from schools website, checks for changes in a
+    the class staus bewtween db and website, updates db if there is a change, and 
+    notifies every who is tracking this class
+    """
+    code = class_dict["code"]
+    name = class_dict["name"]
+
+    is_open, old_status, new_status = class_is_open(class_dict, status_row)
+    # if class is open
+    if is_open:
+        will_auto_enroll = [] # list of people who have auto-enroll enabled
+        emails = helpers.get_emails_tracking_this_class(class_dict)
+        
+        for email in emails:
+            # construct message to send to user's phone           
             user_doc_dict = helpers.get_doc_dict_for_user(email)
             notif_info = contruct_ios_message(old_status, new_status, class_dict)
-            helpers.send_push_notification_to_user(user_doc_dict, notif_info)
-            helpers.update_user_notification_list(email, old_status, new_status, code, name)
 
+            # send notif to user's cell phone
+            helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.status_changed)
+            
+            # update user's notification list in data base
+            helpers.update_user_notification_list(email, old_status, new_status, code, name, notif_info, Constants.status_changed)
+           
             # send email to student who are tracking this class
             if user_doc_dict["receive_emails"]:
                 helpers.send_email_for_notif(email, code, name ,old_status, new_status)
             
-            # sign users up who have paid for webreg
+            # add users to list if they have paid for web_reg
             if user_doc_dict["web_reg"]:
-                print("auto-enroll_waiting")
+                print(email, "added to auto-enroll")
                 will_auto_enroll.append(user_doc_dict)
 
+        # sign users up who have paid for webreg
         for user_doc_dict in will_auto_enroll:
             webreg.enroll(user_doc_dict, code)
         
@@ -149,8 +225,14 @@ def main():
             classes_to_search_for = helpers.get_classes_to_search_for()
 
         for class_dict in classes_to_search_for:
-            check_for_course(class_dict)
+            # get html
+            status_row = get_course_html(class_dict)
+            # use html to check if class is open
+            check_for_status_change(class_dict, status_row)
+            # use html to check if restrictions have changed
+            check_for_restriction_change(class_dict, status_row)
         count += 1            
+
     except Exception as e:
         status = "SERVER DOWN ERROR!!!"
         message = "Error message: " + str(e)

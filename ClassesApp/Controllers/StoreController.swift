@@ -192,28 +192,6 @@ class StoreController: UIViewController {
         present(alertContoller, animated: true)
     }
     
-    func checkForPremium() {
-        if UserService.user.hasConfirmedEmail && UserService.user.hasNotPurchased {
-            // handle payment
-            makeStoreKitPayment()
-            return
-        }
-        else if UserService.user.hasConfirmedEmail && !UserService.user.hasNotPurchased {
-            let message = "No worries, you already have premium"
-            displayError(title: "Premium Purchased", message: message)
-            return
-        }
-        else if !UserService.user.hasConfirmedEmail && UserService.user.hasNotPurchased {
-            displayError(title: "Please confirm email", message: "Please confirm your email. If it is confirmed please contact support.") { (finished) in
-                self.dismiss(animated: true, completion: nil)
-            }
-            return
-        }
-        else {
-            presentStorePopUpVC()
-        }
-    }
-    
     func updatePremium() {
         let db = Firestore.firestore()
         let docRef = db.collection(DataBase.User).document(UserService.user.email)

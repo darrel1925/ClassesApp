@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template
 import helpers
-from send_email import send_support_email, send_email
+from send_email import send_support_email, send_email_with_msg, contruct_email_message
 # intanciate instance of Flask
 app = Flask(__name__)
 
@@ -16,7 +16,6 @@ def  uci_class_info():
     code = request.args.get('code')
     year = request.args.get('year')
     quarter = request.args.get('quarter')
-    # year = request.args['year'] <--- for mandatory data, will crash if data is not passed in
 
     return helpers.get_class_status_for_ios(code, quarter, year, school)
 
@@ -39,7 +38,8 @@ def send_notification_email():
     new_status     = str(request.args.get("new_status")).encode('ascii', 'ignore').decode('ascii')
     reciever_email = str(request.args.get("reciever_email")).encode('ascii', 'ignore').decode('ascii')
     
-    did_send_email = send_email(reciever_email, code, name,  old_status, new_status)
+    message = contruct_email_message(old_status, new_status, code, name)
+    did_send_email = send_email_with_msg(reciever_email, message)
     json = {"did_send_email": did_send_email}
     return json
 

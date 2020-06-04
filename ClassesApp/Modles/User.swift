@@ -23,16 +23,14 @@ class User {
     var referralLink: String
     
     var webReg: Bool
-    var isLoggedIn:Bool
+    var isLoggedIn: Bool
     var hasPremium: Bool
     var receiveEmails: Bool
     var isEmailVerified: Bool
     var seenWelcomePage: Bool
     var hasShortReferral: Bool
     var notificationsEnabled: Bool
-    
-    var hasSetUserProperty: Bool
-    
+        
     var seenHomeTapDirections: Bool
     
     var numReferrals: Int
@@ -46,7 +44,6 @@ class User {
     var revPurchaseHistory: [ [String: String] ] { return purchaseHistory.reversed()}
     var courseCodes: [String] { return Array(classes.keys) }
     var authenticated: Bool { return AppConstants.authenticated }
-    var hasNotPurchased: Bool { return AppConstants.has_not_purchased }
     var hasConfirmedEmail: Bool { return AppConstants.has_confirmed_email }
     
     // User is Signing Up
@@ -79,9 +76,7 @@ class User {
         self.purchaseHistory = purchaseHistory
         self.notificationsEnabled = notificationsEnabled
         self.notifications = notifications
-        
-        self.hasSetUserProperty = hasSetUserProperty
-        
+                
         self.seenHomeTapDirections = seenHomeTapDirections
         
         setFCMTokenAndUpdateDB()
@@ -108,9 +103,7 @@ class User {
             print("Cast unsuccessful")
             self.classes = [:]
         }
-        
-        self.hasSetUserProperty = data[DataBase.has_set_user_poperty] as? Bool ?? false
-        
+                
         self.school = data[DataBase.school] as? String ?? ""
         self.fcm_token = data[DataBase.fcm_token] as? String ?? ""
         self.receiveEmails = data[DataBase.receive_emails] as? Bool ?? true
@@ -157,7 +150,6 @@ class User {
             DataBase.has_short_referral: user.hasShortReferral,
             DataBase.notifications_enabled: user.notificationsEnabled,
             DataBase.seen_home_tap_directions: user.seenHomeTapDirections,
-            DataBase.has_set_user_poperty:user.hasSetUserProperty
         ]
         
         return data
@@ -195,6 +187,5 @@ class User {
                 print("Customer fcm Token was updated!")
             }
         }
-        
     }
 }

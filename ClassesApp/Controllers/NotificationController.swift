@@ -56,7 +56,6 @@ class NotificationController: UIViewController {
         alert.addAction(cancelAction)
         alert.addAction(clearAction)
         present(alert, animated: true, completion: nil)
-        
     }
     
     func addLabel() {
@@ -124,9 +123,17 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
 
         cell.selectionStyle = .none
         cell.courseNumberLabel.text = notification[DataBase.name]
-        cell.courseDescriptionLabel.text = "Status changed from \(notification[DataBase.old_status] ?? "") to \(notification[DataBase.new_status] ?? "")"
-        
         cell.timeLabel.text = notification[DataBase.date]?.toDate().toStringInWords()
+
+        if let message = notification[DataBase.message] {
+            print("message here")
+            cell.courseDescriptionLabel.text = message
+        }
+        else {
+            cell.courseDescriptionLabel.text = "Status changed from \(notification[DataBase.old_status] ?? "") to \(notification[DataBase.new_status] ?? "")"
+
+        }
+        
         
         return cell
     }
@@ -138,10 +145,6 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
             print("Deleted")
         }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
     }
     
     func removeNotification(AtIndex index: Int) {
