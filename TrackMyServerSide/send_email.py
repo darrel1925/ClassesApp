@@ -1,5 +1,6 @@
 import smtplib
 from constants import Restrictions
+from helpers import get_full_class_name
 
 WEB_REG_URL = "https://www.reg.uci.edu/cgi-bin/webreg-redirect.sh"
 
@@ -36,18 +37,24 @@ def send_email_with_msg(reciever_email, message):
         return False
 
 
-def contruct_email_message(old_status, new_status, code, name):
+def contruct_email_message(old_status, class_dict):
+    code  = class_dict["code"]
+    new_status  = class_dict["status"]
+    
+    new_name = get_full_class_name(class_dict)
+    old_status, new_status = _format_status(old_status, new_status)
+
     old_status, new_status = _format_status(old_status, new_status)    
     opt_out_info = "\n\nNote: To opt-out of email notifications, change your preferences in your app Settings."
 
     if new_status == "Open":
-        subject = name + " is Open!"
+        subject = new_name + " is Open!"
         body = "Your class" + " (" + code + ") " + "has changed from " + old_status + " to " + new_status + "! Head to Web Reg to sign up! \n\n" + WEB_REG_URL + opt_out_info
         full_msg = 'Subject: {}\n\n{}'.format(subject, body)
         return full_msg
 
     elif new_status == "Waitlist":
-        subject = "Waitlist is open for" + name +  "(" + code + ")!"
+        subject = "Waitlist is open for" + new_name +  "(" + code + ")!"
         body = "Your class" + " (" + code + ") " + "has changed from " + old_status + " to " + new_status + "!  \n\nHead over to web reg to sign up! \n\n" + WEB_REG_URL + opt_out_info
         full_msg = 'Subject: {}\n\n{}'.format(subject, body)
         return full_msg        
@@ -60,10 +67,7 @@ def contruct_email_message(old_status, new_status, code, name):
 
 
 def contruct_ios_message(old_status, new_status, class_dict):
-    name = class_dict["name"]
-    section = class_dict["section"]
-    course_type = class_dict["type"]
-    new_name = name + " " + course_type + " " + section
+    new_name = get_full_class_name(class_dict)
     old_status, new_status = _format_status(old_status, new_status)
 
     if new_status == "Open": # status is Open
@@ -142,3 +146,27 @@ def construct_restrictions_message(old_restrictions, new_restrictions, class_dic
     message = "Restrictions have changed from " + old + " to " + new
     
     return title, message
+
+def construct_enrollment_notification(user_doc_dict, class_dict):
+    new_name = get_full_class_name(class_dict)
+
+    title = "You are enrolled in " + new_name + "!"
+    message = "Check web reg to confirm your registration!\n\nLet us know how we did! If you've experienced any issues or have questions we're happy to help."
+
+    return title, message
+
+def construct_enrollment_success_email(user_doc_dict, class_dict, message):
+    new_name = get_full_class_name(class_dict)
+
+    subject = "You are enrolled in " + new_name + "!"
+    body = "Results from WebReg:\n" + message + "\n\nCheck WebReg to confirm your registration!\n\nWe're not perfect yet, let us know how we did! If you've experienced any issues or have questions we're happy to help."
+
+    return subject, body
+
+def construct_enrollment_failure_email(user_doc_dict, class_dict, message):
+    new_name = get_full_class_name(class_dict)
+
+    subject = "Could not enrolled in " + new_name
+    body = "Results from WebReg:\n" + message + "\n\nCheck WebReg to confirm your registration.\n\nWe're not perfect yet, let us know how we did. If you've experienced any issues or have questions we're happy to help."
+
+    return subject, body

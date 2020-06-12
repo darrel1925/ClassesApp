@@ -31,7 +31,7 @@ class HomePageController: UIViewController {
     
     var lastClick: TimeInterval!
     var lastIndexPath: IndexPath!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpAddLabel()
@@ -39,8 +39,6 @@ class HomePageController: UIViewController {
         setUpNavController()
         setUpTableView()
         setUpGestures()
-        
-        logNumTrackedClasses()
         setScreenName()
     }
     
@@ -48,10 +46,40 @@ class HomePageController: UIViewController {
         super.viewDidAppear(animated)
         setLabels()
         refreshTableView()
-        handleShowDirections()
         UserService.checkForShortLink()
         UserService.ensureFCMIsSet()
+        handlePopUps()
+    }
+        
+    func handlePopUps() {
         handleUpdatePrompt()
+        handleWhatsNewController()
+        handleShowDirections()
+    }
+
+    func handleWhatsNewController() {
+        /* Displays whats new controller if the user has not seen the controller AND the user
+        had the most current version of the app
+         !!! Need to update most current_app_version in AppConstants !!! */
+        
+        print("UserService.user.seenWhatsNew",  UserService.user.seenWhatsNew)
+        
+        // if I have have seen the whats new page
+        if UserService.user.seenWhatsNew  { return }
+        
+        ServerService.getCurrentAppVersion { (version, success) in
+            // if I could not get version from bundle ID
+            if !success { return }
+            // if i do have the apps most up to date version
+            if version != AppConstants.current_app_version { return }
+            
+            DispatchQueue.main.async {
+                self.presentWhatsNew()
+                let db = Firestore.firestore()
+                let docRef = db.collection(DataBase.User).document(UserService.user.email)
+                docRef.updateData([DataBase.seen_whats_new  : true])
+            }
+        }
     }
     
     func handleUpdatePrompt() {
@@ -64,6 +92,16 @@ class HomePageController: UIViewController {
             checkForUpdate()
         }
         UserDefaults.standard.set(promptForUpdate + 1, forKey: Defaults.promptForUpdate)
+    }
+    
+    func handleShowDirections() {
+        if UserService.user.seenHomeTapDirections { return }
+        if UserService.user.courseCodes.count != 1 { return }
+        
+        Animations.animateHomeTapDirections(HomeViewController: self)
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
+        docRef.updateData([DataBase.seen_home_tap_directions  : true])
     }
     
     func checkForUpdate() {
@@ -146,6 +184,13 @@ class HomePageController: UIViewController {
         present(alert, animated: true)
     }
     
+    func presentWhatsNew() {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "WhatsNewController") as! WhatsNewController
+        vc.modalPresentationStyle = .overFullScreen
+        self.present(vc, animated: true, completion: nil)
+        
+    }
+    
     func presentNotifications() {
         let vc = storyboard?.instantiateViewController(withIdentifier: "NotificationController") as! NotificationController
         let navController = UINavigationController(rootViewController: vc)
@@ -192,7 +237,7 @@ class HomePageController: UIViewController {
         navController.modalPresentationStyle = .fullScreen
         self.present(navController, animated: true, completion: nil)
     }
-
+    
     func presentClassDetailsController(course: Course, indexPath: IndexPath) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "ClassDetailsController") as! ClassDetailsController
         vc.modalPresentationStyle = .overFullScreen
@@ -257,8 +302,8 @@ class HomePageController: UIViewController {
     
     func reloadUser() {
         /*
-        If user just verified their email without closing the app, this will refresh their user object to reflect that
-        */
+         If user just verified their email without closing the app, this will refresh their user object to reflect that
+         */
         if UserService.user.isEmailVerified { return }
         guard let user = Auth.auth().currentUser else { return }
         user.reload(completion: nil)
@@ -272,10 +317,6 @@ class HomePageController: UIViewController {
             if !self.labelHasBeenPresented { self.setUpAddLabel() }
             self.noClassLabel.isHidden = false
         }
-    }
-    
-    func logNumTrackedClasses() {
-        Stats.logNumClassesTracked(numCourses: UserService.user.courseCodes.count)
     }
     
     func sortClasses() {
@@ -355,16 +396,6 @@ class HomePageController: UIViewController {
         }
     }
     
-    func handleShowDirections() {
-        if UserService.user.seenHomeTapDirections { return }
-        if UserService.user.courseCodes.count != 1 { return }
-        
-        Animations.animateHomeTapDirections(HomeViewController: self)
-        let db = Firestore.firestore()
-        let docRef = db.collection(DataBase.User).document(UserService.user.email)
-        docRef.updateData([DataBase.seen_home_tap_directions  : true])
-    }
-    
     func slideInMenu() {
         guard let menuVC = storyboard?.instantiateViewController(identifier: "MenuController") as? MenuController else { return }
         menuVC.didTapMenuType = { menuType in
@@ -390,9 +421,15 @@ class HomePageController: UIViewController {
             case "Support":
                 self.presentEmailSupport()
                 
+            case "WhatsNew":
+                self.presentWhatsNew()
+                
             case "Credits":
                 self.presentCredits()
-                                
+                
+            case "Updates":
+                self.presentWhatsNew()
+                
             default:
                 return
             }
@@ -467,7 +504,7 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        presentClassDetailController(course: courses[indexPath.row], indexPath: indexPath)
+        //        presentClassDetailController(course: courses[indexPath.row], indexPath: indexPath)
         presentClassDetailsController(course: courses[indexPath.row], indexPath: indexPath)
     }
     

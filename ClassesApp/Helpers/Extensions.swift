@@ -168,6 +168,40 @@ extension Date {
         return "\(dateArr[0]) • \(dateStr2)" // Wednesday • 4:44pm
     }
     
+    func toStringDayMonthMiunutes() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(abbreviation: "PST")
+        dateFormatter.dateStyle = .full
+        let dateStr = dateFormatter.string(from: self)
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "MM/dd"
+        let dateStr2 = formatter.string(from: self)
+        
+        let formatter2 = DateFormatter()
+        formatter2.locale = Locale(identifier: "en_US_POSIX")
+        formatter2.dateFormat = "h:mma" // "4:44 pm
+        formatter2.amSymbol = "am"
+        formatter2.pmSymbol = "pm"
+        
+        let dateStr3 = formatter2.string(from: self) // "4:44pm on June 23, 2016\n"
+        
+        let dateArr = dateStr.components(separatedBy: ", ") // Wednesday, January 10, 2018
+        
+        return "\(dateStr2) • \(dateStr3)" // Wednesday • 4:44pm
+
+        
+        return dateStr2
+    }
+    
+    var isOneWeekOld: Bool {
+        if let diffInDays = Calendar.current.dateComponents([.day], from: self, to: Date()).day {
+            return diffInDays > 7
+        }
+        return true
+    }
+    
     var recivedUnderFiveMinutesAgo: Bool  {
         let inputDate = self.toString()
         

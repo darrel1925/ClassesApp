@@ -23,3 +23,4 @@ class Restrictions:
 class Constants:
     restriction_changed = "restriction_changed"
     status_changed = "status_changed"    
+    enroll = "enroll"

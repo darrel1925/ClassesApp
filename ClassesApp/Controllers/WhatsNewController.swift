@@ -10,21 +10,65 @@ import UIKit
 
 class WhatsNewController: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    
+    @IBOutlet weak var backgroundView: UIView!
+    @IBOutlet weak var containerView: RoundedView!
+    @IBOutlet weak var versionLabel: UILabel!
+    
+        override func viewDidLoad() {
+            super.viewDidLoad()
+                setUpGestures()
+            versionLabel.text = "TrackMy version \(UserService.user.appVersion)"
+            }
+            
+            override func viewDidAppear(_ animated: Bool) {
+                super.viewDidAppear(animated)
+                animateViewIn()
+            }
+            
+            func animateViewIn() {
+                UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                    
+                    self.backgroundView.alpha = 0.25
+                    
+                }, completion: nil)
+            }
+            
+            func setUpGestures() {
+                let tap1 = UITapGestureRecognizer(target: self, action: #selector(handleDismiss))
+                let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(handleDismiss))
+                swipe1.direction = .down
+                backgroundView.addGestureRecognizer(swipe1)
+                backgroundView.addGestureRecognizer(tap1)
+            }
+            
+        func presentWelcome31() {
+            let vc = storyboard?.instantiateViewController(withIdentifier: "WelcomeScreen31") as! WelcomeScreen31
+            vc.modalPresentationStyle = .overCurrentContext
+            vc.changeSkipButtonTitle = true
+            self.present(vc, animated: true, completion: nil)
+        }
+        
+        @objc func handleDismiss() {
+            UIView.animate(withDuration: 0.15, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                
+                self.backgroundView.alpha = 0
+                
+            }, completion: {_ in
+                UIView.animate(withDuration: 0.15, delay: 1, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                    
+                    self.dismiss(animated: true, completion: nil)
+                    
+                }, completion: nil)
+            })
+        }
 
-        // Do any additional setup after loading the view.
+    @IBAction func premiumDetailsButton(_ sender: Any) {
+        presentWelcome31()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBAction func exitClicked(_ sender: Any) {
+        handleDismiss()
     }
-    */
-
 }
+

@@ -72,8 +72,12 @@ final class _Stats {
         Analytics.logEvent(DataBase.email_verified, parameters: nil)
     }
     
-    func logNumClassesTracked(numCourses: Int) { // <-- figure out a better was to analyize this info
-        Analytics.logEvent(DataBase.num_classes_tracked, parameters: [DataBase.num_courses: numCourses])
+    func logViewedPremiumDetailsFromWelcome(numCourses: Int) {
+        Analytics.logEvent(DataBase.viewed_premium_details_from_welcome, parameters: nil)
+    }
+    
+    func logViewedPremiumDetailsFromStore(numCourses: Int) {
+        Analytics.logEvent(DataBase.viewed_premium_details_from_store, parameters: nil)
     }
     
     func logTrackedClass(course: Course) {

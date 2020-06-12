@@ -137,6 +137,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
+
+    
     // MARK: UISceneSession Lifecycle
     
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
@@ -233,6 +235,28 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         print("Notificaiton 11")
 //        presentHomePage()
         
+        // the root view controller
+        guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else { return }
+        
+        print("rootViewController1")
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+        // instantiate the view controller we want to show from storyboard
+        // root view controller is tab bar controller
+        // the selected tab is a navigation controller
+        // then we push the new view controller to it
+        if let homeVC = storyboard.instantiateViewController(withIdentifier: "HomePageController") as? HomePageController{
+            let navigationController = UINavigationController.init(rootViewController: homeVC)
+
+            self.window?.rootViewController = navigationController
+            self.window?.makeKeyAndVisible()
+                // we can modify variable of the new view controller using notification data
+                // (eg: title of notification)
+//                conversationVC.senderDisplayName = response.notification.request.content.title
+                // you can access custom data of the push notification by using userInfo property
+                // response.notification.request.content.userInfo
+//                navigationController.pushViewController(homeVC, animated: true)
+        }
         
         completionHandler()
     }

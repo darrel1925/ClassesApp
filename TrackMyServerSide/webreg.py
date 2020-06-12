@@ -3,13 +3,13 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 from collections import defaultdict
-
+from constants import Constants
 from time import sleep
-import time
+import time, helpers, send_email
 start_time = time.time()
 
 CHROME_DRIVER_PATH = "/home/ubuntu/desktop/chromedriver"
-# CHROME_DRIVER_PATH = "/Users/darrelm/Desktop/classes/chromedriver"
+# CHROME_DRIVER_PATH = "/Users/darrelm/Desktop/classes/ClassesApp/TrackMyServerSide/chromedriver"
 PAGE_TIMEOUT = 20
 
 active_drivers = []
@@ -28,18 +28,18 @@ def no_webreg_err_msg(driver):
         
         # if we find an error
         if webreg_err.text == "Login Authorization has expired": # cannot log in
-            return False
+            return False, webreg_err.text
         if "Sorry, your student record is currently" in webreg_err.text:
-            return False
+            return False, webreg_err.text
         if "Your enrollment window opens on" in webreg_err.text:
-            return False
+            return False, webreg_err.text
         
         # if there is no error
-        return True
+        return True, webreg_err.text
 
     # if you cannot find DivLogoutMsg there was not error
     except:
-        return True
+        return True, ""
 
 def no_div_logout_msg(driver):
     # if you can find DivLogoutMsg there might be an error
@@ -48,14 +48,14 @@ def no_div_logout_msg(driver):
         print(logout_err.text)
         # if we find an error
         if logout_err.text == "You are logged out.": # cannot log in
-            return False
+            return False, logout_err.text
         
         # if there is no error
-        return True
+        return True, logout_err.text
 
     # if you cannot find DivLogoutMsg there was not error
     except:
-        return True
+        return True, ""
 
 def log_into_web_reg(email, pswd):
     """
@@ -89,28 +89,30 @@ def log_into_web_reg(email, pswd):
     except Exception as e:
         # couldnt find username and password field
         print("err 1:", str(e))
-        message = "Unable to login. Double check that your username and password are entered correctly."
-        driver.quit()
-        return None, message
+        message = "Unable to login.\nDouble check that your username and password are entered correctly."
+        return driver, message, False
 
     ### try to get passed the user name and password login ###
     try:
-        assert(no_webreg_err_msg(driver))
+        success, message = no_webreg_err_msg(driver)
+        assert(success)
     except Exception as e:  
         print("error after clicking log in:", str(e))
-        message = "Unable to login. Likly becasue your registration window is not open at this time."
-        return None, message
+        message = "Unable to login.\nLikly becasue you are not authorized to enroll at this time."
+        return driver, message, False
 
     ### loading the front page of portal correctly ###
     try:
-        assert(no_div_logout_msg(driver))
+        success, message = no_div_logout_msg(driver)
+        assert(success)
     except Exception as e:  
         print("error after getting into web reg:", str(e))
-        logout_of_webreg(driver)
+        message = "Unable access webreg.\nLikly becasue you are not authorized to enroll at this time."
+        return driver, message, False
 
 
     ### We got into we reg ###
-    return driver, "message"
+    return driver, "", True
 
 def logout_of_webreg(driver):
     """
@@ -138,7 +140,63 @@ def logout_of_webreg(driver):
     print("My program took", time.time() - start_time, "to run")
     driver.quit()
 
-def add_class(driver, code):
+def click_enroll_btn(driver):
+    print("entered click enroll")
+    # try to get to page to add and drop classes
+    try:
+        success, message = no_webreg_err_msg(driver)
+        assert(success)
+        print("looking for enroll")
+
+        # try to click the enrollment menu button
+        front_pg_buttons = driver.find_elements_by_class_name("WebRegButton")
+
+        # get initial enroll button
+        for btn in front_pg_buttons:
+            btn_value = btn.get_attribute('value')
+            print(btn_value)
+
+            if btn_value == "Enrollment Menu":
+                btn.click()
+                break
+        
+        return driver, "", True
+
+    except Exception as e:
+        print("Error: login error", str(e))
+        logout_of_webreg(driver)
+        message = "Unable access webreg. \nLikely becasue you are not authorized to enroll at this time."
+        return None, message, False
+
+def click_waitlist_btn(driver):
+    print("entered click enroll")
+    # try to get to page to add and drop classes
+    try:
+        success, message = no_webreg_err_msg(driver)
+        assert(success)
+        print("looking for enroll")
+
+        # try to click the enrollment menu button
+        front_pg_buttons = driver.find_elements_by_class_name("WebRegButton")
+
+        # get initial enroll button
+        for btn in front_pg_buttons:
+            btn_value = btn.get_attribute('value')
+            print(btn_value)
+
+            if btn_value == "Wait list Menu":
+                btn.click()
+                break
+        
+        return driver, "", True
+
+    except Exception as e:
+        print("Error: login error", str(e))
+        logout_of_webreg(driver)
+        message = "Unable access webreg. \nLikely becasue you are not authorized to enroll at this time."
+        return None, message, False
+
+def add_class(driver, code, retry_used = False):
     """
     Takes in a WebReg driver and cousrse code then adds that course
     """
@@ -159,88 +217,164 @@ def add_class(driver, code):
             print("Request was went")
             break
 
-            
+    # if adding class is successful
     try:
         classes_added_elem = driver.find_element_by_class_name("studyList") 
-        print(classes_added_elem.text)
-        return
+        formated_text = code + classes_added_elem.text.split(code)[1]
+        print(formated_text)
+        return "Course " + code + " Added:\n" + formated_text + "\n"
+    # if adding class is NOT successful
     except:
         print('class not added')
-
-
-    try:
         webreg_err = driver.find_element_by_class_name("WebRegErrorMsg") 
         print(webreg_err.text)
-    except:
-        print('no web reg error')
+        # retry each class at leasae once
+        if retry_used == False:
+            return add_class(driver, code, retry_used = True)
+        
+        return "Course " + code + " Not Added:\n" + webreg_err.text + "\n"
 
+def should_retry_main(num_retries):
+     # give program 3 tries
+    return True if num_retries < 2 else False
 
-def click_enroll_btn(driver):
-    print("entered click enroll")
-    # try to get to page to add and drop classes
+def send_success_notifications(user_doc_dict, class_dict, message):
+    # TODO: Remove them from auto-enroll
+    email = user_doc_dict["email"]
+    
+    # send notification to phone
+    if "not" in message.lower():
+        notif_info = send_email.construct_enrollment_failure_email(user_doc_dict, class_dict, message)
+    else:
+        notif_info = send_email.construct_enrollment_success_email(user_doc_dict, class_dict, message)
+    
+    helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.enroll)
+    
+    # send email
+    if user_doc_dict["receive_emails"]:
+        full_msg = 'Subject: {}\n\n{}'.format(notif_info[0], notif_info[1])
+        send_email.send_email_with_msg(email, full_msg)
+
+    # update users notification list
+    helpers.update_user_notification_list(email, "", class_dict, notif_info, Constants.enroll)
+
+def send_error_notifications(user_doc_dict, class_dict, message):
+    email = user_doc_dict["email"]
+    new_name = helpers.get_full_class_name(class_dict)
+
+    # send notification to phone
+    title = "Could not register for " + new_name 
+    body = "Error message: \n\t" + message + "\n\nLet us know how we did! While working to perfect this product, the more feedback the better - good or bad."
+    notif_info = (title, body)
+    helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.enroll)
+    
+    # send email
+    email_title = "Could not register for " + new_name 
+    email_body = "Error message: \n\n" + message + "\n\nLet us know how we did by replying to this email! While working to perfect this product, the more feedback the better - good or bad."
+    if user_doc_dict["receive_emails"]:
+        full_msg = 'Subject: {}\n\n{}'.format(email_title, email_body)
+        send_email.send_email_with_msg(email, full_msg)
+
+    # update users notification list
+    helpers.update_user_notification_list(email, "", class_dict, notif_info, Constants.enroll)
+
+def main(user_doc_dict, class_dict, num_retries = 0):
+    global start_time
+    start_time = time.time()
+
     try:
-        assert(no_webreg_err_msg(driver))
-        print("looking for enroll")
+        # get info from user and class
+        code = class_dict["code"]
+        email = user_doc_dict["email"]
+        pswd = user_doc_dict["web_reg_pswd"]
+        discussion_and_labs = [code] + user_doc_dict["classes"][code]
+        print("in webreg main")
 
-        # try to click the enrollment menu button
-        front_pg_buttons = driver.find_elements_by_class_name("WebRegButton")
+        # log into web reg
+        driver, message, success = log_into_web_reg(email, pswd)
+        if not success:
+            if should_retry_main(num_retries):
+                logout_of_webreg(driver)
+                main(user_doc_dict, class_dict, num_retries = num_retries + 1)
+                return
+            else:
+                # send failure notification
+                logout_of_webreg(driver)
+                send_error_notifications(user_doc_dict, class_dict, message)
+                return 
 
-        # get initial enroll button
-        for btn in front_pg_buttons:
-            btn_value = btn.get_attribute('value')
-            print(btn_value)
+        #  --> Go to Enrollment Menu <--
+        print("class_dict[status] ==", helpers.Status.OPEN, class_dict["status"] == helpers.Status.OPEN)
+        if class_dict["status"] == helpers.Status.OPEN:
+            # click on enrollment button
+            driver, message, success = click_enroll_btn(driver)
+            if not success:
+                print("failed logging in: -->", num_retries)
+                if should_retry_main(num_retries):
+                    logout_of_webreg(driver)
+                    main(user_doc_dict, class_dict, num_retries = num_retries + 1)
+                    return
+                else:
+                    # send failure notification
+                    logout_of_webreg(driver)
+                    send_error_notifications(user_doc_dict, class_dict, message)
+                    return 
 
-            if btn_value == "Enrollment Menu":
-                btn.click()
-                break
+        # --> Go to Waitlist Menu <-- 
+        else:
+            print("--> enter waitl!")
+            # click on wait list button
+            driver, message, success = click_waitlist_btn(driver)
+            if not success:
+                print("failed logging in: -->", num_retries)
+                if should_retry_main(num_retries):
+                    logout_of_webreg(driver)
+                    main(user_doc_dict, class_dict, num_retries = num_retries + 1)
+                    return
+                else:
+                    # send failure notification
+                    logout_of_webreg(driver)
+                    send_error_notifications(user_doc_dict, class_dict, message)
+                    return 
 
+        message = ""
+        # enroll in class or add classes to waitlist 
+        for code in discussion_and_labs:
+            sleep(0.1) # wait for page to load
+            message_fragment = add_class(driver, code)
+            message += message_fragment
+
+        print("PRESENT SUCCESS")
+        logout_of_webreg(driver)
+        # send a success notification
+        send_success_notifications(user_doc_dict, class_dict, message)
 
     except Exception as e:
-        print("Error: login error", str(e))
-        logout_of_webreg(driver)
-        return None
-
-    return driver 
-    
-def enroll(user_doc_dict, code):
-    email = user_doc_dict["email"]
-    pswd = user_doc_dict["web_reg_pswd"]
-    discussion_and_labs = user_doc_dict["classes"][code]
-    print("in enroll")
-    driver, message = log_into_web_reg(email, pswd)
-
-    if not driver:
-        return 
-    click_enroll_btn(driver)
-    time.sleep(1) # wait for page to load
-
-    for code in discussion_and_labs:
-        sleep(0.5)
-        add_class(driver, code)
-    
-    logout_of_webreg(driver)
-
-def main():
-    code = "12345"
-    email = "dmuonekw@uci.edu"
-    pswd = "Vision925"
-    discussion_and_labs = []
-    print("in enroll")
-    driver, message = log_into_web_reg(email, pswd)
-
-    if not driver:
-        return 
-    click_enroll_btn(driver)
-    time.sleep(1) # wait for page to load
-
-
-    add_class(driver, code)
-    for code in discussion_and_labs:
-        sleep(1)
-        add_class(driver, code)
-    
-    logout_of_webreg(driver)
+        print("Error occured ->", e)
+        subject = "ERR with auto-enroll!!!"
+        message = "error: " + str(e) 
+        helpers.send_email_error(subject, message)
     
 
 
-# main()
+user_doc_dict = {
+    "email": "dmuonekw@uci.edu",
+    "web_reg_pswd": "Vision925",
+    "classes": {
+        "34180": []
+        },
+    "is_logged_in": True,
+    "notifications_enabled": True,
+    "receive_emails": False,
+    "fcm_token": "cqYJ8H7zEEl6sKMQrxcGPD:APA91bHjsIynTuGbqfv6_u4ea7KHR8QTd--OUzWav5SO91qcyYe-j3rtyTTGkUie-HH5I6l-cCcBi_WuwHtZafTLliNvB7VMKl6y2ygEy_VtSxWjdyLr1974mJ1JwzzTpZqb8acExnTf"
+    }
+
+class_dict = {
+    "status": "OPEN",
+    "code": "34180",
+    "name": "Comp Sci 143a",
+    "section": "A",
+    "type": "Lec"
+}
+# helpers.initialize_firebase()
+# main(user_doc_dict, class_dict, num_retries = 0)

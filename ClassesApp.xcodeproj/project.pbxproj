@@ -12,18 +12,17 @@
 		387A636A0B5683E30416CBC1 /* Pods_ClassesAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CD1F71F095CCBA58547F6AB /* Pods_ClassesAppTests.framework */; };
 		9A08BCA22446102C00DC4B40 /* StorePopUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A08BCA02446102C00DC4B40 /* StorePopUpController.swift */; };
 		9A08BCA32446102C00DC4B40 /* StorePopUpController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A08BCA12446102C00DC4B40 /* StorePopUpController.xib */; };
-		9A17D8E8246E28E400E3BA6B /* SignUpPopUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */; };
-		9A17D8E9246E28E400E3BA6B /* SignUpPopUpController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */; };
 		9A1BA9EB243420400087622D /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1BA9EA243420400087622D /* SettingsController.swift */; };
 		9A1D0901247B675600095F6F /* ClassDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1D0900247B675500095F6F /* ClassDetailsController.swift */; };
 		9A21C7EA2452A7D000355CC2 /* NotifcationStatusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A21C7E82452A7D000355CC2 /* NotifcationStatusController.swift */; };
 		9A21C7EB2452A7D000355CC2 /* NotifcationStatusController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */; };
+		9A30140A24824BE50048A65A /* WhatsNewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A30140924824BE50048A65A /* WhatsNewController.swift */; };
 		9A31D142243430BA00C05EA1 /* StartScreenAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */; };
 		9A3D4A042456A4990073C0F7 /* WebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D4A032456A4990073C0F7 /* WebController.swift */; };
 		9A3D4A0624576A100073C0F7 /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D4A0524576A0F0073C0F7 /* Course.swift */; };
 		9A3D4A09245776A30073C0F7 /* AddToListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D4A07245776A30073C0F7 /* AddToListController.swift */; };
 		9A3D4A0A245776A30073C0F7 /* AddToListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A3D4A08245776A30073C0F7 /* AddToListController.xib */; };
-		9A40E7F2243857B90070A410 /* StripeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A40E7F1243857B90070A410 /* StripeAPI.swift */; };
+		9A40B3FB24818A2E0044BD4C /* WelcomeScreen31.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A40B3FA24818A2E0044BD4C /* WelcomeScreen31.swift */; };
 		9A445419242D959300089389 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A445418242D959300089389 /* UserService.swift */; };
 		9A445621245B2ED50054521A /* ChangeSchoolController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A44561F245B2ED50054521A /* ChangeSchoolController.swift */; };
 		9A445622245B2ED50054521A /* ChangeSchoolController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A445620245B2ED50054521A /* ChangeSchoolController.xib */; };
@@ -110,18 +109,17 @@
 		8AC04124D54E938C8E6F9737 /* Pods-ClassesApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesApp.release.xcconfig"; path = "Target Support Files/Pods-ClassesApp/Pods-ClassesApp.release.xcconfig"; sourceTree = "<group>"; };
 		9A08BCA02446102C00DC4B40 /* StorePopUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePopUpController.swift; sourceTree = "<group>"; };
 		9A08BCA12446102C00DC4B40 /* StorePopUpController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StorePopUpController.xib; sourceTree = "<group>"; };
-		9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpPopUpController.swift; sourceTree = "<group>"; };
-		9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SignUpPopUpController.xib; sourceTree = "<group>"; };
 		9A1BA9EA243420400087622D /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		9A1D0900247B675500095F6F /* ClassDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassDetailsController.swift; sourceTree = "<group>"; };
 		9A21C7E82452A7D000355CC2 /* NotifcationStatusController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifcationStatusController.swift; sourceTree = "<group>"; };
 		9A21C7E92452A7D000355CC2 /* NotifcationStatusController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotifcationStatusController.xib; sourceTree = "<group>"; };
+		9A30140924824BE50048A65A /* WhatsNewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewController.swift; sourceTree = "<group>"; };
 		9A31D141243430BA00C05EA1 /* StartScreenAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenAnimation.swift; sourceTree = "<group>"; };
 		9A3D4A032456A4990073C0F7 /* WebController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebController.swift; sourceTree = "<group>"; };
 		9A3D4A0524576A0F0073C0F7 /* Course.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
 		9A3D4A07245776A30073C0F7 /* AddToListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToListController.swift; sourceTree = "<group>"; };
 		9A3D4A08245776A30073C0F7 /* AddToListController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddToListController.xib; sourceTree = "<group>"; };
-		9A40E7F1243857B90070A410 /* StripeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeAPI.swift; sourceTree = "<group>"; };
+		9A40B3FA24818A2E0044BD4C /* WelcomeScreen31.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen31.swift; sourceTree = "<group>"; };
 		9A445418242D959300089389 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		9A44561F245B2ED50054521A /* ChangeSchoolController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSchoolController.swift; sourceTree = "<group>"; };
 		9A445620245B2ED50054521A /* ChangeSchoolController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChangeSchoolController.xib; sourceTree = "<group>"; };
@@ -263,8 +261,6 @@
 				9A3D4A08245776A30073C0F7 /* AddToListController.xib */,
 				9A44561F245B2ED50054521A /* ChangeSchoolController.swift */,
 				9A445620245B2ED50054521A /* ChangeSchoolController.xib */,
-				9A17D8E6246E28E400E3BA6B /* SignUpPopUpController.swift */,
-				9A17D8E7246E28E400E3BA6B /* SignUpPopUpController.xib */,
 				9AADB82E24750D4900A79586 /* RestorePurchaseController.swift */,
 				9AADB82F24750D4900A79586 /* RestorePurchaseController.xib */,
 			);
@@ -331,7 +327,6 @@
 				9A8CF978242C4BEA008D0DC6 /* GoogleService-Info.plist */,
 				9A31D1402434309900C05EA1 /* Animations */,
 				9A8533F3243D6B9500F7197F /* Xibs */,
-				9A9FD2FD243815530011F8A4 /* Stripe */,
 				9AAD828B2431B3EF00C66838 /* Cells */,
 				9A445417242D957900089389 /* Services */,
 				9A853400243E7C1400F7197F /* Constants */,
@@ -402,16 +397,9 @@
 				9AFCD2B4244B987E009D2081 /* PageController.swift */,
 				9AFB5E16247B5D64003D3BE7 /* RestrictionsController.swift */,
 				9A1D0900247B675500095F6F /* ClassDetailsController.swift */,
+				9A30140924824BE50048A65A /* WhatsNewController.swift */,
 			);
 			path = Controllers;
-			sourceTree = "<group>";
-		};
-		9A9FD2FD243815530011F8A4 /* Stripe */ = {
-			isa = PBXGroup;
-			children = (
-				9A40E7F1243857B90070A410 /* StripeAPI.swift */,
-			);
-			path = Stripe;
 			sourceTree = "<group>";
 		};
 		9AAD828B2431B3EF00C66838 /* Cells */ = {
@@ -445,6 +433,7 @@
 				9AC4A954244B92410019921F /* WelcomeScreen2.swift */,
 				9AC4A956244B92540019921F /* WelcomeScreen3.swift */,
 				9AC4A958244B92620019921F /* WelcomeScreen4.swift */,
+				9A40B3FA24818A2E0044BD4C /* WelcomeScreen31.swift */,
 			);
 			path = WelcomeScreens;
 			sourceTree = "<group>";
@@ -587,7 +576,6 @@
 				9A3D4A0A245776A30073C0F7 /* AddToListController.xib in Resources */,
 				9A8533F7243D6BF300F7197F /* ForgotPasswordController.xib in Resources */,
 				9AADB83124750D4900A79586 /* RestorePurchaseController.xib in Resources */,
-				9A17D8E9246E28E400E3BA6B /* SignUpPopUpController.xib in Resources */,
 				9A9472B4242C1E7C004927DD /* Assets.xcassets in Resources */,
 				9A8CF979242C4BEA008D0DC6 /* GoogleService-Info.plist in Resources */,
 				9A21C7EB2452A7D000355CC2 /* NotifcationStatusController.xib in Resources */,
@@ -749,7 +737,6 @@
 				9A8CF973242C3F43008D0DC6 /* SplashScreenController.swift in Sources */,
 				9A8CF975242C48FA008D0DC6 /* LogInController.swift in Sources */,
 				9A7E051D244189E8002E9803 /* ServerService.swift in Sources */,
-				9A17D8E8246E28E400E3BA6B /* SignUpPopUpController.swift in Sources */,
 				9A8533FD243D7F2700F7197F /* PurchaseHistoryCell.swift in Sources */,
 				9AC6292E24589FAA00B793C0 /* ShareController.swift in Sources */,
 				9AA2116E244EEA6B00A49606 /* PrivacyController.swift in Sources */,
@@ -770,6 +757,7 @@
 				9A652A31244CCA6200366229 /* AppConstants.swift in Sources */,
 				9A7B46A5244FAB6F00B4D7A0 /* CreditsController.swift in Sources */,
 				9AAD829A243295E700C66838 /* AddClassController.swift in Sources */,
+				9A30140A24824BE50048A65A /* WhatsNewController.swift in Sources */,
 				9AAD829E24329E4D00C66838 /* MenuController.swift in Sources */,
 				9AFB5E17247B5D64003D3BE7 /* RestrictionsController.swift in Sources */,
 				9A8CF981242C78FE008D0DC6 /* HomePageController.swift in Sources */,
@@ -785,11 +773,11 @@
 				9A9472AD242C1E76004927DD /* SceneDelegate.swift in Sources */,
 				9AC4A955244B92410019921F /* WelcomeScreen2.swift in Sources */,
 				9A08BCA22446102C00DC4B40 /* StorePopUpController.swift in Sources */,
+				9A40B3FB24818A2E0044BD4C /* WelcomeScreen31.swift in Sources */,
 				9A8CF97F242C6CCB008D0DC6 /* User.swift in Sources */,
 				9A8533FB243D6CB200F7197F /* SettingsLabelCell.swift in Sources */,
 				9A21C7EA2452A7D000355CC2 /* NotifcationStatusController.swift in Sources */,
 				9A3D4A09245776A30073C0F7 /* AddToListController.swift in Sources */,
-				9A40E7F2243857B90070A410 /* StripeAPI.swift in Sources */,
 				9AE8D758243E7D050049B090 /* Constants.swift in Sources */,
 				9A1D0901247B675600095F6F /* ClassDetailsController.swift in Sources */,
 			);
@@ -968,7 +956,7 @@
 				CODE_SIGN_ENTITLEMENTS = ClassesApp/ClassesApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -994,7 +982,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

@@ -43,7 +43,6 @@ def send_notification_email():
     json = {"did_send_email": did_send_email}
     return json
 
-
 @app.route("/display_terms")
 def display_terms():
     return render_template("terms.html")

@@ -15,8 +15,10 @@ enum MenuType: Int {
     case Share
     case Settings
     case HowItWorks
+    case WhatsNew
     case Support
     case Credits
+    case Updates
 }
 
 class MenuController: UITableViewController {
@@ -31,13 +33,16 @@ class MenuController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
+        return 9
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
-        tableView.deselectRow(at: indexPath, animated: true)
+        //tableView.deselectRow(at: indexPath, animated: true)
         guard let menuType = MenuType(rawValue: indexPath.row) else { return }
+        
+        if (menuType == MenuType.Credits) || (menuType == MenuType.Updates) { return }
+        
         dismiss(animated: true) { [weak self] in
             print("Dismissing \(menuType)")
             self?.didTapMenuType?(menuType)            
@@ -49,6 +54,13 @@ class MenuController: UITableViewController {
         dismiss(animated: true) { [weak self] in
             print("Dismissing Credits")
             self?.didTapMenuType?(MenuType.Credits)
+        }
+    }
+    
+    @IBAction func updatesButtonClicked(_ sender: Any) {
+        dismiss(animated: true) { [weak self] in
+            print("Dismissing Credits")
+            self?.didTapMenuType?(MenuType.Updates)
         }
     }
 }

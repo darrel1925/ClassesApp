@@ -19,12 +19,15 @@ class User {
     var school: String
     var stripeId: String
     var fcm_token: String
+    var appVersion: String
+    var dateJoined: String
     var webRegPswd: String
     var referralLink: String
     
     var webReg: Bool
     var isLoggedIn: Bool
     var hasPremium: Bool
+    var hasAutoEnroll: Bool
     var receiveEmails: Bool
     var isEmailVerified: Bool
     var seenWelcomePage: Bool
@@ -32,10 +35,12 @@ class User {
     var notificationsEnabled: Bool
         
     var seenHomeTapDirections: Bool
+    var seenWhatsNew: Bool
+    
     
     var numReferrals: Int
 
-    var classes: [String: [Any]]
+    var classes: [String: Any]
     
     var purchaseHistory: [[String: String]] // [ [num_credits: 3, date: Date, price: 149] ]
     var notifications: [[String: String]] // [ [course_code: '34250', status: 'FULL OPEN', date: Date] ]?
@@ -47,14 +52,14 @@ class User {
     var hasConfirmedEmail: Bool { return AppConstants.has_confirmed_email }
     
     // User is Signing Up
-    init(id: String = "", email: String = "\n", webReg: Bool = false, webRegPswd: String = "",
-         stripeId: String = "", classes: [String: [Any]] = [:], school: String = "",
+    init(id: String = "", email: String = "", webReg: Bool = false, webRegPswd: String = "",
+         stripeId: String = "", classes: [String: Any] = [:], school: String = "", dateJoined: String = "",
          hasShortReferral: Bool  = false, fcm_token: String = "", numReferrals: Int = 0,
          hasPremium: Bool = false, receiveEmails: Bool = false, seenWelcomePage: Bool = false,
          isLoggedIn: Bool = true, isEmailVerified: Bool = false, referralLink: String = "",
-         seenHomeTapDirections: Bool = false, hasSetUserProperty: Bool = false,
-         notificationsEnabled: Bool = true, purchaseHistory: [[String: String]] = [],
-         notifications: [[String: String]] = []){
+         hasAutoEnroll: Bool = false, appVersion: String = "", seenHomeTapDirections: Bool = false,
+         hasSetUserProperty: Bool = false, seenWhatsNew: Bool = false, notificationsEnabled: Bool = true,
+         purchaseHistory: [[String: String]] = [], notifications: [[String: String]] = []) {
         
         self.id = id
         self.email = email
@@ -62,7 +67,10 @@ class User {
         self.webRegPswd = webRegPswd
         self.stripeId = stripeId
         
+        self.dateJoined = dateJoined
+        self.appVersion = appVersion
         self.hasPremium = hasPremium
+        self.hasAutoEnroll = hasAutoEnroll
         self.hasShortReferral = hasShortReferral
         self.referralLink = referralLink
         self.numReferrals = numReferrals
@@ -78,6 +86,7 @@ class User {
         self.notifications = notifications
                 
         self.seenHomeTapDirections = seenHomeTapDirections
+        self.seenWhatsNew = seenWhatsNew
         
         setFCMTokenAndUpdateDB()
         print("user is made")
@@ -94,17 +103,20 @@ class User {
         self.numReferrals = data[DataBase.num_referrals] as? Int ?? 0
         self.referralLink = data[DataBase.referral_link] as? String ?? ""
         self.hasPremium = data[DataBase.has_premium] as? Bool ?? false
+        self.hasAutoEnroll = data[DataBase.has_auto_enroll] as? Bool ?? false
         self.isLoggedIn = data[DataBase.is_logged_in] as? Bool ?? true
-        if let classes = data[DataBase.classes] as? [String : [Any]] {
-            print("Cast successful")
+        if let classes = data[DataBase.classes] as? [String : Any] {
+            print("Class cast successful")
             self.classes = classes
         }
         else {
-            print("Cast unsuccessful")
+            print("Class cast unsuccessful")
             self.classes = [:]
         }
                 
         self.school = data[DataBase.school] as? String ?? ""
+        self.dateJoined = data[DataBase.date_joined] as? String ?? ""
+        self.appVersion = data[DataBase.app_version] as? String ?? ""
         self.fcm_token = data[DataBase.fcm_token] as? String ?? ""
         self.receiveEmails = data[DataBase.receive_emails] as? Bool ?? true
         self.isEmailVerified = data[DataBase.is_email_verified] as? Bool ?? false
@@ -119,8 +131,8 @@ class User {
             self.notifications = notifications
         } else { self.notifications = [] }
         
-        
         self.seenHomeTapDirections = data[DataBase.seen_home_tap_directions] as? Bool ?? false
+        self.seenWhatsNew = data[DataBase.seen_whats_new] as? Bool ?? false
         
         setFCMTokenAndUpdateDB()
         print("user is made")
@@ -135,6 +147,7 @@ class User {
             DataBase.web_reg: user.webReg,
             DataBase.web_reg_pswd: user.webRegPswd,
             
+            DataBase.date_joined: user.dateJoined,
             DataBase.classes: user.classes,
             DataBase.has_premium: user.hasPremium,
             DataBase.is_logged_in: user.isLoggedIn,
@@ -147,26 +160,14 @@ class User {
             DataBase.notifications: user.notifications,
             DataBase.num_referrals: user.numReferrals,
             DataBase.referral_link: user.referralLink,
+            DataBase.has_auto_enroll: user.hasAutoEnroll,
             DataBase.has_short_referral: user.hasShortReferral,
             DataBase.notifications_enabled: user.notificationsEnabled,
             DataBase.seen_home_tap_directions: user.seenHomeTapDirections,
+            DataBase.seen_whats_new: user.seenWhatsNew,
+            DataBase.app_version: user.appVersion,
         ]
-        
         return data
-    }
-    
-    private func handleEmailVerification() {
-        // If email is not verified
-        if isEmailVerified { return }
-        guard let user = Auth.auth().currentUser else { return }
-        if user.isEmailVerified {
-            isEmailVerified = true
-            
-            let db = Firestore.firestore()
-            let docRef = db.collection(DataBase.User).document(UserService.user.email)
-            docRef.updateData([DataBase.is_email_verified: true])
-            return
-        }
     }
     
     private func setFCMTokenAndUpdateDB() {

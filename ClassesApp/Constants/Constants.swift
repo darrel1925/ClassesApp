@@ -24,12 +24,15 @@ struct DataBase {
     static let classes   = "classes"
     static let stripeId  = "stripeId"
     static let fcm_token = "fcm_token"
+    static let date_joined   = "date_joined"
+    static let app_version   = "app_version"
     static let has_premium   = "has_premium"
     static let web_reg_pswd  = "web_reg_pswd"
     static let is_logged_in  = "is_logged_in"
     static let notifications = "notifications"
     static let num_referrals = "num_referrals"
     static let referral_link = "referral_link"
+    static let has_auto_enroll   = "has_auto_enroll"
     static let receive_emails    = "receive_emails"
     static let current_version   = "current_version"
     static let purchase_history  = "purchase_history"
@@ -58,7 +61,8 @@ struct DataBase {
     static let class_info       = "class_info"
     static let display_terms    = "display_terms"
     static let did_send_email   = "did_send_email"
-    static let display_privacy  = "display_privacy"    
+    static let add_class_to_db  = "add_class_to_db"
+    static let display_privacy  = "display_privacy"
     static let send_email_route = "send_email_route"
 
     static let path          = "path"
@@ -86,13 +90,15 @@ struct DataBase {
     static let registration_pages  = "registration_pages"
     static let premium_product_id  = "premium_product_id"
     static let class_look_up_pages = "class_look_up_pages"
+    static let current_app_version = "current_app_version"
 
-    // Class
-    static let year    = "year"
-    static let emails  = "emails"
-    static let quarter = "quarter"
-    static let code    = "code"
-    static let status  = "status"
+    // Course
+    static let year        = "year"
+    static let emails      = "emails"
+    static let quarter     = "quarter"
+    static let code        = "code"
+    static let status      = "status"
+    static let auto_enroll_emails = "auto_enroll_emails"
 
     // Courses
     static let room  = "room"
@@ -104,9 +110,11 @@ struct DataBase {
     static let units = "units"
     static let section      = "section"
     static let professor    = "professor"
+    static let date_added   = "date_added"
     static let dis_and_labs = "dis_and_labs"
     static let restrictions = "restrictions"
-        
+    
+
     // Analytics
     static let faq_viewed          = "faq_viewed"
     static let num_courses         = "num_courses"
@@ -116,6 +124,8 @@ struct DataBase {
     static let num_classes_tracked     = "num_classes_tracked"
     static let copied_link_to_clip     = "copied_link_to_clip"
     static let signed_up_from_referral = "signed_up_from_referral"
+    static let viewed_premium_details_from_store  = "viewed_premium_details_from_store"
+    static let viewed_premium_details_from_welcome  = "viewed_premium_details_from_welcome"
     static let premium = "premium"
     static let purchases = "purchases"
     
@@ -123,6 +133,7 @@ struct DataBase {
     static let should_prompt_update_frequency = "should_prompt_update_frequency"
     static let seen_home_tap_directions       = "seen_home_tap_directions"
     static let should_prompt_update           = "should_prompt_update"
+    static let seen_whats_new                 = "seen_whats_new"
 }
 
 struct Status {

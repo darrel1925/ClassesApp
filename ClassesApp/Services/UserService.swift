@@ -87,6 +87,18 @@ final class _UserService {
         }
     }
         
+    func handleUpdateAppVersionInDB() {
+        ServerService.getCurrentAppVersion { (version, success) in
+            if !success { return }
+            
+            if UserService.user.appVersion != version {
+                let db = Firestore.firestore()
+                let docRef = db.collection(DataBase.User).document(UserService.user.email)
+                docRef.updateData([DataBase.app_version: version])
+            }
+        }
+    }
+    
     func generateReferralLink() {
         // Create url that will get parsed and give you the parameters
         print(ReferralLink.scheme)

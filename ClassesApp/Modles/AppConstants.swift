@@ -8,7 +8,6 @@
 
 import Foundation
 import FirebaseFirestore
-import Stripe
 let AppConstants = _AppConstants()
 
 class _AppConstants {
@@ -26,6 +25,7 @@ class _AppConstants {
     var premium_price = 499
     var support_email_pswd   = ""
     var premium_product_id   = ""
+    var current_app_version  =  ""
     var has_confirmed_email  = true
     var should_prompt_update = false
     var should_prompt_update_frequency = 10
@@ -69,6 +69,7 @@ class _AppConstants {
             self.support_email = data[DataBase.support_email] as? String ?? ""
             self.premium_product_id = data[DataBase.premium_product_id] as? String ?? ""
             self.support_email_pswd = data[DataBase.support_email_pswd] as? String ?? ""
+            self.current_app_version = data[DataBase.current_app_version] as? String ?? ""
             self.should_prompt_update = data[DataBase.should_prompt_update] as? Bool ?? false
             self.should_prompt_update_frequency = data[DataBase.should_prompt_update_frequency] as? Int ?? 10
             self.referral_info = data[DataBase.referral_info] as? [String: String] ?? [:]
@@ -76,8 +77,6 @@ class _AppConstants {
             self.registration_pages = data[DataBase.registration_pages] as? [String: String] ?? [:]
             self.class_look_up_pages = data[DataBase.class_look_up_pages] as? [String: String] ?? [:]
             self.routes = data[DataBase.routes] as? [String: String] ?? [:]
-            Stripe.setDefaultPublishableKey(self.stripe_pk)
-
 //            print(data)
         })
     }

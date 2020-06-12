@@ -1,5 +1,6 @@
 import classes5, helpers
 from time import sleep
+from datetime import datetime
 
 def get_all_classes():
     try:
@@ -13,7 +14,7 @@ def get_all_classes():
             course.pop('emails', None)
             course.pop('school', None)
             course.pop('quarter', None)
-            course.pop('year', None)
+            course.pop('year', None)    
 
             sleep(3)
             if school == "UCI":
@@ -127,5 +128,9 @@ def practice():
     print()
     print()
 
+
+
 # get_all_classes()
-practice()
+if __name__ == "__main__":
+    practice()
+

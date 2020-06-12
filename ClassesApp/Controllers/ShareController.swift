@@ -50,10 +50,14 @@ class ShareController: UIViewController {
         }
         
         
-        toGoLabel.isHidden = UserService.user.authenticated
+        redeemButton.isHidden = UserService.user.hasPremium
         referralLabel.text = UserService.user.referralLink
-        toGoLabel.isHidden = UserService.user.authenticated
         redeemButton.isHidden = UserService.user.authenticated
+        
+        if UserService.user.authenticated || UserService.user.hasPremium {
+            toGoLabel.isHidden = true
+            redeemButton.isHidden = true
+        }
     }
     
     func setUpGestures() {

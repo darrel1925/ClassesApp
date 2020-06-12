@@ -14,10 +14,14 @@ class FAQController: UIViewController {
     @IBOutlet weak var containerView: RoundedView!
     @IBOutlet weak var tableView: UITableView!
     
-    let questions: [[String]] = [
+    let faqQuestions: [[String]] = [
+        [
+            "What is the difference between TrackMy Premium and TrackMy Free?",
+            "1. Premium users will receive all notifications first, non-premium will receive notifications directly after.\n\n2. Premium users can track an unlimited number of classes each quarter, Free users can only track one class at a time.\n\n3. Premium users will be notified when restrictions are dropped from a class AND when a class status changes, TrackMy Free users will only be notified when a class status changes."
+        ],
         [
             "Will premium last the entire year?",
-            "Unfortunaly not, purchasing premium will allow you to track as many classes as you want for Fall quarter only. "
+            "No, purchasing premium will allow you to track as many classes as you want for the current quarter only. "
         ],
         [
             "Will my card be automatically charged next quarter?",
@@ -52,7 +56,6 @@ class FAQController: UIViewController {
     
     
     func setUpGestures() {
-        
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismiss))
         let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(handleDismiss))
         let swipe2: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(handleDismiss))
@@ -69,7 +72,7 @@ class FAQController: UIViewController {
         let height: CGFloat = containerView.frame.height
         let y = window.frame.height - height
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
             self.backgroundView.alpha = 0.5
             self.containerView.frame = CGRect(x: 0, y: y, width: window.frame.width, height: height)
@@ -85,12 +88,12 @@ class FAQController: UIViewController {
     
     @objc func handleDismiss() {
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
             self.backgroundView.alpha = 0
 
         }, completion: {_ in
-            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
                 self.dismiss(animated: true, completion: nil)
                 
@@ -101,7 +104,7 @@ class FAQController: UIViewController {
 
 extension FAQController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return questions.count * 2
+        return faqQuestions.count * 2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -113,10 +116,10 @@ extension FAQController: UITableViewDelegate, UITableViewDataSource {
         
         if row % 2 == 0 {
             cell.descriptionLabel.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-            cell.descriptionLabel.text = questions[Int(index)][0]
+            cell.descriptionLabel.text = faqQuestions[Int(index)][0]
         }
         else {
-            cell.descriptionLabel.text = questions[Int(index)][1]
+            cell.descriptionLabel.text = faqQuestions[Int(index)][1]
             cell.descriptionLabel.textColor = #colorLiteral(red: 0.6666666865, green: 0.6666666865, blue: 0.6666666865, alpha: 1)
         }
         

@@ -88,7 +88,7 @@ final class _ServerService {
                             }
                         }
                     }
-                        // If class is already being tracked
+                    // If class is already being tracked
                     else {
                         let doc = querySnapshot!.documents[0]
                         var emails = doc.data()[DataBase.emails] as! [String]
@@ -176,6 +176,13 @@ final class _ServerService {
                                 classRef.updateData([DataBase.emails : emails])
                             }
                         }
+                        
+                        // if this class has an auto_enroll param (old versions might not create it)
+                        if var auto_enroll_emails = doc.data()[DataBase.auto_enroll_emails] as? [String] {
+                            // if user is registered in auto_enroll, remove them
+                            auto_enroll_emails = auto_enroll_emails.filter { $0 != UserService.user.email }
+                            classRef.updateData([DataBase.auto_enroll_emails : auto_enroll_emails])
+                        }
                     }
                 }
             }
@@ -246,14 +253,13 @@ final class _ServerService {
     
     func sendSupportEmail(subject: String, message: String, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
         
-        let newMessage = "\(message) bought by \(UserService.user.email) from \(UserService.user.school)"
         var components = URLComponents()
         components.scheme = Routes.scheme
         components.host = AppConstants.server_ip
         components.path = "/\(Routes.send_email_route ?? "")"
         
         let subjectQueryItem = URLQueryItem(name: DataBase.subject, value: subject)
-        let messageQueryItem = URLQueryItem(name: DataBase.message, value: newMessage)
+        let messageQueryItem = URLQueryItem(name: DataBase.message, value: message)
         
         components.queryItems = [subjectQueryItem, messageQueryItem]
         
@@ -280,26 +286,35 @@ final class _ServerService {
         
     }
     
-    
     // UNUSED
-    func sendSupportEmailPost(subject: String, message: String, completion: @escaping ([String: Any]?, Error?) -> Void ){
+    func addClassToDb(course: Course, completion: @escaping ([String: Any]?, Error?) -> Void ){
         
+        // construct url
         var components = URLComponents()
         components.scheme = Routes.scheme
         components.host = AppConstants.server_ip
         components.path = "/\(Routes.send_email_route ?? "")"
         
+        // get constructed url
         guard let url = components.url else { return }
         
-        var request = URLRequest(url: url)
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
-        let parameters: [String: Any] = [
-            DataBase.subject: subject,
-            DataBase.message: message
-        ]
-        request.httpBody = parameters.percentEncoded()
+        // add all key,vals from course to th query
+        let courseDict = course.modelToData()
+        var queryItems: [URLQueryItem] = []
+        for key in courseDict.keys {
+            queryItems.append(URLQueryItem(name: key, value: courseDict[key] as? String ?? "not a string"))
+        }
         
+        // get query
+        components.queryItems = queryItems
+        let query = components.url!.query
+        
+        // construct request
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = Data(query!.utf8)
+        
+        // send request
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("WE HAVE ERROR", error.localizedDescription)
@@ -324,19 +339,6 @@ final class _ServerService {
         task.resume()
     }
     
-    fileprivate func getToken(forEmail email: String, completion: @escaping (String?) -> Void ) {
-        let db = Firestore.firestore()
-        let docRef = db.collection(DataBase.User).document(email)
-
-        docRef.getDocument { (doc, error) in
-            if error != nil {
-                completion(nil)
-                return
-            }
-            guard let token = doc?[DataBase.fcm_token] as? String else { return }
-            completion(token)
-        }
-    }
     
     func updatePurchaseMade() {
         Stats.logPurchase()
@@ -350,6 +352,20 @@ final class _ServerService {
             ]
             self.sendToPhone(withToken: token, withData: data)
             self.updatePurchaseAnalytics(data: data)
+        }
+    }
+    
+    fileprivate func getToken(forEmail email: String, completion: @escaping (String?) -> Void ) {
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(email)
+
+        docRef.getDocument { (doc, error) in
+            if error != nil {
+                completion(nil)
+                return
+            }
+            guard let token = doc?[DataBase.fcm_token] as? String else { return }
+            completion(token)
         }
     }
     
@@ -390,6 +406,14 @@ final class _ServerService {
 
     enum VersionError: Error {
         case invalidResponse, invalidBundleInfo
+    }
+    
+    func getCurrentAppVersion(completion: @escaping (String, Bool) -> Void) {
+        guard let info = Bundle.main.infoDictionary,
+            let currentVersion = info["CFBundleShortVersionString"] as? String
+            else { completion("", false); return }
+        
+        completion(currentVersion, true)
     }
     
     func isUpdateAvailable(completion: @escaping (Bool?, Error?) -> Void) throws -> URLSessionDataTask {

@@ -112,7 +112,6 @@ class NotificationController: UIViewController {
 
 extension NotificationController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("NOTIFS \(UserService.user.notifications)")
         return UserService.user.notifications.count
     }
     
@@ -123,18 +122,24 @@ extension NotificationController: UITableViewDelegate, UITableViewDataSource {
 
         cell.selectionStyle = .none
         cell.courseNumberLabel.text = notification[DataBase.name]
-        cell.timeLabel.text = notification[DataBase.date]?.toDate().toStringInWords()
+        
+        let notifDate = notification[DataBase.date]?.toDate()
+        
+        if notifDate?.isOneWeekOld ?? true {
+            cell.timeLabel.text = notifDate?.toStringDayMonthMiunutes()
+        }
+        else {
+            cell.timeLabel.text = notifDate?.toStringInWords()
+        }
+        
 
         if let message = notification[DataBase.message] {
             print("message here")
             cell.courseDescriptionLabel.text = message
         }
-        else {
+        else { // old users still not using message yet
             cell.courseDescriptionLabel.text = "Status changed from \(notification[DataBase.old_status] ?? "") to \(notification[DataBase.new_status] ?? "")"
-
         }
-        
-        
         return cell
     }
     

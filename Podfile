@@ -12,11 +12,10 @@ target 'ClassesApp' do
 	pod 'Firebase/Functions'
 	pod 'Firebase/Messaging'
 	pod 'Firebase/DynamicLinks'
+	#pod 'Firebase/InAppMessaging'
 
 	pod 'Firebase/Analytics'
 	pod 'Firebase/Crashlytics'
-	
-	pod 'Stripe', '15.0.2'
 
 
   target 'ClassesAppTests' do

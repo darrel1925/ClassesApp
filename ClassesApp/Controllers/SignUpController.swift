@@ -262,7 +262,10 @@ class SignUpController: UIViewController {
                                  email: email,
                                  webReg: false,
                                  school: school,
-                                 receiveEmails: false)
+                                 dateJoined: Date().toString(),
+                                 receiveEmails: false
+                                 
+            )
             
             UserDefaults.standard.set(true, forKey: Defaults.wasReferred)
             

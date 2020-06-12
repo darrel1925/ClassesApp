@@ -30,7 +30,6 @@ class AddToListController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         addButton.layer.cornerRadius = 20
-        // if user has premium hide get premium button
         setLabels()
         setUpGestures()
         animateViewDownward()
@@ -95,13 +94,6 @@ class AddToListController: UIViewController {
 
     }
     
-    func presentSignUp() {
-        let signUp = SignUpPopUpController()
-        signUp.modalPresentationStyle = .overFullScreen
-        signUp.addToListVC = self
-        self.present(signUp, animated: true, completion: nil)
-    }
-    
     func alreadyTrackingClasses() -> Bool {
         if UserService.user.courseCodes.contains(course.code){
             let message = "You are already tracking course \(course.code)."
@@ -114,9 +106,8 @@ class AddToListController: UIViewController {
         return false
     }
     
-    func addClasses(dispatchGroup dg: DispatchGroup) -> Bool {
+    func addClass(dispatchGroup dg: DispatchGroup) -> Bool {
         dg.enter()
-
         if !ServerService.addClassToFirebase(withCourse: course, viewController: self) {
             ServerService.dispatchGroup.notify(queue: .main) {
                 print("is false")
@@ -130,9 +121,9 @@ class AddToListController: UIViewController {
         return true
     }
     
-    func trackClasses() {
+    func trackClass() {
         let dg = DispatchGroup()
-        if !addClasses(dispatchGroup: dg) { return }
+        if !addClass(dispatchGroup: dg) { return }
         
         dg.notify(queue: .main) {
             print("dispatched finished")
@@ -159,8 +150,6 @@ class AddToListController: UIViewController {
     
     @IBAction func addButtonClicked(_ sender: Any) {
         if alreadyTrackingClasses() { return }
-//        if UserService.user.email == "" { presentSignUp(); return }
-        
-        trackClasses()
+        trackClass()
     }
 }

@@ -64,7 +64,7 @@ class EmailSupportController: UIViewController {
         }
         
         let email = UserService.user.email
-        let message = "\(textView.text ?? "")  -(hidden: \(email))" 
+        let message = "\(textView.text ?? "")  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n -(hidden: \(email))" 
         ServerService.sendSupportEmail(subject: subject, message: message) { (json, error) in
             print("json", json)
             if let _ = error {
@@ -98,6 +98,24 @@ class EmailSupportController: UIViewController {
         }
     }
     
+    func sendAnonymous() {
+        let title = "Send Anonymous"
+        let message = "In order for us to reply, please provide an email, otherwise tap Send Anonymous"
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let sendAnonymous = UIAlertAction(title: "Send Anonymous", style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                self.activityIndicator.startAnimating()
+                self.send_email()
+            }
+        })
+        let goBack = UIAlertAction(title: "Go Back", style: .default, handler: nil)
+        
+        alert.addAction(goBack)
+        alert.addAction(sendAnonymous)
+        present(alert, animated: true, completion: nil)
+    }
+    
     @objc func dismissKeyboard() {
         print("dis")
         view.endEditing(true)
@@ -116,8 +134,14 @@ class EmailSupportController: UIViewController {
             self.displayError(title: "Please enter a message", message: "")
             return
         }
-        activityIndicator.startAnimating()
-        send_email()
+        if textField.text?.isEmpty ?? false {
+            self.sendAnonymous()
+        }
+        else {
+            activityIndicator.startAnimating()
+            send_email()
+        }
+
     }
 }
 

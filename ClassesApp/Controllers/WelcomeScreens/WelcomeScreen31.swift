@@ -10,21 +10,34 @@ import UIKit
 
 class WelcomeScreen31: UIViewController {
 
+    // change when I call this var from get premium page
+    var changeSkipButtonTitle: Bool = false
+    
+    @IBOutlet weak var skipButton: RoundedButton!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        changeButton()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func changeButton() {
+        if changeSkipButtonTitle {
+            setGestures()
+            skipButton.setTitle("Go Back", for: .normal)
+            skipButton.setTitleColor(.black, for: .normal)
+        }
     }
-    */
-
+    
+    func setGestures() {
+        let swipe1: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleDismiss))
+        swipe1.direction = .down
+        view.addGestureRecognizer(swipe1)
+    }
+    
+    @objc func handleDismiss() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func skipClicked(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
 }

@@ -156,21 +156,6 @@ class StoreController: UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
-    //    func presentSupport() {
-    //        guard MFMailComposeViewController.canSendMail() else {
-    //            let message = "Email account not set up on this device. Head over to you device's Setting → Passwords&Accounts → Add Account, then add your email address. You can also send an email to \(AppConstants.support_email)"
-    //            self.displayError(title: "Cannot Send Mail", message: message)
-    //            return
-    //        }
-    //
-    //        let composer = MFMailComposeViewController()
-    //        composer.mailComposeDelegate = self
-    //        composer.setSubject("Support - Payments")
-    //        composer.setToRecipients([AppConstants.support_email])
-    //        print(AppConstants.support_email)
-    //        present(composer, animated: true)
-    //    }
-    
     func presentLearnMore() {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "FAQController") as! FAQController
         vc.modalPresentationStyle = .overFullScreen
@@ -207,7 +192,8 @@ class StoreController: UIViewController {
     }
     
     func presentSuccessAlert() {
-        ServerService.sendSupportEmail(subject: "Purchase!! :D", message: "Hella moniess") { (json, err) in
+        let body = "Purchase bought by \(UserService.user.email) from \(UserService.user.school)"
+        ServerService.sendSupportEmail(subject: "Purchase!! :D", message: body) { (json, err) in
             
         }
         
@@ -223,6 +209,14 @@ class StoreController: UIViewController {
         alertController.addAction(okay)
         self.present(alertController, animated: true)
     }
+    
+    func presentWelcome31() {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "WelcomeScreen31") as! WelcomeScreen31
+        vc.modalPresentationStyle = .overCurrentContext
+        vc.changeSkipButtonTitle = true
+        self.present(vc, animated: true, completion: nil)
+    }
+    
     
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil )
@@ -261,6 +255,10 @@ class StoreController: UIViewController {
     
     @IBAction func exitButtonClicked(_ sender: Any) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func viewPremiumBenefitsButton(_ sender: Any) {
+        presentWelcome31()
     }
 }
 

@@ -108,20 +108,6 @@ class SettingsController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func presentSignUp() {
-        let signUp = SignUpPopUpController()
-        signUp.modalPresentationStyle = .overFullScreen
-        self.present(signUp, animated: true, completion: nil)
-    }
-    
-    func userIsLoggedIn() -> Bool {
-        if UserService.user.email == "" {
-            presentSignUp()
-            return false
-        }
-        return true
-    }
-    
     func logOut() {
          // if user is signed in
          if let _ = Auth.auth().currentUser {
@@ -152,6 +138,8 @@ class SettingsController: UIViewController {
     @IBAction func exitButtonClicked(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
+    
+
 }
 
 extension SettingsController: UITableViewDelegate, UITableViewDataSource{

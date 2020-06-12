@@ -43,9 +43,6 @@ class AddClassController: UIViewController {
         addToListVC.modalPresentationStyle = .overFullScreen
         addToListVC.course = course
         addToListVC.addClassVC = self
-        
-//        let signUp = SignUpPopUpController()
-//        signUp.modalPresentationStyle = .overFullScreen
         self.present(addToListVC, animated: true, completion: nil)
     }
     
@@ -117,3 +114,4 @@ extension AddClassController: UITextFieldDelegate {
         return false
     }
 }
+

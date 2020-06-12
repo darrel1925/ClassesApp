@@ -81,7 +81,9 @@ class Course{
             
             DataBase.school: self.school,
             DataBase.year: self.year,
-            DataBase.quarter: self.quarter
+            DataBase.quarter: self.quarter,
+            DataBase.date_added: Date().toString(),
+            DataBase.auto_enroll_emails: [],
         ]
         return data
     }

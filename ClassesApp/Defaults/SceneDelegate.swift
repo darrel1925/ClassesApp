@@ -194,6 +194,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         reloadUser() // <-- to refresh user object for email verifications
         Stats.logAppOpened() // <-- log each time a user opens app
+        UserService.ensureFCMIsSet() // <-- update fcm token
+        UserService.handleUpdateAppVersionInDB() // <-- update user's app version
+        print("coming")
     }
     
     func sceneWillResignActive(_ scene: UIScene) {

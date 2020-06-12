@@ -40,9 +40,7 @@ class ClassDetailsController: UIViewController {
         animateViewIn()
     }
     
-    
     func animateViewIn() {
-        
         UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
             self.backgroundView.alpha = 0.25
@@ -134,13 +132,12 @@ class ClassDetailsController: UIViewController {
     }
     
     @objc func handleDismiss() {
-        
-        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.15, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
-            self.view.alpha = 0
+            self.backgroundView.alpha = 0
             
         }, completion: {_ in
-            UIView.animate(withDuration: 0.3, delay: 1, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.15, delay: 1, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
                 self.dismiss(animated: true, completion: nil)
                 
