@@ -70,9 +70,10 @@ class HomePageController: UIViewController {
         ServerService.getCurrentAppVersion { (version, success) in
             // if I could not get version from bundle ID
             if !success { return }
-            // if i do have the apps most up to date version
+            // if i do not have the apps most up to date version
             if version != AppConstants.current_app_version { return }
             
+            // if i do have the curren version
             DispatchQueue.main.async {
                 self.presentWhatsNew()
                 let db = Firestore.firestore()
@@ -82,16 +83,26 @@ class HomePageController: UIViewController {
         }
     }
     
-    func handleUpdatePrompt() {
+    func handleUpdatePrompt() { // TODO: Check if this works
         if !AppConstants.should_prompt_update { return }
         
         let frequency = AppConstants.should_prompt_update_frequency
         let promptForUpdate = UserDefaults.standard.integer(forKey: Defaults.promptForUpdate)
         print("promptForUpdate", promptForUpdate)
-        if promptForUpdate % frequency == 0 {
-            checkForUpdate()
+        
+        ServerService.getCurrentAppVersion { (version, success) in
+            // if I could not get version from bundle ID
+            if !success { return }
+            // if i do have the apps most up to date version
+            if version == AppConstants.current_app_version { return }
+            
+            if promptForUpdate % frequency == 0 {
+                DispatchQueue.main.async {
+                    self.checkForUpdate()
+                    UserDefaults.standard.set(promptForUpdate + 1, forKey: Defaults.promptForUpdate)
+                }
+            }
         }
-        UserDefaults.standard.set(promptForUpdate + 1, forKey: Defaults.promptForUpdate)
     }
     
     func handleShowDirections() {

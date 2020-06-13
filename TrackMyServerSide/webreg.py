@@ -1,4 +1,3 @@
-
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
@@ -8,11 +7,22 @@ from time import sleep
 import time, helpers, send_email
 start_time = time.time()
 
-CHROME_DRIVER_PATH = "/home/ubuntu/desktop/chromedriver"
-# CHROME_DRIVER_PATH = "/Users/darrelm/Desktop/classes/ClassesApp/TrackMyServerSide/chromedriver"
-PAGE_TIMEOUT = 20
+# CHROME_DRIVER_PATH = "/home/ubuntu/desktop/chromedriver"
+CHROME_DRIVER_PATH = "./chromedriver"
+PAGE_TIMEOUT = 12 # how long to wait for a page to load
+NUM_RETRIES = 1 # how many time to retry logging in 
+IMPLICIT_WAIT = 0 # how long to wait for element to load onto a page
 
 active_drivers = []
+
+def password_is_valid(driver):
+    try:
+        log_in_message = driver.find_element_by_class_name("webauth-alert").text
+        print(log_in_message)
+        return False, log_in_message
+    except:
+        return True, ""
+
 
 def get_login_message(driver):
     try:
@@ -66,15 +76,16 @@ def log_into_web_reg(email, pswd):
     message = ""
     # set options for window size
     chrome_options = Options()
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1")
     chrome_options.add_argument("--headless")  # <--------- change for aws
 
     # open chrome
     driver = webdriver.Chrome(executable_path = CHROME_DRIVER_PATH, options=chrome_options)
     driver.set_page_load_timeout(PAGE_TIMEOUT)
+    driver.implicitly_wait(IMPLICIT_WAIT) # wait up to n sec to find an element
     driver.get("https://www.reg.uci.edu/cgi-bin/webreg-redirect.sh")
     net_id = email.split("@")[0]
     
-
     ### try to find username and password input field ###
     try:
         # input credentials
@@ -89,13 +100,24 @@ def log_into_web_reg(email, pswd):
     except Exception as e:
         # couldnt find username and password field
         print("err 1:", str(e))
-        message = "Unable to login.\nDouble check that your username and password are entered correctly."
+        message = "Unable to login. Double check that your username and password are entered correctly."
+        return driver, message, False
+
+    ### check for invalid password error ###
+    try:
+        success, message = password_is_valid(driver)
+        assert success, message
+    except Exception as e:
+        # username and password are incorrect  
+        print("error after clicking log in:", str(e))
+        message = "Unable to login: " + str(e) 
         return driver, message, False
 
     ### try to get passed the user name and password login ###
     try:
         success, message = no_webreg_err_msg(driver)
-        assert(success)
+        assert success
+
     except Exception as e:  
         print("error after clicking log in:", str(e))
         message = "Unable to login.\nLikly becasue you are not authorized to enroll at this time."
@@ -104,7 +126,8 @@ def log_into_web_reg(email, pswd):
     ### loading the front page of portal correctly ###
     try:
         success, message = no_div_logout_msg(driver)
-        assert(success)
+        assert success
+
     except Exception as e:  
         print("error after getting into web reg:", str(e))
         message = "Unable access webreg.\nLikly becasue you are not authorized to enroll at this time."
@@ -145,7 +168,7 @@ def click_enroll_btn(driver):
     # try to get to page to add and drop classes
     try:
         success, message = no_webreg_err_msg(driver)
-        assert(success)
+        assert success
         print("looking for enroll")
 
         # try to click the enrollment menu button
@@ -173,7 +196,7 @@ def click_waitlist_btn(driver):
     # try to get to page to add and drop classes
     try:
         success, message = no_webreg_err_msg(driver)
-        assert(success)
+        assert success
         print("looking for enroll")
 
         # try to click the enrollment menu button
@@ -196,7 +219,8 @@ def click_waitlist_btn(driver):
         message = "Unable access webreg. \nLikely becasue you are not authorized to enroll at this time."
         return None, message, False
 
-def add_class(driver, code, retry_used = False):
+ # *set retry_used = False to have each filed attmept to add class retried at 1 time
+def add_class(driver, code, retry_used = True): 
     """
     Takes in a WebReg driver and cousrse code then adds that course
     """
@@ -236,7 +260,7 @@ def add_class(driver, code, retry_used = False):
 
 def should_retry_main(num_retries):
      # give program 3 tries
-    return True if num_retries < 2 else False
+    return True if num_retries < (NUM_RETRIES - 1) else False
 
 def send_success_notifications(user_doc_dict, class_dict, message):
     # TODO: Remove them from auto-enroll
@@ -244,8 +268,10 @@ def send_success_notifications(user_doc_dict, class_dict, message):
     
     # send notification to phone
     if "not" in message.lower():
+        # send failure
         notif_info = send_email.construct_enrollment_failure_email(user_doc_dict, class_dict, message)
     else:
+        #send success
         notif_info = send_email.construct_enrollment_success_email(user_doc_dict, class_dict, message)
     
     helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.enroll)
@@ -264,7 +290,7 @@ def send_error_notifications(user_doc_dict, class_dict, message):
 
     # send notification to phone
     title = "Could not register for " + new_name 
-    body = "Error message: \n\t" + message + "\n\nLet us know how we did! While working to perfect this product, the more feedback the better - good or bad."
+    body = "Error message: \n\n" + message + "\n\nLet us know how we did! While working to perfect this product, the more feedback the better - good or bad."
     notif_info = (title, body)
     helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.enroll)
     
@@ -277,6 +303,14 @@ def send_error_notifications(user_doc_dict, class_dict, message):
 
     # update users notification list
     helpers.update_user_notification_list(email, "", class_dict, notif_info, Constants.enroll)
+
+def handle_retry(driver, user_doc_dict, class_dict, num_retries, message):
+    logout_of_webreg(driver)
+    if should_retry_main(num_retries):
+        main(user_doc_dict, class_dict, num_retries = num_retries + 1)
+    else:
+        # send failure notification
+        send_error_notifications(user_doc_dict, class_dict, message)
 
 def main(user_doc_dict, class_dict, num_retries = 0):
     global start_time
@@ -293,62 +327,45 @@ def main(user_doc_dict, class_dict, num_retries = 0):
         # log into web reg
         driver, message, success = log_into_web_reg(email, pswd)
         if not success:
-            if should_retry_main(num_retries):
-                logout_of_webreg(driver)
-                main(user_doc_dict, class_dict, num_retries = num_retries + 1)
-                return
-            else:
-                # send failure notification
-                logout_of_webreg(driver)
-                send_error_notifications(user_doc_dict, class_dict, message)
-                return 
+            handle_retry(driver, user_doc_dict, class_dict, num_retries, message)
+            return
 
         #  --> Go to Enrollment Menu <--
-        print("class_dict[status] ==", helpers.Status.OPEN, class_dict["status"] == helpers.Status.OPEN)
+        print("class_dict[status] ==", helpers.Status.OPEN, "is", class_dict["status"] == helpers.Status.OPEN)
         if class_dict["status"] == helpers.Status.OPEN:
+            
             # click on enrollment button
             driver, message, success = click_enroll_btn(driver)
+            
             if not success:
                 print("failed logging in: -->", num_retries)
-                if should_retry_main(num_retries):
-                    logout_of_webreg(driver)
-                    main(user_doc_dict, class_dict, num_retries = num_retries + 1)
-                    return
-                else:
-                    # send failure notification
-                    logout_of_webreg(driver)
-                    send_error_notifications(user_doc_dict, class_dict, message)
-                    return 
+                handle_retry(driver, user_doc_dict, class_dict, num_retries, message)
+                return
 
         # --> Go to Waitlist Menu <-- 
         else:
             print("--> enter waitl!")
             # click on wait list button
             driver, message, success = click_waitlist_btn(driver)
+            
             if not success:
                 print("failed logging in: -->", num_retries)
-                if should_retry_main(num_retries):
-                    logout_of_webreg(driver)
-                    main(user_doc_dict, class_dict, num_retries = num_retries + 1)
-                    return
-                else:
-                    # send failure notification
-                    logout_of_webreg(driver)
-                    send_error_notifications(user_doc_dict, class_dict, message)
-                    return 
+                handle_retry(driver, user_doc_dict, class_dict, num_retries, message)
+                return
 
         message = ""
         # enroll in class or add classes to waitlist 
         for code in discussion_and_labs:
-            sleep(0.1) # wait for page to load
+            # sleep(0.1) # wait for page to load
             message_fragment = add_class(driver, code)
-            message += message_fragment
+            message += message_fragment + "\n"
+
 
         print("PRESENT SUCCESS")
         logout_of_webreg(driver)
         # send a success notification
         send_success_notifications(user_doc_dict, class_dict, message)
-
+    
     except Exception as e:
         print("Error occured ->", e)
         subject = "ERR with auto-enroll!!!"
@@ -361,8 +378,9 @@ user_doc_dict = {
     "email": "dmuonekw@uci.edu",
     "web_reg_pswd": "Vision925",
     "classes": {
-        "34180": []
+        "34180": ["34181","34182"]
         },
+    "notifications": [],
     "is_logged_in": True,
     "notifications_enabled": True,
     "receive_emails": False,
@@ -376,5 +394,6 @@ class_dict = {
     "section": "A",
     "type": "Lec"
 }
-# helpers.initialize_firebase()
-# main(user_doc_dict, class_dict, num_retries = 0)
+if __name__ == "__main__":
+    helpers.initialize_firebase()
+    main(user_doc_dict, class_dict, num_retries = 0)

@@ -1,13 +1,14 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
 from pytz import timezone
+from constants import Constants
 import pytz, urllib.request, requests
 import datetime
 
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from firebase_admin import  messaging
+from firebase_admin import messaging
 
 SERVER_IP = "http://34.209.136.1"
 
@@ -337,6 +338,77 @@ def update_course_status(class_dict):
     else:
         send_email_error("Doc doesnt Exists for Status", "got doc " + code + " " + status + " " + "deostn exist")
 
+def update_notifications_sent(num_push, num_email, reciever_email): 
+    db = firestore.client()
+    doc_ref = db.collection(Constants.Analytics).document(Constants.uci_analytics)
+    doc = doc_ref.get()
+    doc_dict = doc.to_dict()    
+    notification_dict = doc_dict[Constants.notification_info]
+    todays_date = get_pst_date()
+
+    month = get_month()
+    week = get_week()
+    date = get_pst_date()
+    
+    if not doc.exists:
+        print("Analytics Does not Exists!")
+        send_email_error("Analytics Does not Exists!", "Analytics Does not Exists!")
+        return 
+
+    if month not in notification_dict.keys():
+        notification_dict[month] = {            
+            Constants.monthly_total: 0,
+            Constants.monthly_push: 0,
+            Constants.monthly_emails: 0,
+            week: {
+                Constants.weekly_total: 0,
+                Constants.weekly_push: 0,
+                Constants.weekly_emails: 0,
+                date:{
+                    Constants.daily_total: 0,
+                    Constants.daily_push: 0,
+                    Constants.daily_emails: 0,
+                    }
+                }
+            }
+
+    if week not in notification_dict[month].keys():
+        notification_dict[month][week] =  {
+                Constants.weekly_total: 0,
+                Constants.weekly_push: 0,
+                Constants.weekly_emails: 0,
+                date:{
+                    Constants.daily_total: 0,
+                    Constants.daily_push: 0,
+                    Constants.daily_emails: 0,
+                    }
+                }
+                
+    if date not in notification_dict[month][week].keys():
+        notification_dict[month][week][date] = {
+                    Constants.daily_total: 0,
+                    Constants.daily_push: 0,
+                    Constants.daily_emails: 0,
+                    }
+    # update monthly info
+    notification_dict[month][Constants.monthly_total] += num_push + num_email
+    notification_dict[month][Constants.monthly_push] += num_push
+    notification_dict[month][Constants.monthly_emails] += num_email
+
+    # update weekly info
+    notification_dict[month][week][Constants.weekly_total] += num_push + num_email
+    notification_dict[month][week][Constants.weekly_push] += num_push
+    notification_dict[month][week][Constants.weekly_emails] += num_email
+
+    # update daily info
+    notification_dict[month][week][date][Constants.daily_total] += num_push + num_email
+    notification_dict[month][week][date][Constants.daily_push] += num_push
+    notification_dict[month][week][date][Constants.daily_emails] += num_email
+    
+    doc_ref.set({
+        Constants.notification_info: notification_dict,
+    }, merge=True)
+
 def get_emails_tracking_this_class(class_dict): 
     """
     Returns the emails for all users that are tracking this class (Premium Users first, Free
@@ -398,34 +470,35 @@ def send_push_notification_to_user(user_dict, notif_info, notif_type):
     """
     Sends an iOS push notif to fcm in user's doc dict
     """
-    try:
-        print(user_dict["email"])
-        print("is_logged_in ==", user_dict["is_logged_in"])
-        if (user_dict["is_logged_in"] == False) or (user_dict["notifications_enabled"] == False):
-            return 
+    # try:
+    print(user_dict["email"])
+    print("is_logged_in ==", user_dict["is_logged_in"])
+    if (user_dict["is_logged_in"] == False) or (user_dict["notifications_enabled"] == False):
+        return 
 
-        fcm_token = user_dict["fcm_token"]
-        title, message = notif_info
-        notif_data = {"notif_type": notif_type}
+    fcm_token = user_dict["fcm_token"]
+    title, message = notif_info
+    notif_data = {"notif_type": notif_type}
 
-        # message
-        notif = messaging.Message(
-            notification = messaging.Notification(
-                title = title,
-                body = message
-            ),
-            data = notif_data,
-            token = fcm_token,
-        )
+    # message
+    notif = messaging.Message(
+        notification = messaging.Notification(
+            title = title,
+            body = message
+        ),
+        data = notif_data,
+        token = fcm_token,
+    )
 
-        # send
-        messaging.send(notif)
+    # send
+    messaging.send(notif)
+    update_notifications_sent(1, 0, user_dict["email"])
 
-    except Exception as e:
-        print("Could not send push notification")
-        body = user_dict["email"] + " " + notif_info[0] + " Could not send push notification: " + str(e)
-        send_email_error("ERR SENDING NOTIF", body)
-        return
+    # except Exception as e:
+    #     print("Could not send push notification")
+    #     body = user_dict["email"] + " " + notif_info[0] + " Could not send push notification: " + str(e)
+    #     send_email_error("ERR SENDING NOTIF", body)
+    #     return
 
     # body = user_dict["email"] + " " + title + " " + message
     # send_email_error("Notif Sent:)", body)
@@ -440,6 +513,12 @@ def update_user_notification_list(email, old_status, class_dict, notif_info ,not
     doc = doc_ref.get()
     doc_dict = doc.to_dict()    
 
+    # if user with email does not exist
+    if doc_dict == None:
+        body =  "update_user_notification_list could not find doc for email: " + email
+        send_email_error("Couldnt find doct_dict for " + email, body)
+        return
+
     _, message = notif_info
     date = get_pst_time()
     print("date", date)
@@ -453,7 +532,7 @@ def update_user_notification_list(email, old_status, class_dict, notif_info ,not
         "message": message,
         "notif_type": notif_type
     }
-
+    
     notifications = doc_dict["notifications"]
     if notifications == [{}]:
         notifications = []
@@ -516,6 +595,35 @@ def should_slow_search():
     
     return False
 
+def get_month():
+    date_format="%B"
+    date = datetime.datetime.now(tz=pytz.utc)
+    date = date.astimezone(timezone('US/Pacific'))
+    month = date.strftime(date_format)
+    return month
+
+def get_pst_date():
+    date_format="%m/%d"
+    date = datetime.datetime.now(tz=pytz.utc)
+    date = date.astimezone(timezone('US/Pacific'))
+    pstDateTime=date.strftime(date_format)
+    return pstDateTime
+
+def get_week():
+    date_format="%d"
+    date = datetime.datetime.now(tz=pytz.utc)
+    date = date.astimezone(timezone('US/Pacific'))
+    day = int(date.strftime(date_format))
+    
+    if (day / 7) < 1: # 0 - 7
+        return "week 1"
+    elif (day / 7) < 2: # 8 
+        return "week 2"
+    elif (day / 7) < 3: # 15 - 21
+        return "week 3"
+    else: # 22 - 31
+        return "week 4"  
+
 def format_email(email):
     return email.split("@")[0]
 
@@ -525,7 +633,7 @@ def format_school(school):
 
 
 if __name__ == "__main__":
-    pass
+    print(get_month())
     # print(get_full_class_info_uci("https://www.reg.uci.edu/perl/WebSoc?YearTerm=2020-92&ShowFinals=0&ShowComments=0&CourseCodes=34140"))
     # pass
     # formatted date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

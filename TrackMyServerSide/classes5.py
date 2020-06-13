@@ -163,6 +163,7 @@ def check_for_restriction_change(class_dict, status_row):
             if user_doc_dict["receive_emails"]:
                 print("sending restriction email to", email)
                 full_msg = 'Subject: {}\n\n{}'.format(subject, body)
+                helpers.update_notifications_sent(0, 1, email)
                 send_email_with_msg(email, full_msg)
                     
         # sign users up who have paid for webreg
@@ -204,6 +205,7 @@ def check_for_status_change(class_dict, status_row):
             if user_doc_dict["receive_emails"]:
                 full_msg = contruct_email_message(old_status, class_dict)
                 send_email_with_msg(email, full_msg)
+                helpers.update_notifications_sent(0, 1, email)
 
         # sign users up who have paid for webreg
         for user_doc_dict in users_with_auto_enroll:
@@ -224,10 +226,10 @@ def main():
             classes_to_search_for = helpers.get_classes_to_search_for()
 
         for class_dict in classes_to_search_for:
-            # if count < 100:
+            # if count < 110:
             #     count += 1
             #     continue
-            time.sleep(0.25)
+            time.sleep(0.2)
             # get html
             status_row = get_course_html(class_dict)
             # use html to check if class is open

@@ -159,7 +159,7 @@ def construct_enrollment_success_email(user_doc_dict, class_dict, message):
     new_name = get_full_class_name(class_dict)
 
     subject = "You are enrolled in " + new_name + "!"
-    body = "Results from WebReg:\n" + message + "\n\nCheck WebReg to confirm your registration!\n\nWe're not perfect yet, let us know how we did! If you've experienced any issues or have questions we're happy to help."
+    body = "Check WebReg to confirm your registration!\n\nWe're not perfect yet, let us know how we did! If you've experienced any issues or have questions we're happy to help."
 
     return subject, body
 
@@ -167,6 +167,6 @@ def construct_enrollment_failure_email(user_doc_dict, class_dict, message):
     new_name = get_full_class_name(class_dict)
 
     subject = "Could not enrolled in " + new_name
-    body = "Results from WebReg:\n" + message + "\n\nCheck WebReg to confirm your registration.\n\nWe're not perfect yet, let us know how we did. If you've experienced any issues or have questions we're happy to help."
+    body = "Reason from Web Reg:\n" + message + "\nWe're not perfect yet, let us know how we did. If you've experienced any issues or have questions we're happy to help."
 
     return subject, body
