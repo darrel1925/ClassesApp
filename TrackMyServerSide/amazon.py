@@ -3,11 +3,11 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 
+MAX_PRICE = 700 # <- the maximun the consumer is willing to pay for the item
 PAGE_TIMEOUT = 20
-# CHROME_DRIVER_PATH = "/Users/darrelm/Desktop//chromedriver"
-CHROME_DRIVER_PATH = "/home/ubuntu/desktop/chromedriver"
+CHROME_DRIVER_PATH = "./chromedriver"
 ITEM_URL = "https://www.amazon.com/gp/offer-listing/B00HRT863U/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B00HRT863U&linkCode=am2&tag=chrisby20-20&linkId=cd1af38e475a3a692e9a683bdf23b2fb"
-# ITEM_URL = "https://www.amazon.com/gp/offer-listing/B07K3FN5MR/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B07K3FN5MR&linkCode=am2&tag=chrisby20-20&linkId=db2c0502d4d7515e34e134c3fd8d6aa4"
+# ITEM_URL2 = "https://www.amazon.com/gp/offer-listing/B07K3FN5MR/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B07K3FN5MR&linkCode=am2&tag=chrisby20-20&linkId=db2c0502d4d7515e34e134c3fd8d6aa4"
 amzn_drivers = []
 
 
@@ -15,7 +15,8 @@ def load_inital_page():
     chrome_options = Options()
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36")
     chrome_options.add_argument("--incognito")    
-    chrome_options.add_argument("--headless")  # <--------- change for aws
+    # chrome_options.add_argument("--headless")  # <-- uncomment for aws
+    # chrome_options.add_argument("--proxy-server=115.211.231.15:8888")  # <-- uncomment to add proxy
 
     driver = webdriver.Chrome(executable_path = CHROME_DRIVER_PATH, options=chrome_options)
     driver.implicitly_wait(3) # wait up to n sec to find an element
@@ -65,25 +66,24 @@ def check_price(driver, max_price):
 
 def click_add_to_cart(driver):
     # click add cart
-    add_to_cart_btns = driver.find_elements_by_name("submit.addToCart")[0].click()
+    driver.find_elements_by_name("submit.addToCart")[0].click()
     
     # click proceed to checkout
-    proceed_to_checkout = driver.find_elements_by_class_name("a-button-inner")[1].click()
+    driver.find_elements_by_class_name("a-button-inner")[1].click()
 
 
 def sign_in(driver, email, pswd):
     # input credentials
     email_field = driver.find_element_by_name("email")
     email_field.send_keys(email)
-    sleep(2)
+
     # continue to enter pswd
-    continue_btn = driver.find_element_by_id("continue").click()
-    sleep(2)
+    driver.find_element_by_id("continue").click()
+
     pswd_field = driver.find_element_by_name('password')
     pswd_field.send_keys(pswd)
 
-    sign_in_btn = driver.find_element_by_id("signInSubmit").click()
-    sleep(2)
+    driver.find_element_by_id("signInSubmit").click()
 
 def enter_shipping_info(driver):
     print("signed in")
@@ -146,17 +146,15 @@ def enter_card_info(driver):
         text = item.text
         print(text)
 
-
     # Select card year dropdown
     # delivery_instructions = driver.find_element_by_class_name('a-declarative')[1]
     # delivery_instructions.selectByIndex(5)
 
 def main():
-
     driver = load_inital_page()
-    check_price(driver, 600)
+    check_price(driver, MAX_PRICE)
     click_add_to_cart(driver)
-    sign_in(driver, "darrelmuonekwu@gmail.com", "Vision925")
+    sign_in(driver, "darrelmuonekwu@gmail.com", "Vision925") # <-- cant get passed bot detection after this line
     enter_shipping_info(driver)
     enter_card_info(driver)
 
@@ -170,6 +168,7 @@ if __name__ == "__main__":
         print("Error:", error)
 
     finally:
+        # quit all open drivers, if any
         for driver in amzn_drivers:
             driver.quit()
     

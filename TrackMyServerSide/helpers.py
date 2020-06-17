@@ -11,6 +11,7 @@ from firebase_admin import firestore
 from firebase_admin import messaging
 
 SERVER_IP = "http://34.209.136.1"
+# ec2-34-209-136-1.us-west-2.compute.amazonaws.com
 
 class Quarter:
 	fall          = "-92"
@@ -344,11 +345,10 @@ def update_notifications_sent(num_push, num_email, reciever_email):
     doc = doc_ref.get()
     doc_dict = doc.to_dict()    
     notification_dict = doc_dict[Constants.notification_info]
-    todays_date = get_pst_date()
 
     month = get_month()
     week = get_week()
-    date = get_pst_date()
+    date = get_pst_day_and_date()
     
     if not doc.exists:
         print("Analytics Does not Exists!")
@@ -456,49 +456,39 @@ def get_emails_tracking_this_class(class_dict):
     # return emails_tracking_this_class # <-- comment out
     return users_with_premium + users_without_premium, users_with_auto_enroll 
 
-# def get_doc_dict_for_user(email):
-#     """
-#     Returns a document dictionary for a specific user
-#     """
-#     db = firestore.client()
-#     doc_ref = db.collection("User").document(email)
-#     doc = doc_ref.get()
-#     doc_dict = doc.to_dict()    
-#     return doc_dict
-
 def send_push_notification_to_user(user_dict, notif_info, notif_type):
     """
     Sends an iOS push notif to fcm in user's doc dict
     """
-    # try:
-    print(user_dict["email"])
-    print("is_logged_in ==", user_dict["is_logged_in"])
-    if (user_dict["is_logged_in"] == False) or (user_dict["notifications_enabled"] == False):
-        return 
+    try:
+        print(user_dict["email"])
+        print("is_logged_in ==", user_dict["is_logged_in"])
+        if (user_dict["is_logged_in"] == False) or (user_dict["notifications_enabled"] == False):
+            return 
 
-    fcm_token = user_dict["fcm_token"]
-    title, message = notif_info
-    notif_data = {"notif_type": notif_type}
+        fcm_token = user_dict["fcm_token"]
+        title, message = notif_info
+        notif_data = {"notif_type": notif_type}
 
-    # message
-    notif = messaging.Message(
-        notification = messaging.Notification(
-            title = title,
-            body = message
-        ),
-        data = notif_data,
-        token = fcm_token,
-    )
+        # message
+        notif = messaging.Message(
+            notification = messaging.Notification(
+                title = title,
+                body = message
+            ),
+            data = notif_data,
+            token = fcm_token,
+        )
 
-    # send
-    messaging.send(notif)
-    update_notifications_sent(1, 0, user_dict["email"])
+        # send
+        messaging.send(notif)
+        update_notifications_sent(1, 0, user_dict["email"])
 
-    # except Exception as e:
-    #     print("Could not send push notification")
-    #     body = user_dict["email"] + " " + notif_info[0] + " Could not send push notification: " + str(e)
-    #     send_email_error("ERR SENDING NOTIF", body)
-    #     return
+    except Exception as e:
+        print("Could not send push notification")
+        body = user_dict["email"] + " " + notif_info[0] + " Could not send push notification: " + str(e)
+        send_email_error("Err sending notif", body)
+        return
 
     # body = user_dict["email"] + " " + title + " " + message
     # send_email_error("Notif Sent:)", body)
@@ -594,7 +584,7 @@ def should_slow_search():
         return True
     
     return False
-
+# hi
 def get_month():
     date_format="%B"
     date = datetime.datetime.now(tz=pytz.utc)
@@ -602,8 +592,8 @@ def get_month():
     month = date.strftime(date_format)
     return month
 
-def get_pst_date():
-    date_format="%m/%d"
+def get_pst_day_and_date():
+    date_format="%a %m/%d"
     date = datetime.datetime.now(tz=pytz.utc)
     date = date.astimezone(timezone('US/Pacific'))
     pstDateTime=date.strftime(date_format)
@@ -633,7 +623,7 @@ def format_school(school):
 
 
 if __name__ == "__main__":
-    print(get_month())
+    print(get_pst_day_and_date())
     # print(get_full_class_info_uci("https://www.reg.uci.edu/perl/WebSoc?YearTerm=2020-92&ShowFinals=0&ShowComments=0&CourseCodes=34140"))
     # pass
     # formatted date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
