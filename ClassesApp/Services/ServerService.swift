@@ -42,7 +42,7 @@ final class _ServerService {
                     let course = Course(courseDict: data)
                     homeVC.courses.append(course)
                     
-                    print("Found course: \(cls) status: \(course.status)")
+//                    print("Found course: \(cls) status: \(course.status)")
                     dispatchGroup.leave()
                     
                 } else {
@@ -251,6 +251,12 @@ final class _ServerService {
         task.resume()
     }
     
+    func updateUser(atKey key: String, withValue value: Any) {
+        let db = Firestore.firestore()
+        let docRef = db.collection(DataBase.User).document(UserService.user.email)
+        docRef.setData([key : value], merge: true)
+    }
+    
     func sendSupportEmail(subject: String, message: String, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
         
         var components = URLComponents()
@@ -334,7 +340,7 @@ final class _ServerService {
             
             
             let responseString = String(data: data, encoding: .utf8)
-            print("responseString = \(responseString)")
+            print("responseString = \(String(describing: responseString))")
         }
         task.resume()
     }

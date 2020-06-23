@@ -24,6 +24,7 @@ struct DataBase {
     static let classes   = "classes"
     static let stripeId  = "stripeId"
     static let fcm_token = "fcm_token"
+    static let badge_count   = "badge_count"
     static let date_joined   = "date_joined"
     static let app_version   = "app_version"
     static let has_premium   = "has_premium"
@@ -32,13 +33,13 @@ struct DataBase {
     static let notifications = "notifications"
     static let num_referrals = "num_referrals"
     static let referral_link = "referral_link"
-    static let has_auto_enroll   = "has_auto_enroll"
     static let receive_emails    = "receive_emails"
+    static let has_auto_enroll   = "has_auto_enroll"
     static let current_version   = "current_version"
     static let purchase_history  = "purchase_history"
     static let seen_welcome_page = "seen_welcome_page"
-    static let course_dict_arr   = "course_dict_arr"
     static let is_email_verified = "is_email_verified"
+    static let prompt_update_count   = "prompt_update_count"
     static let has_short_referral    = "has_short_referral"
     static let notifications_enabled = "notifications_enabled"
     
@@ -175,6 +176,10 @@ struct Defaults {
     static let promptForUpdate = "promptForUpdate"
     static let hasUsedOneReferral   = "hasUsedOneReferral"
     static let hasSeenWelcomeScreen = "hasSeenWelcomeScreen"
+}
+
+struct App {
+    static var version: String {  Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "err gettinf version"}
 }
 
 struct Restrictions {

@@ -22,21 +22,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let user = Auth.auth().currentUser
         AppConstants.initalizeConstants()
-
+        
         // if user is logged in
         if ((user) != nil) {
             
-            isUserDisabled(user: user!)
+//            isUserDisabled(user: user!)
             
             print("user:\(user?.email ?? "email not found") already logged in\n\n")
             guard let windowScene = (scene as? UIWindowScene) else { return }
             self.window = UIWindow(windowScene: windowScene)
             
-            UserService.dispatchGroup.enter()
-            UserService.getCurrentUser(email: user?.email ?? "no email found at start") // leaves dispatch group
-            
-            UserService.dispatchGroup.notify(queue: .main, execute: {
-                print("storyboard = UIStoryboard")
+            UserService.getCurrentUser(email: user?.email ?? "no email found at start", completion: {
+                if UserService.user == nil { self.presentSplashScreen(); return } // if user is logged in but account is deleted (shouldnt ever happen)
+                
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 
                 guard let rootVC = storyboard.instantiateViewController(identifier: "HomePageController") as? HomePageController else {
@@ -51,27 +49,41 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         else {
             print("user is NOT already logged in\n\n")
-//            UserService.createDummyUser()
-        }
-     }
-    
-    
-    func checkIfUserLoggedIn() {
-        Auth.auth().addStateDidChangeListener { auth, user in
-            if let user = user { // user already logged in
-                print("user already logged in")
-                UserService.dispatchGroup.enter()
-                
-                UserService.getCurrentUser(email: user.email ?? "no email found at start")
-                UserService.dispatchGroup.notify(queue: .main, execute: {
-                    self.presentHomePage()
-                })
-            }
-            else {
-                print("User not logged in \n")
-            }
         }
     }
+    
+    
+    func presentSplashScreen() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        guard let rootVC = storyboard.instantiateViewController(identifier: "SplashScreenController") as? SplashScreenController else {
+            print("ViewController not found")
+            return
+        }
+        
+        let rootNC = UINavigationController(rootViewController: rootVC)
+        rootNC.isNavigationBarHidden = true
+        self.window?.rootViewController = rootNC
+        self.window?.makeKeyAndVisible()
+    }
+    
+    
+    //    func checkIfUserLoggedIn() {
+    //        Auth.auth().addStateDidChangeListener { auth, user in
+    //            if let user = user { // user already logged in
+    //                print("user already logged in")
+    //                UserService.dispatchGroup.enter()
+    //
+    //                UserService.getCurrentUser(email: user.email ?? "no email found at start")
+    //                UserService.dispatchGroup.notify(queue: .main, execute: {
+    //                    self.presentHomePage()
+    //                })
+    //            }
+    //            else {
+    //                print("User not logged in \n")
+    //            }
+    //        }
+    //    }
     
     func presentHomePage(){
         // show customer home page
@@ -86,12 +98,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func isUserDisabled(user: FirebaseAuth.User) {
-//        user.reload(completion: { (error) in
-//            if error != nil {
-//                print("Error reloading user \(error?.localizedDescription ?? "")")
-//            }
-//        })
-//        print("checked disabled")
+        //        user.reload(completion: { (error) in
+        //            if error != nil {
+        //                print("Error reloading user \(error?.localizedDescription ?? "")")
+        //            }
+        //        })
+        //        print("checked disabled")
     }
     
     
@@ -119,7 +131,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
         print("got the dynamic link from url! \(url)")
-
+        
         // get info from the url
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems else { return }
@@ -128,7 +140,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         var email = ""
         
         for query in queryItems {
-            print("Perameter \(query.name), Value \(query.value)")
+            print("Perameter \(query.name), Value \(String(describing: query.value))")
             if query.name == "email"{
                 email = query.value ?? "??"
             }
@@ -154,17 +166,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             print("none")
             // There is nothing in this dynamic link
             break
+        @unknown default:
+            print("none")
+            
         }
     }
     
     func reloadUser() {
         /*
-        If user just verified their email without closing the app, this will refresh their user object to reflect that
-        */
+         If user just verified their email without closing the app, this will refresh their user object to reflect that
+         */
         
         // if user has not been logged in
         if UserService.user == nil { return }
-
+        
         let isVerified = UserService.user.isEmailVerified
         if isVerified { return }
         print("not verified")
@@ -188,15 +203,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-        UserService.isLoggedIn = false // <- to allow user login into new account and have fcm update automatically
+        UIApplication.shared.applicationIconBadgeNumber = 0
         
         if UserService.user == nil { return }
-
+        
         reloadUser() // <-- to refresh user object for email verifications
         Stats.logAppOpened() // <-- log each time a user opens app
-        UserService.ensureFCMIsSet() // <-- update fcm token
-        UserService.handleUpdateAppVersionInDB() // <-- update user's app version
-        print("coming")
+        UserService.setFCM() // <-- update fcm token
+        UserService.setAppVersion() // <-- update user's app version
     }
     
     func sceneWillResignActive(_ scene: UIScene) {

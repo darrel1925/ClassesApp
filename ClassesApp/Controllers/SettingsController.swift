@@ -60,21 +60,21 @@ class SettingsController: UIViewController {
         vc.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
         self.present(vc, animated: true, completion: nil)
     }
-
+    
     func presentForgotPassword() {
         let forgotPassVC = ForgotPasswordController()
         forgotPassVC.modalTransitionStyle = .crossDissolve
         forgotPassVC.modalPresentationStyle = .overCurrentContext
         present(forgotPassVC, animated: true, completion: nil)
     }
-
+    
     func presentChangeSchool() {
         let changeSchoolVC = ChangeSchoolController()
         changeSchoolVC.modalPresentationStyle = .overFullScreen
         changeSchoolVC.settingsVC = self
         self.present(changeSchoolVC, animated: true, completion: nil)
     }
-
+    
     func presentRestorePurchase() {
         let restorePurchaseVC = RestorePurchaseController()
         restorePurchaseVC.modalPresentationStyle = .overFullScreen
@@ -109,27 +109,31 @@ class SettingsController: UIViewController {
     }
     
     func logOut() {
-         // if user is signed in
-         if let _ = Auth.auth().currentUser {
-             do {
-                 try Auth.auth().signOut()
-                 let dg = DispatchGroup()
-                 UserService.logoutUser(disaptchGroup: dg)
-                 print("sign out successful")
-                 dg.notify(queue: .main) {
-                     self.presentSplashScreen()
-                 }
-             }
-             catch _ as NSError {
-                displayError(title: "Error Signing Out", message: "If this problem continues, please contact support.")
-                 return
-             }
-         }
-         else { // if user is not signed in
-             print("user not signed in")
-             presentSplashScreen()
-         }
-     }
+        // if user is signed in
+        
+        if let _ = Auth.auth().currentUser {
+            UserService.setIsLoggedIn(email: UserService.user.email) {
+                do {
+                    try Auth.auth().signOut()
+                    UserService.logoutUser()
+                    print("sign out successful")
+                    DispatchQueue.main.async {
+                        self.presentSplashScreen()
+                    }
+                    
+                }
+                catch _ as NSError {
+                    DispatchQueue.main.async {
+                    self.displayError(title: "Error Signing Out", message: "If this problem continues, please contact support.")
+                    }
+                }
+            }
+        }
+        else { // if user is not signed in
+            print("user not signed in")
+            self.presentSplashScreen()
+        }
+    }
     
     @objc func handleDismiss() {
         dismiss(animated: true, completion: nil)
@@ -138,8 +142,6 @@ class SettingsController: UIViewController {
     @IBAction func exitButtonClicked(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
-
 }
 
 extension SettingsController: UITableViewDelegate, UITableViewDataSource{
@@ -258,7 +260,7 @@ extension SettingsController: UITableViewDelegate, UITableViewDataSource{
             let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell") as! TitleCell
             cell.titleLabel.text = "Log out"
             cell.titleLabel?.textColor = #colorLiteral(red: 0.762566535, green: 0.3093850772, blue: 0.2170317457, alpha: 1)
-
+            
             cell.accessoryType = .disclosureIndicator
             cell.selectionStyle = .default
             return cell

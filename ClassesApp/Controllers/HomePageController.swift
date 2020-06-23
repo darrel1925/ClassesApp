@@ -40,6 +40,7 @@ class HomePageController: UIViewController {
         setUpTableView()
         setUpGestures()
         setScreenName()
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -47,7 +48,7 @@ class HomePageController: UIViewController {
         setLabels()
         refreshTableView()
         UserService.checkForShortLink()
-        UserService.ensureFCMIsSet()
+        UserService.setFCM()
         handlePopUps()
     }
         
@@ -59,7 +60,7 @@ class HomePageController: UIViewController {
 
     func handleWhatsNewController() {
         /* Displays whats new controller if the user has not seen the controller AND the user
-        had the most current version of the app
+        has the most current version of the app
          !!! Need to update most current_app_version in AppConstants !!! */
         
         print("UserService.user.seenWhatsNew",  UserService.user.seenWhatsNew)
@@ -71,35 +72,36 @@ class HomePageController: UIViewController {
             // if I could not get version from bundle ID
             if !success { return }
             // if i do not have the apps most up to date version
-            if version != AppConstants.current_app_version { return }
+            if version != App.version { return }
             
-            // if i do have the curren version
+            // if i do have the current version
             DispatchQueue.main.async {
                 self.presentWhatsNew()
                 let db = Firestore.firestore()
                 let docRef = db.collection(DataBase.User).document(UserService.user.email)
-                docRef.updateData([DataBase.seen_whats_new  : true])
+                docRef.updateData([DataBase.seen_whats_new : true])
             }
         }
     }
     
     func handleUpdatePrompt() { // TODO: Check if this works
-        if !AppConstants.should_prompt_update { return }
+//        if !AppConstants.should_prompt_update { return }
         
         let frequency = AppConstants.should_prompt_update_frequency
         let promptForUpdate = UserDefaults.standard.integer(forKey: Defaults.promptForUpdate)
-        print("promptForUpdate", promptForUpdate)
         
         ServerService.getCurrentAppVersion { (version, success) in
             // if I could not get version from bundle ID
             if !success { return }
             // if i do have the apps most up to date version
-            if version == AppConstants.current_app_version { return }
+            if version == App.version { return }
+            print("promptForUpdate:", promptForUpdate, "is up to date:", version == App.version)
+
+            UserDefaults.standard.set(promptForUpdate + 1, forKey: Defaults.promptForUpdate)
             
             if promptForUpdate % frequency == 0 {
                 DispatchQueue.main.async {
                     self.checkForUpdate()
-                    UserDefaults.standard.set(promptForUpdate + 1, forKey: Defaults.promptForUpdate)
                 }
             }
         }
@@ -133,6 +135,7 @@ class HomePageController: UIViewController {
     }
     
     func setLabels() {
+    
         let school = UserService.user.school
         let quarter = AppConstants.quarter.capitalizingFirstLetter()
         let year = AppConstants.year.capitalizingFirstLetter()
@@ -177,17 +180,23 @@ class HomePageController: UIViewController {
     }
     
     func presentUpdateAvailible() {
-        let message = "Please update this app to recieve the newest features and to avoid any problem that may occur with older versions."
-        let alert = UIAlertController(title: "Update Available", message: message, preferredStyle: .alert)
+        let message = "An update is availible with the newest features and fixes to avoid problems that may occur with older versions."
+        let alert = UIAlertController(title: "Time To Update", message: message, preferredStyle: .alert)
         let updateAction = UIAlertAction(title: "Update", style: .default) { (_) in
             if let url = URL(string: "itms-apps://itunes.apple.com/app/id\(ReferralLink.appStoreID)"),
                 UIApplication.shared.canOpenURL(url)
             {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
+            UserDefaults.standard.set(0, forKey: Defaults.promptForUpdate)
+            ServerService.updateUser(atKey: DataBase.prompt_update_count, withValue: 0)
+
             print("navigate to app store")
         }
-        let laterAction = UIAlertAction.init(title: "Later", style: .default, handler: nil)
+        let laterAction = UIAlertAction.init(title: "Later", style: .default, handler: { _ in
+            let promptForUpdate = UserDefaults.standard.integer(forKey: Defaults.promptForUpdate)
+            ServerService.updateUser(atKey: DataBase.prompt_update_count, withValue: promptForUpdate)
+        })
         
         alert.addAction(laterAction)
         alert.addAction(updateAction)
@@ -455,7 +464,6 @@ class HomePageController: UIViewController {
         ServerService.getClassStatus(withGroup:dispatchGroup, homeVC: self)
         
         dispatchGroup.notify(queue: .main) {
-            print("reloading")
             self.refreshControl?.endRefreshing()
             self.sortClasses()
             self.tableView.reloadData()
@@ -515,7 +523,7 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //        presentClassDetailController(course: courses[indexPath.row], indexPath: indexPath)
+        //        presentClassDetailC	ontroller(course: courses[indexPath.row], indexPath: indexPath)
         presentClassDetailsController(course: courses[indexPath.row], indexPath: indexPath)
     }
     
@@ -524,7 +532,6 @@ extension HomePageController:  UITableViewDelegate, UITableViewDataSource {
     }
     
     func updateUI(withCell cell: TrackedCell, withResponce response: String) {
-        print("got response \(response)")
         switch response {
         case Status.OPEN:
             cell.cellView.backgroundColor = #colorLiteral(red: 0.4574845033, green: 0.8277172047, blue: 0.4232197912, alpha: 0.2520467252)

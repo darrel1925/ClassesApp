@@ -113,7 +113,7 @@ class SignUpController: UIViewController {
     }
     
     func credentialsAreValid() -> Bool {
-        if !(emailField.text!.isValidSchoolEmail) {
+        if !(emailField.text!.lowercased().isValidSchoolEmail) {
             let message = "Email must be a valid school email address ending in 'edu' /n/n Ex. panteatr@uci.edu, bbears@ucla.edu"
             self.displayError(title: "Invalid School Email.", message: message)
             return false
@@ -135,7 +135,7 @@ class SignUpController: UIViewController {
             self.displayError(title: "Passwords don't match.", message: message)
             return false
         }
-        let email = emailField.text!
+        let email = emailField.text!.lowercased()
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
         let emailArray = trimmedEmail.components(separatedBy: "@") // ['pname', 'uci.edu']
         let extensionArray = emailArray[1].components(separatedBy: ".") // ['uci', 'edu']
@@ -172,15 +172,14 @@ class SignUpController: UIViewController {
             }
             self.activityIndicator.stopAnimating()
             
-            UserService.dispatchGroup.enter()
-            UserService.getCurrentUser(email: user.email) // <--- calls dispatchGroup.leave()
-            
-            UserService.dispatchGroup.notify(queue: .main) {
+            let dispatchGroup = DispatchGroup()
+//            UserService.dispatchGroup.enter()
+            UserService.getCurrentUser(email: user.email, completion: {
                 self.presentVerificationSentAlert()
                 UserService.generateReferralLink()
                 Stats.logSignUp()
                 Stats.setUserProperty(school: UserService.user.school)
-            }
+            })          
         }
     }
     
@@ -242,7 +241,7 @@ class SignUpController: UIViewController {
         if !credentialsAreValid() { return }
         
         let school = schoolField.text!
-        let email = emailField.text!
+        let email = emailField.text!.lowercased()
         let password = passwordField.text!
         
         activityIndicator.startAnimating()
@@ -258,13 +257,15 @@ class SignUpController: UIViewController {
             
             guard let fireUser = result?.user else { return }
             
+            let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+
             let user = User.init(id: fireUser.uid,
                                  email: email,
                                  webReg: false,
                                  school: school,
                                  dateJoined: Date().toString(),
-                                 receiveEmails: false
-                                 
+                                 receiveEmails: false,
+                                 appVersion: appVersion
             )
             
             UserDefaults.standard.set(true, forKey: Defaults.wasReferred)

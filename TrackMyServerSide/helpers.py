@@ -12,7 +12,7 @@ from firebase_admin import messaging
 
 SERVER_IP = "http://34.209.136.1"
 # ec2-34-209-136-1.us-west-2.compute.amazonaws.com
-
+# Crashlytics script /Users/darrelmuonekwu/Desktop/classes/ClassesApp/Pods/FirebaseCrashlytics/upload-symbols -gsp /Users/darrelmuonekwu/Desktop/classes/ClassesApp/ClassesApp/GoogleService-Info.plist -p ios /Users/darrelmuonekwu/Desktop/appDsyms
 class Quarter:
 	fall          = "-92"
 	winter        = "-03"
@@ -340,6 +340,7 @@ def update_course_status(class_dict):
         send_email_error("Doc doesnt Exists for Status", "got doc " + code + " " + status + " " + "deostn exist")
 
 def update_notifications_sent(num_push, num_email, reciever_email): 
+    return 
     db = firestore.client()
     doc_ref = db.collection(Constants.Analytics).document(Constants.uci_analytics)
     doc = doc_ref.get()
@@ -460,35 +461,50 @@ def send_push_notification_to_user(user_dict, notif_info, notif_type):
     """
     Sends an iOS push notif to fcm in user's doc dict
     """
+    # try:
+    print(user_dict["email"])
+    print("is_logged_in ==", user_dict["is_logged_in"])
+
+    if (user_dict["is_logged_in"] == False) or (user_dict["notifications_enabled"] == False):
+        return 
+
+    # incase user has not updated phone to have badge count
     try:
-        print(user_dict["email"])
-        print("is_logged_in ==", user_dict["is_logged_in"])
-        if (user_dict["is_logged_in"] == False) or (user_dict["notifications_enabled"] == False):
-            return 
+        badge_count = user_dict["badge_count"] + 1
+    except:
+        print(user_dict["email"] + " does not have badge_count, setting now")
+        badge_count = 1
 
-        fcm_token = user_dict["fcm_token"]
-        title, message = notif_info
-        notif_data = {"notif_type": notif_type}
+    fcm_token = user_dict["fcm_token"]
+    title, message = notif_info
+    notif_data = {"notif_type": notif_type}
 
-        # message
-        notif = messaging.Message(
-            notification = messaging.Notification(
-                title = title,
-                body = message
+    # message
+    notif = messaging.Message(
+        notification = messaging.Notification(
+            title = title,
+            body = message,
+        ),
+        data = notif_data,
+        token = fcm_token,
+
+        apns=messaging.APNSConfig(
+            payload=messaging.APNSPayload(
+                aps=messaging.Aps(badge=badge_count),
             ),
-            data = notif_data,
-            token = fcm_token,
-        )
+        ),
+    )
 
-        # send
-        messaging.send(notif)
-        update_notifications_sent(1, 0, user_dict["email"])
+    # send
+    messaging.send(notif)
+    update_notifications_sent(1, 0, user_dict["email"])
+    update_badge_count(user_dict["email"])
 
-    except Exception as e:
-        print("Could not send push notification")
-        body = user_dict["email"] + " " + notif_info[0] + " Could not send push notification: " + str(e)
-        send_email_error("Err sending notif", body)
-        return
+    # except Exception as e:
+    #     print("Could not send push notification")
+    #     body = user_dict["email"] + " " + notif_info[0] + " Could not send push notification: " + str(e)
+    #     send_email_error("Err sending notif", body)
+    #     return
 
     # body = user_dict["email"] + " " + title + " " + message
     # send_email_error("Notif Sent:)", body)
@@ -533,29 +549,28 @@ def update_user_notification_list(email, old_status, class_dict, notif_info ,not
         "notifications": notifications,
     }, merge=True)
 
+def update_badge_count(email):
+    db = firestore.client()
+    doc_ref = db.collection("User").document(email)
+    doc = doc_ref.get()    
+    doc_dict = doc.to_dict()    
+
+    try:
+        badge_count = doc_dict["badge_count"]
+    except:
+        badge_count = 0
+
+    doc_ref.set({
+        "badge_count": badge_count + 1,
+    }, merge=True)
+
+
 def send_email_error(subject, message):
     payload = {
     "subject": subject,
     "message": message,
     }
     requests.get(SERVER_IP + "/send_email_route", params=payload)
-
-# def send_email_for_notif(reciever_email, code, name ,old_status, new_status):
-#     payload = {
-#     "reciever_email": reciever_email,
-#     "code": code,
-#     "name": name,
-#     "old_status": old_status,
-#     "new_status": new_status,
-#     }
-#     r = requests.get(SERVER_IP + "/send_notification_email", params=payload)
-#     print(r.text, "sent notif")
-
-# def register_users_with_auto_enroll(users_with_auto_enroll):
-#     # users should already be sorted
-#     # for user in users_with_auto_enroll:
-#         # webreg.main(user, course)
-#     pass
 
 def get_full_class_name(class_dict):
     name = class_dict["name"]
@@ -584,7 +599,7 @@ def should_slow_search():
         return True
     
     return False
-# hi
+
 def get_month():
     date_format="%B"
     date = datetime.datetime.now(tz=pytz.utc)

@@ -71,19 +71,6 @@ class LogInController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    func presentNextPage(user: FirebaseAuth.User) {
-        
-        // If user has not seen welcome page
-//        if !UserService.user.seenWelcomePage {
-//            let db = Firestore.firestore()
-//            let docRef = db.collection(DataBase.User).document(UserService.user.email)
-//            docRef.updateData([DataBase.seen_welcome_page: true])
-//            presentWelcomeScreen()
-//            return
-//        }
-        
-        presentHomePage()
-    }
     
     func credentialsAreValid() -> Bool {
         if !(emailField.text!.isValidSchoolEmail) {
@@ -125,19 +112,17 @@ class LogInController: UIViewController {
             
             user?.user.reload(completion: { (err) in // reloads user fields, like emailVerified:
                 if let _ = err{ print("unable to reload user") ; return}
-                print("user reloaded")
+                print("user reloaded in log in")
             })
             
             print("Login was successful")
             self?.activityIndicator.stopAnimating()
             
-            UserService.dispatchGroup.enter()
-            UserService.getCurrentUser(email: email) // <--- calls dispatchGroup.leave()
-            
-            UserService.dispatchGroup.notify(queue: .main) {
+            UserService.getCurrentUser(email: email, completion: {
+                print("heading to home page")
                 self?.handleReferral()
-                self?.presentNextPage(user: user!.user)
-            }
+                self?.presentHomePage()
+            }) 
         }
     }
     

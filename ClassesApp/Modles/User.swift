@@ -37,13 +37,14 @@ class User {
     var seenHomeTapDirections: Bool
     var seenWhatsNew: Bool
     
-    
+    var promptUpdateCount: Int // unused
     var numReferrals: Int
+    var badgeCount: Int
 
     var classes: [String: Any]
     
     var purchaseHistory: [[String: String]] // [ [num_credits: 3, date: Date, price: 149] ]
-    var notifications: [[String: String]] // [ [course_code: '34250', status: 'FULL OPEN', date: Date] ]?
+    var notifications: [[String: String]]
     
     var revNotifications: [ [String: String] ] { return notifications.reversed()}
     var revPurchaseHistory: [ [String: String] ] { return purchaseHistory.reversed()}
@@ -54,11 +55,12 @@ class User {
     // User is Signing Up
     init(id: String = "", email: String = "", webReg: Bool = false, webRegPswd: String = "",
          stripeId: String = "", classes: [String: Any] = [:], school: String = "", dateJoined: String = "",
-         hasShortReferral: Bool  = false, fcm_token: String = "", numReferrals: Int = 0,
-         hasPremium: Bool = false, receiveEmails: Bool = false, seenWelcomePage: Bool = false,
-         isLoggedIn: Bool = true, isEmailVerified: Bool = false, referralLink: String = "",
-         hasAutoEnroll: Bool = false, appVersion: String = "", seenHomeTapDirections: Bool = false,
-         hasSetUserProperty: Bool = false, seenWhatsNew: Bool = false, notificationsEnabled: Bool = true,
+         hasShortReferral: Bool  = false, fcm_token: String = "", numReferrals: Int = 0, badgeCount: Int = 0,
+         promptUpdateCount: Int = 0, hasPremium: Bool = false, receiveEmails: Bool = false,
+         seenWelcomePage: Bool = false, isLoggedIn: Bool = true, isEmailVerified: Bool = false,
+         referralLink: String = "", hasAutoEnroll: Bool = false, appVersion: String = "",
+         seenHomeTapDirections: Bool = false, hasSetUserProperty: Bool = false,
+         seenWhatsNew: Bool = false, notificationsEnabled: Bool = true,
          purchaseHistory: [[String: String]] = [], notifications: [[String: String]] = []) {
         
         self.id = id
@@ -67,6 +69,8 @@ class User {
         self.webRegPswd = webRegPswd
         self.stripeId = stripeId
         
+        self.badgeCount = badgeCount
+        self.promptUpdateCount = promptUpdateCount
         self.dateJoined = dateJoined
         self.appVersion = appVersion
         self.hasPremium = hasPremium
@@ -88,7 +92,6 @@ class User {
         self.seenHomeTapDirections = seenHomeTapDirections
         self.seenWhatsNew = seenWhatsNew
         
-        setFCMTokenAndUpdateDB()
         print("user is made")
     }
     
@@ -113,7 +116,8 @@ class User {
             print("Class cast unsuccessful")
             self.classes = [:]
         }
-                
+        self.promptUpdateCount = data[DataBase.prompt_update_count] as? Int ?? 0
+        self.badgeCount = data[DataBase.badge_count] as? Int ?? 0
         self.school = data[DataBase.school] as? String ?? ""
         self.dateJoined = data[DataBase.date_joined] as? String ?? ""
         self.appVersion = data[DataBase.app_version] as? String ?? ""
@@ -134,7 +138,6 @@ class User {
         self.seenHomeTapDirections = data[DataBase.seen_home_tap_directions] as? Bool ?? false
         self.seenWhatsNew = data[DataBase.seen_whats_new] as? Bool ?? false
         
-        setFCMTokenAndUpdateDB()
         print("user is made")
     }
     
@@ -147,6 +150,8 @@ class User {
             DataBase.web_reg: user.webReg,
             DataBase.web_reg_pswd: user.webRegPswd,
             
+            DataBase.prompt_update_count: user.promptUpdateCount,
+            DataBase.badge_count: user.badgeCount,
             DataBase.date_joined: user.dateJoined,
             DataBase.classes: user.classes,
             DataBase.has_premium: user.hasPremium,

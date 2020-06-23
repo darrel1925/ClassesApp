@@ -218,32 +218,32 @@ def check_for_status_change(class_dict, status_row):
         print("# of searches", count)
 
 def main():
-    try:
-        global count, classes_to_search_for
+    # try:
+    global count, classes_to_search_for
 
-        if count % 1 == 0:
-            print("Pulling updated info")
-            classes_to_search_for = helpers.get_classes_to_search_for()
+    if count % 1 == 0:
+        print("Pulling updated info")
+        classes_to_search_for = helpers.get_classes_to_search_for()
 
-        for class_dict in classes_to_search_for:
-            # if count < 110:
-            #     count += 1
-            #     continue
-            time.sleep(0.2)
-            # get html
-            status_row = get_course_html(class_dict)
-            # use html to check if class is open
-            check_for_status_change(class_dict, status_row)
-            # use html to check if restrictions have changed
-            check_for_restriction_change(class_dict, status_row)
-        count += 1            
+    for class_dict in classes_to_search_for:
+        if count < 110:
+            count += 1
+            continue
+        time.sleep(0.25)
+        # get html
+        status_row = get_course_html(class_dict)
+        # use html to check if class is open
+        check_for_status_change(class_dict, status_row)
+        # use html to check if restrictions have changed
+        check_for_restriction_change(class_dict, status_row)
+    count += 1            
 
-    except Exception as e:
-        status = "SERVER DOWN ERROR!!!"
-        message = "Error message: " + str(e)
-        helpers.send_email_error(status, message)
-        time.sleep(20)
-        main()
+    # except Exception as e:
+    #     status = "SERVER DOWN ERROR!!!"
+    #     message = "Error message: " + str(e)
+    #     helpers.send_email_error(status, message)
+    #     time.sleep(20)
+    #     main()
 
 # resister signal handlers
 # signal.signal(signal.SIGINT, signal_handler) # catch CTRL C

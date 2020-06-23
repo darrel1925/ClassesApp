@@ -69,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var email = ""
         
         for query in queryItems {
-            print("Perameter \(query.name), Value \(query.value)")
+            print("Perameter \(query.name), Value \(String(describing: query.value))")
             if query.name == "email"{
                 email = query.value ?? "??"
             }
@@ -95,6 +95,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("--> none")
             // There is nothing in this dynamic link
             break
+        @unknown default:
+           print("--> none")
         }
     }
     

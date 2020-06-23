@@ -83,8 +83,6 @@ extension String {
         if extensionArray[1] != "edu" { return false } // pname@uci.abc
         
         print("emailExtension", extensionArray)
-
-
         
         return true
     }
@@ -190,9 +188,7 @@ extension Date {
         let dateArr = dateStr.components(separatedBy: ", ") // Wednesday, January 10, 2018
         
         return "\(dateStr2) • \(dateStr3)" // Wednesday • 4:44pm
-
-        
-        return dateStr2
+//        return dateStr2
     }
     
     var isOneWeekOld: Bool {
@@ -345,7 +341,7 @@ extension AuthErrorCode {
         case .emailAlreadyInUse:
             return "This email is already in use with another account. Pick another email!"
         case .userNotFound:
-            return "Account not found for this email address. Please check and try again!"
+            return "We couldn't find this email address. Please check the spelling and try again!"
         case .userDisabled:
             return "Your account has been disabled. Please contact support at \(AppConstants.support_email)"
         case .networkError:

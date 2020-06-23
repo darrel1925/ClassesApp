@@ -14,17 +14,13 @@ import FirebaseFirestore
 let UserService = _UserService()
 
 final class _UserService {
-    var isLoggedIn: Bool = false // <-- to handle updating fcm token in User when same account logged in on two diff devices
-    
     var user: User!
     var userListener: ListenerRegistration? = nil // our listener
     var fcm_token_has_set: Bool = false
-    let dispatchGroup = DispatchGroup()
-    let db = Firestore.firestore()
     
-    func getCurrentUser(email: String) {
+    func getCurrentUser(email: String,  completion: @escaping () -> ()) {
         // if user is logged in
-        
+        let db = Firestore.firestore()
         let userRef = db.collection(DataBase.User).document(email)
         userRef.updateData([DataBase.is_logged_in : true])
         // if user changes something in document, it will always be up to date in our app
@@ -33,28 +29,34 @@ final class _UserService {
             if let error = error {
                 print("could not add snapShotListener :/")
                 debugPrint(error.localizedDescription)
-                return
+                completion()
             }
             
-            // if we can get user infor from db
-            guard let data = snap?.data() else { return }
+//             if we can get user infor from db
+            guard let data = snap?.data() else {
+                print("no data")
+                completion()
+                return
+            }
             // add it to out user so we can access it globally
-            //            print("Data is \(data)")
+            print("Data is \(data)")
             self.user = User.init(data: data)
             print("user info has been updated")
-            self.dispatchGroup.customLeave()
+            self.updateDbWithNewInfo()
+            completion()
         })
-        
-        dispatchGroup.notify(queue: .main) {
-            print("updateFirebaseWithUpdatedVars")
-            UserService.updateFirebaseWithUpdatedVars()
-            print("checkForShortLink")
-            UserService.checkForShortLink()
-        }
-        
     }
     
+    func updateDbWithNewInfo() {
+        print("updateWithNewInfo")
+        if self.user == nil || self.user.email == "" { return } // in the off chance the user is logged in but doesnt have an account, bc it was deleted (should never happen)
+
+        print("updateFirebaseWithUpdatedVars")
+        UserService.updateFirebaseWithUpdatedVars()
+    }
+        
     func updateFirebaseWithUpdatedVars() {
+        let db = Firestore.firestore()
         let docRef = db.collection(DataBase.User).document(user.email)
         let userInfo = User.modelToData(user: user)
         docRef.setData(userInfo, merge: true)
@@ -62,16 +64,13 @@ final class _UserService {
     }
     
     func checkForShortLink() {
-        print("if user.hasShortReferral", user.hasShortReferral)
         if user.hasShortReferral { return }
+        print("User does not have short link")
         generateReferralLink()
     }
     
-    func createDummyUser() {
-        user = User.init(school: "UCI")
-    }
     
-    func ensureFCMIsSet() {
+    func setFCM() {
         if user.fcm_token ==  Messaging.messaging().fcmToken { print("fcm is good"); return }
         
         let new_fcm = Messaging.messaging().fcmToken ?? "couldnt get fcm token"
@@ -87,7 +86,7 @@ final class _UserService {
         }
     }
         
-    func handleUpdateAppVersionInDB() {
+    func setAppVersion() {
         ServerService.getCurrentAppVersion { (version, success) in
             if !success { return }
             
@@ -155,7 +154,8 @@ final class _UserService {
             print("Short dynamic URL is \(shortURL)")
             
             let stringShortUrl = "\(shortURL)"
-            let userRef = self.db.collection(DataBase.User).document(self.user.email)
+            let db = Firestore.firestore()
+            let userRef = db.collection(DataBase.User).document(self.user.email)
             userRef.updateData([DataBase.referral_link : stringShortUrl, DataBase.has_short_referral: true])
             
             return
@@ -163,34 +163,35 @@ final class _UserService {
         
         // use long url instead
         let stringLongURL = "\(longURL)"
+        let db = Firestore.firestore()
         let userRef = db.collection(DataBase.User).document(user.email)
         userRef.updateData([DataBase.referral_link : stringLongURL])
         
         
     }
     
-    func logoutUser(disaptchGroup dg: DispatchGroup) {
+    func setIsLoggedIn(email: String, completion: @escaping () -> ()) {
         print(user.email)
-        print(user.isLoggedIn)
-        print("trying")
-        
-        let userRef = db.collection(DataBase.User).document(user.email)
-        userRef.updateData([DataBase.is_logged_in : false]) { (err) in
-            print("entered")
+        let db = Firestore.firestore()
+        let userRef = db.collection(DataBase.User).document(email)
+        userRef.setData([DataBase.is_logged_in : false], merge: true) { (err) in
+            print("entered set is_logged_in for logout function")
             if let _ = err {
-                print("Error setting is_logged_in")
-                dg.customLeave()
+                print("Error setting is_logged_in ERROR")
                 
             }
             else {
-                print("is_logged_in_set")
-                dg.customLeave()
+                print("is_logged_in_set SET")
             }
+            completion()
         }
-        userListener?.remove()
-        userListener = nil
-        user = nil
-        isLoggedIn = false
-        fcm_token_has_set = false
+    }
+    
+    func logoutUser() {
+        print("trying")
+        self.userListener?.remove()
+        self.userListener = nil
+        self.user = nil
+        self.fcm_token_has_set = false
     }
 }

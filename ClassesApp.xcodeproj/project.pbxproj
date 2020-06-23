@@ -331,8 +331,8 @@
 				9A445417242D957900089389 /* Services */,
 				9A853400243E7C1400F7197F /* Constants */,
 				9A8CF97D242C6CB5008D0DC6 /* Modles */,
-				9A9472DD242C2BB1004927DD /* Controllers */,
 				9A9472DC242C2BAF004927DD /* Storyboards */,
+				9A9472DD242C2BB1004927DD /* Controllers */,
 				9A9472DB242C2BAD004927DD /* Defaults */,
 				9A8CF97A242C586E008D0DC6 /* Helpers */,
 			);
@@ -956,7 +956,7 @@
 				CODE_SIGN_ENTITLEMENTS = ClassesApp/ClassesApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -964,7 +964,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
 				PRODUCT_NAME = TrackMy;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -982,7 +982,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2Y7PPXA97Y;
 				INFOPLIST_FILE = ClassesApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -990,7 +990,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
 				PRODUCT_NAME = TrackMy;
 				PROVISIONING_PROFILE_SPECIFIER = "";
