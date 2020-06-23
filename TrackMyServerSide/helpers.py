@@ -13,6 +13,7 @@ from firebase_admin import messaging
 SERVER_IP = "http://34.209.136.1"
 # ec2-34-209-136-1.us-west-2.compute.amazonaws.com
 # Crashlytics script /Users/darrelmuonekwu/Desktop/classes/ClassesApp/Pods/FirebaseCrashlytics/upload-symbols -gsp /Users/darrelmuonekwu/Desktop/classes/ClassesApp/ClassesApp/GoogleService-Info.plist -p ios /Users/darrelmuonekwu/Desktop/appDsyms
+# github personal access token: cc77f6c6e5ef5e228e1e8a8f714f6b72c1681653
 class Quarter:
 	fall          = "-92"
 	winter        = "-03"
