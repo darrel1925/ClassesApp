@@ -1079,13 +1079,13 @@
                                 <rect key="frame" x="0.0" y="140" width="414" height="756"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Don't remember the code?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CXe-u7-Gxb">
-                                        <rect key="frame" x="71.5" y="211.5" width="192.5" height="21"/>
+                                        <rect key="frame" x="71.5" y="236" width="192.5" height="21"/>
                                         <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="16"/>
                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="zn1-qM-rLW">
-                                        <rect key="frame" x="187" y="122.5" width="40" height="40"/>
+                                        <rect key="frame" x="187" y="147" width="40" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="Oww-69-BZm"/>
                                             <constraint firstAttribute="width" constant="40" id="Srq-75-GdG"/>
@@ -1093,7 +1093,7 @@
                                         <color key="color" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </activityIndicatorView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1YC-nZ-JGq">
-                                        <rect key="frame" x="272" y="206.5" width="71" height="31.5"/>
+                                        <rect key="frame" x="272" y="231" width="71" height="31.5"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal">
                                             <attributedString key="attributedTitle">
@@ -1121,22 +1121,22 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="center" spacing="9" translatesAutoresizingMaskIntoConstraints="NO" id="uh2-TT-BiF">
-                                <rect key="frame" x="20" y="156" width="374" height="179.5"/>
+                                <rect key="frame" x="20" y="156" width="374" height="204"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter the 5 digit course code for the class you would like to track" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CjN-eL-3PS">
-                                        <rect key="frame" x="5.5" y="0.0" width="363" height="25"/>
+                                        <rect key="frame" x="5.5" y="0.0" width="363" height="49.5"/>
                                         <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="19"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quarter" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bor-oo-AQC">
-                                        <rect key="frame" x="16" y="34" width="342" height="27.5"/>
+                                        <rect key="frame" x="16" y="58.5" width="342" height="27.5"/>
                                         <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="21"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Ex. 34250" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UZe-CQ-lf6">
-                                        <rect key="frame" x="99.5" y="70.5" width="175" height="34"/>
+                                        <rect key="frame" x="99.5" y="95" width="175" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="175" id="jtd-h6-b7n"/>
                                         </constraints>
@@ -1144,13 +1144,13 @@
                                         <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                     </textField>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Szy-O3-bQQ">
-                                        <rect key="frame" x="185" y="113.5" width="4.5" height="17"/>
+                                        <rect key="frame" x="185" y="138" width="4.5" height="17"/>
                                         <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="13"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <stackView opaque="NO" contentMode="scaleAspectFill" distribution="fillEqually" spacing="60" translatesAutoresizingMaskIntoConstraints="NO" id="06H-w4-Vc8">
-                                        <rect key="frame" x="0.0" y="139.5" width="374" height="40"/>
+                                        <rect key="frame" x="0.0" y="164" width="374" height="40"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jRP-n2-x0t">
                                                 <rect key="frame" x="0.0" y="0.0" width="374" height="40"/>

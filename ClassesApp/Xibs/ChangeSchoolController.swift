@@ -102,19 +102,20 @@ class ChangeSchoolController: UIViewController {
     func updateSchool() {
         let db = Firestore.firestore()
         let docRef = db.collection(DataBase.User).document(UserService.user.email)
-        ServerService.removeClassesFromFirebase(withCourseCodes: UserService.user?.courseCodes ?? [])
-
-        docRef.updateData([DataBase.school: schoolField.text ?? UserService.user.school]) { (err) in
-            if err != nil {
+        ServerService.removeClassesFromFirebase(withCourseCodes: UserService.user?.courseCodes ?? [], completion: {
+            docRef.updateData([DataBase.school: self.schoolField.text ?? UserService.user.school]) { (err) in
+                if err != nil {
+                    self.activityIndicator.stopAnimating()
+                    self.displayError(title: "Error Updating School", message: "There was an error you school please try again later.")
+                    return
+                }
+                Stats.setUserProperty(school: self.schoolField.text ?? UserService.user.school)
                 self.activityIndicator.stopAnimating()
-                self.displayError(title: "Error Updating School", message: "There was an error you school please try again later.")
-                return
+                self.settingsVC.tableView.reloadData()
+                self.handleDismiss()
             }
-            Stats.setUserProperty(school: self.schoolField.text ?? UserService.user.school)
-            self.activityIndicator.stopAnimating()
-            self.settingsVC.tableView.reloadData()
-            self.handleDismiss()
-        }
+        })
+
     }
     
     @objc func dismissKeyboard() {

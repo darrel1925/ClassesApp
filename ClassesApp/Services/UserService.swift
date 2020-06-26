@@ -39,7 +39,7 @@ final class _UserService {
                 return
             }
             // add it to out user so we can access it globally
-            print("Data is \(data)")
+//            print("Data is \(data)")
             self.user = User.init(data: data)
             print("user info has been updated")
             self.updateDbWithNewInfo()
@@ -85,7 +85,18 @@ final class _UserService {
             }
         }
     }
+    
+    func resetBadgeCount() {
+        if user.badgeCount == 0 { return }
         
+        let db = Firestore.firestore()
+        db.collection(DataBase.User).document(user.email).setData([DataBase.badge_count: 0], merge: true) { err in
+            if let err = err {
+                print("COULD NOT UPDATE BADGE COUNT: \(err.localizedDescription)")
+            }
+        }
+    }
+    
     func setAppVersion() {
         ServerService.getCurrentAppVersion { (version, success) in
             if !success { return }
@@ -94,6 +105,17 @@ final class _UserService {
                 let db = Firestore.firestore()
                 let docRef = db.collection(DataBase.User).document(UserService.user.email)
                 docRef.updateData([DataBase.app_version: version])
+            }
+        }
+    }
+    
+    func setDateJoined() {
+        if user.dateJoined != "" { return }
+        
+        let db = Firestore.firestore()
+        db.collection(DataBase.User).document(user.email).setData([DataBase.date_joined: Date().toString()], merge: true) { err in
+            if let err = err {
+                print("COULD NOT UPDATE DATE JOINED: \(err.localizedDescription)")
             }
         }
     }

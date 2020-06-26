@@ -32,6 +32,7 @@ class HomePageController: UIViewController {
     var lastClick: TimeInterval!
     var lastIndexPath: IndexPath!
     
+    var count = 1
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpAddLabel()
@@ -40,6 +41,7 @@ class HomePageController: UIViewController {
         setUpTableView()
         setUpGestures()
         setScreenName()
+        print("view did load")
 
     }
     
@@ -47,15 +49,16 @@ class HomePageController: UIViewController {
         super.viewDidAppear(animated)
         setLabels()
         refreshTableView()
+
         UserService.checkForShortLink()
         UserService.setFCM()
-        handlePopUps()
-    }
-        
-    func handlePopUps() {
+        UserService.resetBadgeCount()
+        UserService.setAppVersion()
+        UserService.setDateJoined() // <-- will only need temporarily
         handleUpdatePrompt()
         handleWhatsNewController()
         handleShowDirections()
+        print("view did appear")
     }
 
     func handleWhatsNewController() {
@@ -85,7 +88,7 @@ class HomePageController: UIViewController {
     }
     
     func handleUpdatePrompt() { // TODO: Check if this works
-//        if !AppConstants.should_prompt_update { return }
+        if !AppConstants.should_prompt_update { return }
         
         let frequency = AppConstants.should_prompt_update_frequency
         let promptForUpdate = UserDefaults.standard.integer(forKey: Defaults.promptForUpdate)
@@ -173,10 +176,15 @@ class HomePageController: UIViewController {
     }
     
     func removeClass(atIndexPath indexPath: IndexPath) {
-        ServerService.removeClassesFromFirebase(withCourseCodes: [self.courses[indexPath.row].code])
-        self.courses.remove(at: indexPath.row)
-        self.tableView.deleteRows(at: [indexPath], with: .automatic)
-        toggleNoClassLabel()
+        print("indexPath \(indexPath) course len \(self.courses.count) course \(self.courses[indexPath.row].code)")
+
+        ServerService.removeClassesFromFirebase(withCourseCodes: [self.courses[indexPath.row].code], completion: {
+            print("indexPath \(indexPath) course len \(self.courses.count) course \(self.courses[indexPath.row].code)")
+            self.courses.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            self.toggleNoClassLabel()
+        })
+
     }
     
     func presentUpdateAvailible() {
@@ -460,6 +468,12 @@ class HomePageController: UIViewController {
     }
     
     @objc func refreshTableView() {
+//        print(count)
+//        if self.count % 6 == 0 {
+//            ServerService.updateUser(atKey: "num_referrals", withValue: UserService.user.numReferrals + 1)
+//        }
+//        self.count += 1
+//        
         let dispatchGroup = DispatchGroup()
         ServerService.getClassStatus(withGroup:dispatchGroup, homeVC: self)
         

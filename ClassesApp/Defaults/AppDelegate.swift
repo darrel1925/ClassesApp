@@ -118,14 +118,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func presentHomePage() {
-        
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let apptVC = storyboard.instantiateViewController(withIdentifier: "HomePageController") as! HomePageController
-        let navigationController = UINavigationController.init(rootViewController: apptVC)
-        self.window?.rootViewController = navigationController
-        self.window?.makeKeyAndVisible()
-        
+//    func presentHomePage() {
+//
+//        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+//        let apptVC = storyboard.instantiateViewController(withIdentifier: "HomePageController") as! HomePageController
+//        let navigationController = UINavigationController.init(rootViewController: apptVC)
+//        self.window?.rootViewController = navigationController
+//        self.window?.makeKeyAndVisible()
+//
 //        let storyboard = UIStoryboard(name: "Main", bundle: nil)
 //
 //        guard let rootVC = storyboard.instantiateViewController(identifier: "HomePageController") as? HomePageController else {
@@ -137,7 +137,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        self.window?.rootViewController = rootNC
 //        self.window?.makeKeyAndVisible()
         
-    }
+//    }
     
 
     
@@ -238,27 +238,27 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
 //        presentHomePage()
         
         // the root view controller
-        guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else { return }
+//        guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else { return }
         
-        print("rootViewController1")
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        print("rootViewController1")
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
         // instantiate the view controller we want to show from storyboard
         // root view controller is tab bar controller
         // the selected tab is a navigation controller
         // then we push the new view controller to it
-        if let homeVC = storyboard.instantiateViewController(withIdentifier: "HomePageController") as? HomePageController{
-            let navigationController = UINavigationController.init(rootViewController: homeVC)
-
-            self.window?.rootViewController = navigationController
-            self.window?.makeKeyAndVisible()
+//        if let homeVC = storyboard.instantiateViewController(withIdentifier: "HomePageController") as? HomePageController{
+//            let navigationController = UINavigationController.init(rootViewController: homeVC)
+//
+//            self.window?.rootViewController = navigationController
+//            self.window?.makeKeyAndVisible()
                 // we can modify variable of the new view controller using notification data
                 // (eg: title of notification)
 //                conversationVC.senderDisplayName = response.notification.request.content.title
                 // you can access custom data of the push notification by using userInfo property
                 // response.notification.request.content.userInfo
 //                navigationController.pushViewController(homeVC, animated: true)
-        }
+//        }
         
         completionHandler()
     }

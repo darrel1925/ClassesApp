@@ -124,11 +124,14 @@ class ClassDetailsController: UIViewController {
     
     func removeClass(atIndexPath indexPath: IndexPath) {
         let course_code = homeVC.courses[indexPath.row].code
-        ServerService.removeClassesFromFirebase(withCourseCodes: [course_code])
-        homeVC.courses.remove(at: indexPath.row)
-        homeVC.tableView.deleteRows(at: [indexPath], with: .automatic)
-        homeVC.toggleNoClassLabel()
-        handleDismiss()
+        ServerService.removeClassesFromFirebase(withCourseCodes: [course_code], completion: {
+            
+            self.homeVC.courses.remove(at: indexPath.row)
+            self.homeVC.tableView.deleteRows(at: [indexPath], with: .automatic)
+            self.homeVC.toggleNoClassLabel()
+            self.handleDismiss()
+        })
+
     }
     
     @objc func handleDismiss() {

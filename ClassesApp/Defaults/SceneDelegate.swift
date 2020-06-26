@@ -211,6 +211,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         Stats.logAppOpened() // <-- log each time a user opens app
         UserService.setFCM() // <-- update fcm token
         UserService.setAppVersion() // <-- update user's app version
+        UserService.resetBadgeCount() // <-- set badge count to 0
     }
     
     func sceneWillResignActive(_ scene: UIScene) {

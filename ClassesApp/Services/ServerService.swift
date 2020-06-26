@@ -122,7 +122,7 @@ final class _ServerService {
         return returnValue
     }
     
-    func removeClassesFromFirebase(withCourseCodes codes: [String]) {
+    func removeClassesFromFirebase(withCourseCodes codes: [String], completion: @escaping () -> ()) {
         let db = Firestore.firestore()
         
         // remove class from user
@@ -130,10 +130,11 @@ final class _ServerService {
         docRef.getDocument { (doc, error) in
             if error != nil{
                 print("FATAAL ERROR DUBUG ASSSASPPP: in ServerService\n\n\n\n")
+                completion()
                 return
             }
             
-            guard var classes = doc?[DataBase.classes] as? [String : [Any]] else { return }
+            guard var classes = doc?[DataBase.classes] as? [String : [Any]] else { completion(); return }
             
             for code in codes {
                 // If class is in user's classes dict
@@ -144,7 +145,8 @@ final class _ServerService {
             }
             docRef.updateData([DataBase.classes : classes]) { (err) in
                 if let err = err{
-                    print(err.localizedDescription)
+                    print("ERRRRR", err.localizedDescription)
+                    completion()
                     return
                 }
             }
@@ -155,8 +157,8 @@ final class _ServerService {
                 
                 let _ = db.collection(ServerService.schoolParam).whereField(DataBase.code, isEqualTo: code).getDocuments { (querySnapshot, error) in
                     if querySnapshot?.documents.count ?? 0 > 0 { // on success | if query doesnt exist, default to 0
-                        print("doc1: \(querySnapshot!.documents)\n\n")
-                        print("doc2: \(querySnapshot!.documents[0].data())\n\n")
+//                        print("doc1: \(querySnapshot!.documents)\n\n")
+//                        print("doc2: \(querySnapshot!.documents[0].data())\n\n")
                         let doc = querySnapshot!.documents[0]
                         var emails = doc.data()[DataBase.emails] as! [String]
                         let classRef = doc.reference
@@ -166,7 +168,7 @@ final class _ServerService {
                             // Remove email from array
                             emails = emails.filter { $0 != UserService.user.email }
                             
-                            print("course \(code) emails \(emails))")
+//                            print("course \(code) emails \(emails))")
                             // If no one else is tracking this class
                             if emails.count == 0 {
                                 classRef.delete()
@@ -183,8 +185,17 @@ final class _ServerService {
                             auto_enroll_emails = auto_enroll_emails.filter { $0 != UserService.user.email }
                             classRef.updateData([DataBase.auto_enroll_emails : auto_enroll_emails])
                         }
+                        print("completion 1")
+                        completion()
+                        return
+                    }
+                    else {
+                        print("completion 2")
+                        completion()
+                        return
                     }
                 }
+                return
             }
         }
     }
@@ -239,7 +250,7 @@ final class _ServerService {
             
             print("no error")
             guard let data = data else { return }
-            print(data)
+//            print(data)
             do {
                 let json =  try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                 completionHandler(json, false, nil)
@@ -289,7 +300,6 @@ final class _ServerService {
             }
         }
         task.resume()
-        
     }
     
     // UNUSED

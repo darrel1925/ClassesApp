@@ -112,9 +112,10 @@ class AddToListController: UIViewController {
             ServerService.dispatchGroup.notify(queue: .main) {
                 print("is false")
                 // error occured, remove classes
-                ServerService.removeClassesFromFirebase(withCourseCodes: Course.getCodes(courses: [self.course]))
-                self.presentPaymentErrorAlert()
-                dg.leave()
+                ServerService.removeClassesFromFirebase(withCourseCodes: Course.getCodes(courses: [self.course]), completion: {
+                    self.presentPaymentErrorAlert()
+                    dg.leave()
+                })
             }
         }
         dg.leave()
@@ -130,8 +131,24 @@ class AddToListController: UIViewController {
             AudioServicesPlaySystemSound(1519)
             Stats.logTrackedClass(course: self.course)
             self.handleDismiss()
-            self.addClassVC.navigationController?.popViewController(animated: true)
         }
+    }
+    
+    @objc func handleAddClassDismiss() {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            
+            self.view.alpha = 0
+            
+        }, completion: {_ in
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                
+                self.dismiss(animated: true, completion: {
+                    self.addClassVC.navigationController?.popViewController(animated: true)
+
+                })
+                
+            }, completion: nil)
+        })
     }
     
     @objc func handleDismiss() {
