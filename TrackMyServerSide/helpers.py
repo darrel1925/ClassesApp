@@ -14,6 +14,7 @@ SERVER_IP = "http://34.209.136.1"
 # ec2-34-209-136-1.us-west-2.compute.amazonaws.com
 # Crashlytics script /Users/darrelmuonekwu/Desktop/classes/ClassesApp/Pods/FirebaseCrashlytics/upload-symbols -gsp /Users/darrelmuonekwu/Desktop/classes/ClassesApp/ClassesApp/GoogleService-Info.plist -p ios /Users/darrelmuonekwu/Desktop/appDsyms
 # github personal access token: cc77f6c6e5ef5e228e1e8a8f714f6b72c1681653
+# UCLA --> 187003200
 class Quarter:
 	fall          = "-92"
 	winter        = "-03"
@@ -29,6 +30,10 @@ class Status:
     Waitl = "Waitl"
     NewOnly = "NewOnly"
 
+class UCLA:
+    fall   = "F"
+    winter = "W"
+    spring = "S"
 
 def get_class_status_for_ios(code, quarter, year, school):
     """
@@ -154,9 +159,158 @@ def get_full_class_info_uci(web_address):
     }
     return json
 
+# TODO: finish this func
+def get_full_class_info_ucla(code, quarter, year):
+    def get_ucla_class_row(class_rows):
+        for i, row in enumerate(class_rows):
+            divs = row.find_all("div")
+            for div in divs:
+                try:
+                    p = div.find("p", {"class": "hide-small"})
+                    title = p.find_all("a")[0]
+                    if title and f'Class Detail for {code}' in str(title):
+                        return row, i
+                    print(title)
+                except:
+                    pass
+            
+            print("\n")
+        return None
+            
+
+    course_container = get_ucla_html(code, quarter, year)
+    header = course_container.find("h3", {"class": "head"}).text
+    title = header.split(" - ")[0]
+    name = header.split(" - ")[1]
+    print(title)
+    print(name)
+
+    # UCLA is weird. The first (0th index) div contains all of the rows of information for all the classes
+    # on the page. The subsequent rows only contain information for one class per row. So we need to 
+    # strip down the 0th index to only include information about the 0th class 
+
+    # get all of the rows (the 0th row will contain a bunch of duplicate info)
+    class_rows = course_container.findAll("div", {"class": "class-not-checked"})
+    
+    # take the 1st index onward and remove that from the 0th index. So now we truly only have the 0th
+    # index as a string
+    first_row_str = str(class_rows[0]).replace(str(course_container.find("div", {"class": "secondarySection"})), "")
+    
+    # turn it into soup again
+    first_row_soup = BeautifulSoup(first_row_str, 'lxml')
+    
+    # turn it into a tag to match the other types
+    first_row = first_row_soup.find("div", {"class": "class-not-checked"})
+    
+    # add it back in with the rest of the rows
+    class_row = get_ucla_class_row([first_row] + class_rows[1:])
+
+
+    if not class_row:
+        return dict()
+
+
+    divs = class_row[0].find_all("div")
+    for i, div in enumerate(divs):
+        print(f'{i} - {div.text.split()}')
+
+    
+    # if this is a seminar or lecture
+    if class_row[1] == 0:    
+
+        # info for seminars
+        for item in ["open", "wait", "new", "close"]:
+            if item in divs[5].text.split()[0].strip().lower():
+                status = item
+                break
+            else:
+                status = "Error"
+
+        professor = "error"
+        try:
+            professor = divs[15].text.strip()
+        except:
+            professor = divs[14].text.strip()
+
+        
+
+        course_type = divs[3].text.split()[0].strip()
+        section = divs[3].text.split()[1].strip()
+        time = divs[11].text.split()[1]
+        days = divs[12].text.strip()
+        room = divs[13].text.strip()
+        units = divs[14].text.strip()
+        restrictions = []
+        final = dict()
+
+    # info for discussions
+    else:
+
+        # info for seminars
+        for item in ["open", "wait", "new", "full"]:
+            if item in divs[4].text.split()[0].strip().lower():
+                status = item
+                break
+            else:
+                status = "Error"
+
+        course_type = divs[2].text.split()[0].strip()
+        section = divs[2].text.split()[1].strip()
+        time = divs[10].text.split()[1]
+        days = divs[11].text.strip()
+        room = divs[12].text.strip()
+        units = divs[13].text.strip()
+        professor = divs[14].text.strip()
+        restrictions = []
+        final = dict()
+
+    print()
+    print(f'status  - {status}')
+    print(f'title   - {title}')
+    print(f'name    - {name}')
+    print(f'type    - {course_type}')
+    print(f'section - {section}')
+    print(f'units   - {units}')
+    print(f'time    - {time}')
+    print(f'days    - {days}')
+    print(f'room    - {room}')
+    print(f'professor    - {professor}')
+    print(f'restrictions - {restrictions}')
+    print(f'final        - {final}')
+
+
+    # columns = class_row.find_all("div")
+    # for col in columns:
+    #     print(f'{col.text.strip()}')
+
+    # json = {
+    #     "status": status,
+    #     "title": course_title.strip(),
+    #     "name": course_name.strip(),
+    #     "professor": professor,
+    #     "code": code,
+    #     "section": section,
+    #     "units": units,
+    #     "days": days,
+    #     "time": class_time,
+    #     "room": room,
+    #     "type": course_type,
+    #     "restrictions": restrictions,
+    #     "website": "",
+    #     "final": {
+    #         "day": "",
+    #         "date": "",
+    #         "time": "",
+    #         "locations": [],
+    #     }
+    # }
+
+    # return json
+
+
 def get_class_html(class_dict):
     """
-    Takes in a course code and quarter and returns the status
+    Takes in a course and returns the status
     of that class
     """
     code = class_dict["code"]
@@ -165,7 +319,7 @@ def get_class_html(class_dict):
 
     # get websoc url for class
     web_address = get_class_url(code, quarter, year)
-    get_full_class_info_uci(web_address)
+    # get_full_class_info_uci(web_address) <-- dont need
     # get html for page
     response = urllib.request.urlopen(web_address)
     text = response.read()
@@ -218,6 +372,35 @@ def get_class_url(code, quarter, year):
     
     full_url = urlFirstHalf + year + quarter_code + urlSecondHalf + code  
     return full_url
+
+def get_ucla_class_url(code, quarter, year):
+
+    if quarter == "fall":
+        quarter_code = UCLA.fall
+    elif quarter == "winter":
+        quarter_code = UCLA.winter    
+    elif quarter == "spring":
+        quarter_code = UCLA.spring    
+
+    year_code = str(year)[2:] # last two digits of a year
+
+    url = f'https://sa.ucla.edu/ro/Public/SOC/Results?t={year_code}{quarter_code}&sBy=classidnumber&id={code}'
+    return url
+
+def get_ucla_html(code, quarter, year):
+
+    # get websoc url for class
+    web_address = get_ucla_class_url(code, quarter, year)
+    # get html for page
+    response = urllib.request.urlopen(web_address)
+    text = response.read()
+
+    # make html parseable and find status
+    soup = BeautifulSoup(text, 'lxml')
+    course_container = soup.find("div", {"class": "results"})
+
+    return course_container
+
 
 def initialize_firebase():
     cred = credentials.Certificate("myclasses.json")
@@ -553,8 +736,8 @@ def update_user_notification_list(email, old_status, class_dict, notif_info ,not
 def update_badge_count(email):
     db = firestore.client()
     doc_ref = db.collection("User").document(email)
-    doc = doc_ref.get()    
-    doc_dict = doc.to_dict()    
+    doc = doc_ref.get()
+    doc_dict = doc.to_dict()
 
     try:
         badge_count = doc_dict["badge_count"]
@@ -639,7 +822,13 @@ def format_school(school):
 
 
 if __name__ == "__main__":
-    print(get_pst_day_and_date())
+
+    year = "2020"
+    quarter = "fall"
+    code = "529025200"
+    # code = "187003201"
+
+    print(get_full_class_info_ucla(code, quarter, year))
     # print(get_full_class_info_uci("https://www.reg.uci.edu/perl/WebSoc?YearTerm=2020-92&ShowFinals=0&ShowComments=0&CourseCodes=34140"))
     # pass
     # formatted date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

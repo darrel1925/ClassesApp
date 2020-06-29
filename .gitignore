@@ -1,0 +1,7 @@
+/Pods/*
+*.xcuserstate
+*.pbxproj
+ClassesApp.xcworkspace/xcuserdata/darrelmuonekwu.xcuserdatad/UserInterfaceState.xcuserstate
+
+# .DS_Store
+# .xcuserdata/
