@@ -19,32 +19,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        
         let user = Auth.auth().currentUser
         AppConstants.initalizeConstants()
         
         // if user is logged in
         if ((user) != nil) {
             
-//            isUserDisabled(user: user!)
             
             print("user:\(user?.email ?? "email not found") already logged in\n\n")
             guard let windowScene = (scene as? UIWindowScene) else { return }
             self.window = UIWindow(windowScene: windowScene)
             
-            UserService.getCurrentUser(email: user?.email ?? "no email found at start", completion: {
+            let dispatchGroup = DispatchGroup()
+            dispatchGroup.enter()
+            UserService.getCurrentUser(email: user?.email ?? "no email found at start", dispatchGroup: dispatchGroup)
+            
+            dispatchGroup.notify(queue: .main, execute: {
+                
                 if UserService.user == nil { self.presentSplashScreen(); return } // if user is logged in but account is deleted (shouldnt ever happen)
                 
-                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                
-                guard let rootVC = storyboard.instantiateViewController(identifier: "HomePageController") as? HomePageController else {
-                    print("ViewController not found")
-                    return
-                }
-                
-                let rootNC = UINavigationController(rootViewController: rootVC)
-                self.window?.rootViewController = rootNC
-                self.window?.makeKeyAndVisible()
+                self.presentHomeScreen()
             })
         }
         else {
@@ -67,6 +61,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window?.makeKeyAndVisible()
     }
     
+    func presentHomeScreen() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        guard let rootVC = storyboard.instantiateViewController(identifier: "HomePageController") as? HomePageController else {
+            print("ViewController not found")
+            return
+        }
+        
+        let rootNC = UINavigationController(rootViewController: rootVC)
+        self.window?.rootViewController = rootNC
+        self.window?.makeKeyAndVisible()
+    }
+    
     
     //    func checkIfUserLoggedIn() {
     //        Auth.auth().addStateDidChangeListener { auth, user in
@@ -84,18 +91,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     //            }
     //        }
     //    }
-    
-    func presentHomePage(){
-        // show customer home page
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let rootVC = storyboard.instantiateViewController(identifier: "HomePageController") as? HomePageController else {
-            print("ViewController not found")
-            return
-        }
-        let rootNC = UINavigationController(rootViewController: rootVC)
-        self.window?.rootViewController = rootNC
-        self.window?.makeKeyAndVisible()
-    }
     
     func isUserDisabled(user: FirebaseAuth.User) {
         //        user.reload(completion: { (error) in

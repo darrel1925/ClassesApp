@@ -24,6 +24,7 @@ class ClassDetailsController: UIViewController {
     @IBOutlet weak var roomLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var restrictionsButton: UIButton!
+    @IBOutlet weak var restrictionsStackView: UIStackView!
     
     var course: Course!
     var homeVC: HomePageController!
@@ -61,9 +62,15 @@ class ClassDetailsController: UIViewController {
         roomLabel.text = course.room
         statusLabel.text = course.status
         timeLabel.text = "\(course.days) \(course.class_time)"
-        let restrictionsTitle = restrictionsToString(restrictions: course.restrictions)
-        restrictionsButton.setTitle(restrictionsTitle, for: .normal)
         
+        if UserService.user.school == Schools.UCI {
+            let restrictionsTitle = restrictionsToString(restrictions: course.restrictions)
+            restrictionsButton.setTitle(restrictionsTitle, for: .normal)
+        }
+        else {
+            restrictionsStackView.isHidden = true
+        }
+                
     }
     
     func restrictionsToString(restrictions: [String]) -> String {

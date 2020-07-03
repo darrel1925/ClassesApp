@@ -20,14 +20,26 @@ class AddClassController: UIViewController {
     @IBOutlet weak var backgroundView: UIView!
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var quarterLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     var courses = [Course]()
     
     // Change store to get credits or go premium
     override func viewDidLoad() {
         super.viewDidLoad()
-        quarterLabel.text = AppConstants.quarter.capitalizingFirstLetter()
         setUpButtons()
+        setLabels()
+    }
+    
+    func setLabels() {
+        quarterLabel.text = AppConstants.quarter.capitalizingFirstLetter()
+        
+        if UserService.user.school == Schools.UCI {
+        descriptionLabel.text = "Enter the 5 digit course code for the class you would like to track"
+        }
+        else if UserService.user.school == Schools.UCLA {
+            descriptionLabel.text = "Enter the 9 digit course code for the class you would like to track"
+        }
     }
     
     func setUpButtons() {

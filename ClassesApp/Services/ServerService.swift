@@ -355,7 +355,7 @@ final class _ServerService {
         task.resume()
     }
     
-    
+    // UNUSED
     func updatePurchaseMade() {
         Stats.logPurchase()
         getToken(forEmail: AppConstants.my_email) { (token) in
@@ -424,14 +424,6 @@ final class _ServerService {
         case invalidResponse, invalidBundleInfo
     }
     
-    func getCurrentAppVersion(completion: @escaping (String, Bool) -> Void) {
-        guard let info = Bundle.main.infoDictionary,
-            let currentVersion = info["CFBundleShortVersionString"] as? String
-            else { completion("", false); return }
-        
-        completion(currentVersion, true)
-    }
-    
     func isUpdateAvailable(completion: @escaping (Bool?, Error?) -> Void) throws -> URLSessionDataTask {
         guard let info = Bundle.main.infoDictionary,
             let currentVersion = info["CFBundleShortVersionString"] as? String,
@@ -456,6 +448,27 @@ final class _ServerService {
         }
         task.resume()
         return task
+    }
+
+    func getCurrentAppStoreVersion(completion: @escaping (String?, Bool) -> Void) {
+        guard let info = Bundle.main.infoDictionary,
+            let identifier = info["CFBundleIdentifier"] as? String,
+            let url = URL(string: "http://itunes.apple.com/lookup?bundleId=\(identifier)")
+            else { completion(nil, false); return }
+        
+            let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            do {
+                if let _ = error { completion(nil, false) }
+                guard let data = data else { completion(nil, false); return }
+                let json = try JSONSerialization.jsonObject(with: data, options: [.allowFragments]) as? [String: Any]
+                guard let result = (json?["results"] as? [Any])?.first as? [String: Any], let version = result["version"] as? String else { completion(nil, false); return }
+                print("app store version is")
+                completion(version, true)
+            } catch {
+                completion(nil, false)
+            }
+        }
+        task.resume()
     }
 }
 

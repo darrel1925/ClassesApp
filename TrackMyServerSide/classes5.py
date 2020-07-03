@@ -229,7 +229,7 @@ def main():
             if count < 110:
                 count += 1
                 continue
-            time.sleep(0.25)
+            time.sleep(0.4)
             # get html
             status_row = get_course_html(class_dict)
             # use html to check if class is open

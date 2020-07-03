@@ -118,11 +118,15 @@ class LogInController: UIViewController {
             print("Login was successful")
             self?.activityIndicator.stopAnimating()
             
-            UserService.getCurrentUser(email: email, completion: {
+            let dispatchGroup = DispatchGroup()
+            dispatchGroup.enter()
+            UserService.getCurrentUser(email: email, dispatchGroup: dispatchGroup)
+            
+            dispatchGroup.notify(queue: .main, execute: {
                 print("heading to home page")
                 self?.handleReferral()
                 self?.presentHomePage()
-            }) 
+            })
         }
     }
     

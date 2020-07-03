@@ -37,8 +37,7 @@ def send_notification_email():
     old_status     = str(request.args.get("old_status")).encode('ascii', 'ignore').decode('ascii')
     new_status     = str(request.args.get("new_status")).encode('ascii', 'ignore').decode('ascii')
     reciever_email = str(request.args.get("reciever_email")).encode('ascii', 'ignore').decode('ascii')
-    
-    message = contruct_email_message(old_status, new_status, code, name)
+    message = contruct_email_message(old_status, new_status, code, name) # FIXX ADJO:PISJQNUHWPDOH WO ¨Œ()
     did_send_email = send_email_with_msg(reciever_email, message)
     json = {"did_send_email": did_send_email}
     return json
@@ -46,7 +45,6 @@ def send_notification_email():
 @app.route("/display_terms")
 def display_terms():
     return render_template("terms.html")
-
 
 @app.route("/display_privacy")
 def display_privacy():

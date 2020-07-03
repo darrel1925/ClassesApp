@@ -21,6 +21,7 @@ class _AppConstants {
     var privacy_url = ""
     var merchant_id = ""
     var domain_name = ""
+    var force_update  = false
     var support_email = ""
     var premium_price = 499
     var support_email_pswd   = ""
@@ -31,7 +32,7 @@ class _AppConstants {
     var should_prompt_update_frequency = 10
     
     var authenticated: Bool { return (my_email == UserService.user.email) && has_confirmed_email }
-    var supported_schools: [String] = ["UCI", "UCLA"]
+    var supported_schools: [String] = [Schools.UCI, Schools.UCLA]
     var appConstantListener: ListenerRegistration? = nil
     var registration_pages: [String: String] = [:]
     var class_look_up_pages: [String: String] = [:]
@@ -66,6 +67,7 @@ class _AppConstants {
             self.premium_price = data[DataBase.premium_price] as? Int ?? 499
             self.merchant_id = data[DataBase.merchant_id] as? String ?? ""
             self.domain_name = data[DataBase.domain_name] as? String ?? ""
+            self.force_update = data[DataBase.force_update] as? Bool ?? false
             self.support_email = data[DataBase.support_email] as? String ?? ""
             self.premium_product_id = data[DataBase.premium_product_id] as? String ?? ""
             self.support_email_pswd = data[DataBase.support_email_pswd] as? String ?? ""
@@ -73,7 +75,7 @@ class _AppConstants {
             self.should_prompt_update = data[DataBase.should_prompt_update] as? Bool ?? false
             self.should_prompt_update_frequency = data[DataBase.should_prompt_update_frequency] as? Int ?? 10
             self.referral_info = data[DataBase.referral_info] as? [String: String] ?? [:]
-            self.supported_schools = data[DataBase.supported_schools] as? [String] ?? ["UCI", "UCLA"]
+//            self.supported_schools = data[DataBase.supported_schools] as? [String] ?? ["UCI", "UCLA"]
             self.registration_pages = data[DataBase.registration_pages] as? [String: String] ?? [:]
             self.class_look_up_pages = data[DataBase.class_look_up_pages] as? [String: String] ?? [:]
             self.routes = data[DataBase.routes] as? [String: String] ?? [:]

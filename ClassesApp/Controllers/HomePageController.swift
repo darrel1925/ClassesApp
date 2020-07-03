@@ -32,7 +32,6 @@ class HomePageController: UIViewController {
     var lastClick: TimeInterval!
     var lastIndexPath: IndexPath!
     
-    var count = 1
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpAddLabel()
@@ -71,11 +70,11 @@ class HomePageController: UIViewController {
         // if I have have seen the whats new page
         if UserService.user.seenWhatsNew  { return }
         
-        ServerService.getCurrentAppVersion { (version, success) in
-            // if I could not get version from bundle ID
+        ServerService.getCurrentAppStoreVersion { (appStoreVersion, success) in
+            // if I could not get version from appstore
             if !success { return }
             // if i do not have the apps most up to date version
-            if version != App.version { return }
+            if appStoreVersion != App.version { return }
             
             // if i do have the current version
             DispatchQueue.main.async {
@@ -87,24 +86,24 @@ class HomePageController: UIViewController {
         }
     }
     
-    func handleUpdatePrompt() { // TODO: Check if this works
+    func handleUpdatePrompt() {
         if !AppConstants.should_prompt_update { return }
         
         let frequency = AppConstants.should_prompt_update_frequency
         let promptForUpdate = UserDefaults.standard.integer(forKey: Defaults.promptForUpdate)
         
-        ServerService.getCurrentAppVersion { (version, success) in
-            // if I could not get version from bundle ID
+        ServerService.getCurrentAppStoreVersion { (appStoreVersion, success) in
+            // if I could not get version from appstore
             if !success { return }
             // if i do have the apps most up to date version
-            if version == App.version { return }
-            print("promptForUpdate:", promptForUpdate, "is up to date:", version == App.version)
+            if appStoreVersion == App.version { return }
+            print("promptForUpdate:", promptForUpdate, "is up to date:", appStoreVersion == App.version)
 
             UserDefaults.standard.set(promptForUpdate + 1, forKey: Defaults.promptForUpdate)
             
             if promptForUpdate % frequency == 0 {
                 DispatchQueue.main.async {
-                    self.checkForUpdate()
+                    self.presentUpdateAvailible()
                 }
             }
         }
@@ -120,18 +119,18 @@ class HomePageController: UIViewController {
         docRef.updateData([DataBase.seen_home_tap_directions  : true])
     }
     
-    func checkForUpdate() {
-        _ = try? ServerService.isUpdateAvailable(completion: { (update, error) in
-            if let error = error {
-                print("error", error)
-            } else if let update = update {
-                print("needs update", update)
-                DispatchQueue.main.async {
-                    self.presentUpdateAvailible()
-                }
-            }
-        })
-    }
+//    func checkForUpdate() {
+//        _ = try? ServerService.isUpdateAvailable(completion: { (update, error) in
+//            if let error = error {
+//                print("error", error)
+//            } else if let update = update {
+//                print("needs update", update)
+//                DispatchQueue.main.async {
+//
+//                }
+//            }
+//        })
+//    }
     
     func setScreenName() {
         Stats.setScreenName(screenName: "HomePage", screenClass: "HomePageController")
@@ -200,13 +199,11 @@ class HomePageController: UIViewController {
             ServerService.updateUser(atKey: DataBase.prompt_update_count, withValue: 0)
 
             print("navigate to app store")
+            if AppConstants.force_update {
+                self.presentUpdateAvailible()
+            }
         }
-        let laterAction = UIAlertAction.init(title: "Later", style: .default, handler: { _ in
-            let promptForUpdate = UserDefaults.standard.integer(forKey: Defaults.promptForUpdate)
-            ServerService.updateUser(atKey: DataBase.prompt_update_count, withValue: promptForUpdate)
-        })
         
-        alert.addAction(laterAction)
         alert.addAction(updateAction)
         
         present(alert, animated: true)
@@ -468,12 +465,6 @@ class HomePageController: UIViewController {
     }
     
     @objc func refreshTableView() {
-//        print(count)
-//        if self.count % 6 == 0 {
-//            ServerService.updateUser(atKey: "num_referrals", withValue: UserService.user.numReferrals + 1)
-//        }
-//        self.count += 1
-//        
         let dispatchGroup = DispatchGroup()
         ServerService.getClassStatus(withGroup:dispatchGroup, homeVC: self)
         

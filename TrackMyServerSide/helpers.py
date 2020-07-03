@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from pytz import timezone
 from constants import Constants
+from time import sleep
 import pytz, urllib.request, requests
 import datetime
 
@@ -39,9 +40,12 @@ def get_class_status_for_ios(code, quarter, year, school):
     """
     Get class status with the input from ios device rather than from python script
     """
-    # if school == UCI:
-    web_address = get_class_url(code, quarter, year)
-    return get_full_class_info_uci(web_address)
+    if school == "UCI":
+        web_address = get_class_url(code, quarter, year)
+        return get_full_class_info_uci(web_address)
+
+    elif school == "UCLA":
+        return get_ucla_full_class_info(code, quarter, year)
 
 def get_full_class_info_uci(web_address):
     # get html for page
@@ -160,24 +164,7 @@ def get_full_class_info_uci(web_address):
     return json
 
 # TODO: finish this func
-def get_full_class_info_ucla(code, quarter, year):
-    def get_ucla_class_row(class_rows):
-        for i, row in enumerate(class_rows):
-            divs = row.find_all("div")
-            for div in divs:
-                try:
-                    p = div.find("p", {"class": "hide-small"})
-                    title = p.find_all("a")[0]
-                    if title and f'Class Detail for {code}' in str(title):
-                        return row, i
-                    print(title)
-                except:
-                    pass
-            
-            print("\n")
-        return None
-            
-
+def get_ucla_full_class_info(code, quarter, year):
     course_container = get_ucla_html(code, quarter, year)
     header = course_container.find("h3", {"class": "head"}).text
     title = header.split(" - ")[0]
@@ -211,101 +198,58 @@ def get_full_class_info_ucla(code, quarter, year):
 
 
     divs = class_row[0].find_all("div")
-    for i, div in enumerate(divs):
-        print(f'{i} - {div.text.split()}')
-
+    # for i, div in enumerate(divs):
+    #     print(f'{i} - {div.text.split()}')
     
-    # if this is a seminar or lecture
-    if class_row[1] == 0:    
 
-        # info for seminars
-        for item in ["open", "wait", "new", "close"]:
-            if item in divs[5].text.split()[0].strip().lower():
-                status = item
-                break
-            else:
-                status = "Error"
+    status = get_ucla_status(divs)
 
-        professor = "error"
-        try:
-            professor = divs[15].text.strip()
-        except:
-            professor = divs[14].text.strip()
-
-        
-
-        course_type = divs[3].text.split()[0].strip()
-        section = divs[3].text.split()[1].strip()
-        time = divs[11].text.split()[1]
-        days = divs[12].text.strip()
-        room = divs[13].text.strip()
-        units = divs[14].text.strip()
-        restrictions = []
-        final = dict()
-
-    # info for discussions
-    else:
-
-        # info for seminars
-        for item in ["open", "wait", "new", "full"]:
-            if item in divs[4].text.split()[0].strip().lower():
-                status = item
-                break
-            else:
-                status = "Error"
-
-        course_type = divs[2].text.split()[0].strip()
-        section = divs[2].text.split()[1].strip()
-        time = divs[10].text.split()[1]
-        days = divs[11].text.strip()
-        room = divs[12].text.strip()
-        units = divs[13].text.strip()
-        professor = divs[14].text.strip()
-        restrictions = []
-        final = dict()
+    course_type = divs[2].text.split()[0].strip()
+    section = divs[2].text.split()[1].strip()
+    time = get_ucla_time(divs)
+    days = get_ucla_days(divs)
+    room = get_ucla_room(divs)
+    units = get_ucla_units(divs)
+    professor = get_ucla_professor(divs)
+    restrictions = []
+    final = dict()
 
     print()
-    print(f'status  - {status}')
-    print(f'title   - {title}')
-    print(f'name    - {name}')
-    print(f'type    - {course_type}')
-    print(f'section - {section}')
-    print(f'units   - {units}')
-    print(f'time    - {time}')
-    print(f'days    - {days}')
-    print(f'room    - {room}')
+    print(f'status       - {title}')
+    print(f'name         - {name}')
+    print(f'type         - {course_type}')
+    print(f'section      - {section}')
+    print(f'units        - {units}')
+    print(f'time         - {time}')
+    print(f'days         - {days}')
+    print(f'room         - {room}')
     print(f'professor    - {professor}')
     print(f'restrictions - {restrictions}')
     print(f'final        - {final}')
 
+    json = {
+        "status": status,
+        "title": title,
+        "name": name,
+        "professor": professor,
+        "code": code,
+        "section": section,
+        "units": units,
+        "days": days,
+        "time": time,
+        "room": room,
+        "type": course_type,
+        "restrictions": restrictions,
+        "website": "",
+        "final": {
+            "day": "",
+            "date": "",
+            "time": "",
+            "locations": [],
+        }
+    }
 
-    # columns = class_row.find_all("div")
-    # for col in columns:
-    #     print(f'{col.text.strip()}')
-
-    # json = {
-    #     "status": status,
-    #     "title": course_title.strip(),
-    #     "name": course_name.strip(),
-    #     "professor": professor,
-    #     "code": code,
-    #     "section": section,
-    #     "units": units,
-    #     "days": days,
-    #     "time": class_time,
-    #     "room": room,
-    #     "type": course_type,
-    #     "restrictions": restrictions,
-    #     "website": "",
-    #     "final": {
-    #         "day": "",
-    #         "date": "",
-    #         "time": "",
-    #         "locations": [],
-    #     }
-    # }
-
-    # return json
+    return json
 
 
 def get_class_html(class_dict):
@@ -330,6 +274,26 @@ def get_class_html(class_dict):
 
     return status_row
 
+
+def get_ucla_status(divs):
+    status = "Error"
+    # if we are looking for a seminar or lecture
+    for item in ["open", "wait", "new", "closed"]:
+        if item in divs[5].text.split()[0].strip().lower():
+            status = item
+            break
+
+    if status != "Error":
+        return status.capitalize() 
+
+    # looking for a discussion
+    for item in ["open", "wait", "new", "closed"]:
+        if item in divs[4].text.split()[0].strip().lower():
+            status = item
+            break
+
+    return status.capitalize()  
+
 def get_class_status(status_row):
     """
     Takes in a status_row (html) returns the status 
@@ -344,8 +308,124 @@ def get_class_status(status_row):
         sbj = "Class likely removed"
         msg = "Error finding status. Class status is now error"
         send_email_error(sbj, msg)
+        sleep(900) # wait 15 min 
         return "Error"
 
+def get_ucla_time(divs):
+    try:
+        time = divs[11].text.split()[1]
+        if "scheduled" in time:
+            return "Not scheduled"
+        return time
+    except:
+        pass
+
+    try:
+        time = divs[10].text.split()[1]
+        if "scheduled" in time:
+            return "Not scheduled"
+        return time
+    except:
+        return "Error"
+
+def get_ucla_units(divs):
+    try:
+        units = float(divs[13].text.strip())
+        return str(units)
+    except:
+        pass
+
+    try:
+        units = float(divs[14].text.strip())
+        return str(units)
+    except:
+        return "Error"
+
+def get_ucla_professor(divs):
+    try:
+        professor = divs[14].text.strip()
+        for num in "0123456789":
+            if num in professor:
+                raise AttributeError
+        return professor
+    except:
+        pass
+
+    try:
+        professor = divs[15].text.strip()
+        for num in "0123456789":
+            if num in professor:
+                raise AttributeError
+        return professor
+    except:
+        pass
+
+    return "Error"
+
+def get_ucla_days(divs):
+    try:
+        day = divs[10].text.split()[0]
+        if "not" in day.lower():
+            return "Not scheduled"
+    except:
+        pass
+
+    try:
+        div = ""
+        for _div in divs:
+            if _div.get("class") == ["timeColumn"]:
+                div = _div
+                break
+        
+        if not div:
+            return "Error"
+
+        # isolate days of week
+        div = str(div)
+        div = div.split('data-content="')[1]
+        days = div.split('"')[0].split(",")
+
+        for i, day in enumerate(days):
+            day = day.strip()
+            if day.lower() == "thursday":
+                days[i] = "Th"
+            elif day.lower() == "tuesday":
+                days[i] = "Tu"
+            else:
+                days[i] = day[0]
+
+        formatted_days = ",".join(days) 
+        return formatted_days
+
+    except:
+        return "Error"
+
+def get_ucla_room(divs):
+    try:
+        room = divs[13].text.strip()
+        # room is unassigned
+        if room == "":
+            return "Not scheduled"
+
+        # looking at units
+        for num in "0123456789":
+            if num in room:
+                raise AttributeError
+        return room
+    except:
+        pass
+
+    try:
+        room = divs[12].text.strip()
+        if room == "":
+            return "Not scheduled"
+
+        for num in "0123456789":
+            if num in room:
+                raise AttributeError
+        return room
+    except:
+        return "Error"
 
 def get_class_url(code, quarter, year):
     """
@@ -453,6 +533,7 @@ def get_changed_restrictions(status_row, old_restrictions, class_dict):
         sbj = "Class " + name + " likely removed"
         msg = "Error finding restrictions for " + name + " " + class_dict["code"]
         send_email_error(sbj, msg)
+        sleep(900) # wait 15 min 
 
     if sorted(old_restrictions) != sorted(new_restrictions):
         print("restrictions changed from", old_restrictions, "-->", new_restrictions)
@@ -825,10 +906,14 @@ if __name__ == "__main__":
 
     year = "2020"
     quarter = "fall"
-    code = "529025200"
+    code = "187003200" # open seminar
+    # code = "529025200"
     # code = "187003201"
+    code = "259330200"
 
-    print(get_full_class_info_ucla(code, quarter, year))
-    # print(get_full_class_info_uci("https://www.reg.uci.edu/perl/WebSoc?YearTerm=2020-92&ShowFinals=0&ShowComments=0&CourseCodes=34140"))
+    for code in ["187003200", "529025200", "187003201", "259330200"]:
+        get_full_class_info_ucla(code, quarter, year)
+    # print(get_full_class_info_ucla(code, quarter, year))
+    # print(get_full_class_info_uci("https://www.reg.uci.edu/perl/WebSoc?YearTerm=2020-92&ShowFinals=0&ShowComments=0&CourseCodes=34630"))
     # pass
     # formatted date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

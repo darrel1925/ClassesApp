@@ -18,7 +18,6 @@ class WhatsNewController: UIViewController {
         override func viewDidLoad() {
             super.viewDidLoad()
                 setUpGestures()
-            versionLabel.text = "TrackMy version \(UserService.user.appVersion)"
             }
             
             override func viewDidAppear(_ animated: Bool) {

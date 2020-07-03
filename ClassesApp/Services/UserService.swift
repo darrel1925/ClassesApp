@@ -16,9 +16,8 @@ let UserService = _UserService()
 final class _UserService {
     var user: User!
     var userListener: ListenerRegistration? = nil // our listener
-    var fcm_token_has_set: Bool = false
     
-    func getCurrentUser(email: String,  completion: @escaping () -> ()) {
+    func getCurrentUser(email: String, dispatchGroup: DispatchGroup) {
         // if user is logged in
         let db = Firestore.firestore()
         let userRef = db.collection(DataBase.User).document(email)
@@ -29,22 +28,25 @@ final class _UserService {
             if let error = error {
                 print("could not add snapShotListener :/")
                 debugPrint(error.localizedDescription)
-                completion()
+                dispatchGroup.customLeave()
             }
             
 //             if we can get user infor from db
             guard let data = snap?.data() else {
                 print("no data")
-                completion()
+                dispatchGroup.customLeave()
                 return
             }
             // add it to out user so we can access it globally
 //            print("Data is \(data)")
             self.user = User.init(data: data)
             print("user info has been updated")
-            self.updateDbWithNewInfo()
-            completion()
+            dispatchGroup.customLeave()
         })
+        
+        dispatchGroup.notify(queue: .main) {
+            UserService.updateDbWithNewInfo()
+        }
     }
     
     func updateDbWithNewInfo() {
@@ -98,14 +100,13 @@ final class _UserService {
     }
     
     func setAppVersion() {
-        ServerService.getCurrentAppVersion { (version, success) in
-            if !success { return }
             
-            if UserService.user.appVersion != version {
-                let db = Firestore.firestore()
-                let docRef = db.collection(DataBase.User).document(UserService.user.email)
-                docRef.updateData([DataBase.app_version: version])
-            }
+        let myCurrentVersion = App.version
+        
+        if UserService.user.appVersion != myCurrentVersion {
+            let db = Firestore.firestore()
+            let docRef = db.collection(DataBase.User).document(UserService.user.email)
+            docRef.updateData([DataBase.app_version: myCurrentVersion])
         }
     }
     
@@ -188,8 +189,6 @@ final class _UserService {
         let db = Firestore.firestore()
         let userRef = db.collection(DataBase.User).document(user.email)
         userRef.updateData([DataBase.referral_link : stringLongURL])
-        
-        
     }
     
     func setIsLoggedIn(email: String, completion: @escaping () -> ()) {
@@ -214,6 +213,5 @@ final class _UserService {
         self.userListener?.remove()
         self.userListener = nil
         self.user = nil
-        self.fcm_token_has_set = false
     }
 }

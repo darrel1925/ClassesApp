@@ -151,7 +151,7 @@ class User {
             DataBase.web_reg_pswd: user.webRegPswd,
             
             DataBase.prompt_update_count: user.promptUpdateCount,
-            DataBase.badge_count: user.badgeCount,
+            DataBase.badge_count: 0,
             DataBase.date_joined: user.dateJoined,
             DataBase.classes: user.classes,
             DataBase.has_premium: user.hasPremium,

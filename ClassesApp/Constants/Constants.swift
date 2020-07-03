@@ -84,6 +84,7 @@ struct DataBase {
     static let merchant_id   = "merchant_id"
     static let domain_name   = "domain_name"
     static let server_port   = "server_port"
+    static let force_update  = "force_update"
     static let support_email = "support_email"
     static let premium_price = "premium_price"
     static let supported_schools   = "supported_schools"

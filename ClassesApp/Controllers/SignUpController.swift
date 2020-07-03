@@ -173,13 +173,16 @@ class SignUpController: UIViewController {
             self.activityIndicator.stopAnimating()
             
             let dispatchGroup = DispatchGroup()
-//            UserService.dispatchGroup.enter()
-            UserService.getCurrentUser(email: user.email, completion: {
+            dispatchGroup.enter()
+            UserService.getCurrentUser(email: user.email, dispatchGroup: dispatchGroup)
+            
+            dispatchGroup.notify(queue: .main, execute: {
+                print("heading to home page")
                 self.presentVerificationSentAlert()
                 UserService.generateReferralLink()
                 Stats.logSignUp()
                 Stats.setUserProperty(school: UserService.user.school)
-            })          
+            })
         }
     }
     

@@ -79,6 +79,10 @@
 		9AFB0C22245CC849008D1297 /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB0C21245CC849008D1297 /* Animations.swift */; };
 		9AFB5E17247B5D64003D3BE7 /* RestrictionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB5E16247B5D64003D3BE7 /* RestrictionsController.swift */; };
 		9AFCD2B5244B987E009D2081 /* PageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFCD2B4244B987E009D2081 /* PageController.swift */; };
+		C91E690924ADAA5100BB9AE7 /* AutoEnroll.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C91E690824ADAA5100BB9AE7 /* AutoEnroll.storyboard */; };
+		C91E690C24ADB81100BB9AE7 /* GetPasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91E690B24ADB81100BB9AE7 /* GetPasswordController.swift */; };
+		C91E691024AE331700BB9AE7 /* AutoEnrollController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91E690F24AE331700BB9AE7 /* AutoEnrollController.swift */; };
+		C91E691224AE347A00BB9AE7 /* AEPageThreeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91E691124AE347A00BB9AE7 /* AEPageThreeController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -183,6 +187,10 @@
 		9AFB0C21245CC849008D1297 /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		9AFB5E16247B5D64003D3BE7 /* RestrictionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictionsController.swift; sourceTree = "<group>"; };
 		9AFCD2B4244B987E009D2081 /* PageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageController.swift; sourceTree = "<group>"; };
+		C91E690824ADAA5100BB9AE7 /* AutoEnroll.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AutoEnroll.storyboard; sourceTree = "<group>"; };
+		C91E690B24ADB81100BB9AE7 /* GetPasswordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPasswordController.swift; sourceTree = "<group>"; };
+		C91E690F24AE331700BB9AE7 /* AutoEnrollController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoEnrollController.swift; sourceTree = "<group>"; };
+		C91E691124AE347A00BB9AE7 /* AEPageThreeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEPageThreeController.swift; sourceTree = "<group>"; };
 		F332B3B0C8712692DA7AF6B0 /* Pods-ClassesAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClassesAppTests.debug.xcconfig"; path = "Target Support Files/Pods-ClassesAppTests/Pods-ClassesAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -371,6 +379,7 @@
 			isa = PBXGroup;
 			children = (
 				9A9472B5242C1E7C004927DD /* LaunchScreen.storyboard */,
+				C91E690824ADAA5100BB9AE7 /* AutoEnroll.storyboard */,
 				9A9472B0242C1E76004927DD /* Main.storyboard */,
 			);
 			path = Storyboards;
@@ -379,6 +388,7 @@
 		9A9472DD242C2BB1004927DD /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C91E690A24ADB7C000BB9AE7 /* Auto_Enroll_Intro */,
 				9ADF88892466B40B0095401A /* WebScreens */,
 				9AC4A951244B92060019921F /* WelcomeScreens */,
 				9AAD829F2432A44100C66838 /* SlideInMenu */,
@@ -446,6 +456,16 @@
 				9AF3AEC2244E534000D690C7 /* TermsController.swift */,
 			);
 			path = WebScreens;
+			sourceTree = "<group>";
+		};
+		C91E690A24ADB7C000BB9AE7 /* Auto_Enroll_Intro */ = {
+			isa = PBXGroup;
+			children = (
+				C91E690B24ADB81100BB9AE7 /* GetPasswordController.swift */,
+				C91E690F24AE331700BB9AE7 /* AutoEnrollController.swift */,
+				C91E691124AE347A00BB9AE7 /* AEPageThreeController.swift */,
+			);
+			path = Auto_Enroll_Intro;
 			sourceTree = "<group>";
 		};
 		E6717EC372AE7CD978FC59AB /* Frameworks */ = {
@@ -578,6 +598,7 @@
 				9AADB83124750D4900A79586 /* RestorePurchaseController.xib in Resources */,
 				9A9472B4242C1E7C004927DD /* Assets.xcassets in Resources */,
 				9A8CF979242C4BEA008D0DC6 /* GoogleService-Info.plist in Resources */,
+				C91E690924ADAA5100BB9AE7 /* AutoEnroll.storyboard in Resources */,
 				9A21C7EB2452A7D000355CC2 /* NotifcationStatusController.xib in Resources */,
 				9A9472B2242C1E76004927DD /* Main.storyboard in Resources */,
 			);
@@ -725,6 +746,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C91E691024AE331700BB9AE7 /* AutoEnrollController.swift in Sources */,
 				9A8CF977242C490F008D0DC6 /* SignUpController.swift in Sources */,
 				9ABA5730246165AE00C865D0 /* Stats.swift in Sources */,
 				9AFB0C22245CC849008D1297 /* Animations.swift in Sources */,
@@ -762,6 +784,7 @@
 				9AFB5E17247B5D64003D3BE7 /* RestrictionsController.swift in Sources */,
 				9A8CF981242C78FE008D0DC6 /* HomePageController.swift in Sources */,
 				9A7B46A3244FAB1100B4D7A0 /* CreditCell.swift in Sources */,
+				C91E690C24ADB81100BB9AE7 /* GetPasswordController.swift in Sources */,
 				9A8533FF243D81D100F7197F /* TitleCell.swift in Sources */,
 				9A73F1CD2445A4980004AF54 /* StoreController.swift in Sources */,
 				9AAD82A12432A47300C66838 /* SlideInTransition.swift in Sources */,
@@ -780,6 +803,7 @@
 				9A3D4A09245776A30073C0F7 /* AddToListController.swift in Sources */,
 				9AE8D758243E7D050049B090 /* Constants.swift in Sources */,
 				9A1D0901247B675600095F6F /* ClassDetailsController.swift in Sources */,
+				C91E691224AE347A00BB9AE7 /* AEPageThreeController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
