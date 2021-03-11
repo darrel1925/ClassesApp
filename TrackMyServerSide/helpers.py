@@ -165,12 +165,24 @@ def get_full_class_info_uci(web_address):
 
 # TODO: finish this func
 def get_ucla_full_class_info(code, quarter, year):
+    def get_ucla_class_row(class_rows):
+        for i, row in enumerate(class_rows):
+            divs = row.find_all("div")
+            for div in divs:
+                try:
+                    p = div.find("p", {"class": "hide-small"})
+                    title = p.find_all("a")[0]
+                    if title and f'Class Detail for {code}' in str(title):
+                        return row, i
+                    print(title)
+                except:
+                    pass
+            print("\n")
+        return None
     course_container = get_ucla_html(code, quarter, year)
     header = course_container.find("h3", {"class": "head"}).text
     title = header.split(" - ")[0]
     name = header.split(" - ")[1]
-    print(title)
-    print(name)
 
     # UCLA is weird. The first (0th index) div contains all of the rows of information for all the classes
     # on the page. The subsequent rows only contain information for one class per row. So we need to 
@@ -192,15 +204,12 @@ def get_ucla_full_class_info(code, quarter, year):
     # add it back in with the rest of the rows
     class_row = get_ucla_class_row([first_row] + class_rows[1:])
 
-
     if not class_row:
         return dict()
-
 
     divs = class_row[0].find_all("div")
     # for i, div in enumerate(divs):
     #     print(f'{i} - {div.text.split()}')
-    
 
     status = get_ucla_status(divs)
 
@@ -267,11 +276,10 @@ def get_class_html(class_dict):
     # get html for page
     response = urllib.request.urlopen(web_address)
     text = response.read()
-
+    # sleep(5)
     # make html parseable and find status
     soup = BeautifulSoup(text, 'lxml')
     status_row = soup.find_all("td")
-
     return status_row
 
 
@@ -300,7 +308,7 @@ def get_class_status(status_row):
     of that class. Ex. OPEN, FULL, or Waitl
     """ 
     try: 
-        for element in status_row:
+        for i, element in enumerate(status_row):
             if element.text in ["OPEN", "FULL", "Waitl", "NewOnly"]:
                 return element.text
         return "Error" 
@@ -308,7 +316,7 @@ def get_class_status(status_row):
         sbj = "Class likely removed"
         msg = "Error finding status. Class status is now error"
         send_email_error(sbj, msg)
-        sleep(900) # wait 15 min 
+        sleep(10) # wait 10 sec
         return "Error"
 
 def get_ucla_time(divs):
@@ -495,12 +503,12 @@ def get_classes_to_search_for():
     db = firestore.client()
 
     uci_school_param = format_school("UCI")
-    ucla_school_param = format_school("UCLA")
+    # ucla_school_param = format_school("UCLA")
 
     uciDocs = list(db.collection(uci_school_param).stream())
-    uclaDocs = list(db.collection(ucla_school_param).stream())
+    # uclaDocs = list(db.collection(ucla_school_param).stream())
     
-    docs = uciDocs + uclaDocs #+ classDocs
+    docs = uciDocs #+ uclaDocs #+ classDocs
 
     # print("UCI", uci_school_param, uciDocs)
     # print("UCLA", ucla_school_param, uclaDocs)
@@ -533,7 +541,7 @@ def get_changed_restrictions(status_row, old_restrictions, class_dict):
         sbj = "Class " + name + " likely removed"
         msg = "Error finding restrictions for " + name + " " + class_dict["code"]
         send_email_error(sbj, msg)
-        sleep(900) # wait 15 min 
+        sleep(10) # wait 10 sec
 
     if sorted(old_restrictions) != sorted(new_restrictions):
         print("restrictions changed from", old_restrictions, "-->", new_restrictions)
@@ -605,7 +613,6 @@ def update_course_status(class_dict):
         send_email_error("Doc doesnt Exists for Status", "got doc " + code + " " + status + " " + "deostn exist")
 
 def update_notifications_sent(num_push, num_email, reciever_email): 
-    return 
     db = firestore.client()
     doc_ref = db.collection(Constants.Analytics).document(Constants.uci_analytics)
     doc = doc_ref.get()
@@ -726,50 +733,50 @@ def send_push_notification_to_user(user_dict, notif_info, notif_type):
     """
     Sends an iOS push notif to fcm in user's doc dict
     """
-    # try:
-    print(user_dict["email"])
-    print("is_logged_in ==", user_dict["is_logged_in"])
-
-    if (user_dict["is_logged_in"] == False) or (user_dict["notifications_enabled"] == False):
-        return 
-
-    # incase user has not updated phone to have badge count
     try:
-        badge_count = user_dict["badge_count"] + 1
-    except:
-        print(user_dict["email"] + " does not have badge_count, setting now")
-        badge_count = 1
+        print(user_dict["email"])
+        print("is_logged_in ==", user_dict["is_logged_in"])
 
-    fcm_token = user_dict["fcm_token"]
-    title, message = notif_info
-    notif_data = {"notif_type": notif_type}
+        if (user_dict["is_logged_in"] == False) or (user_dict["notifications_enabled"] == False):
+            return 
 
-    # message
-    notif = messaging.Message(
-        notification = messaging.Notification(
-            title = title,
-            body = message,
-        ),
-        data = notif_data,
-        token = fcm_token,
+        # incase user has not updated phone to have badge count
+        try:
+            badge_count = user_dict["badge_count"] + 1
+        except:
+            print(user_dict["email"] + " does not have badge_count, setting now")
+            badge_count = 1
 
-        apns=messaging.APNSConfig(
-            payload=messaging.APNSPayload(
-                aps=messaging.Aps(badge=badge_count),
+        fcm_token = user_dict["fcm_token"]
+        title, message = notif_info
+        notif_data = {"notif_type": notif_type}
+
+        # message
+        notif = messaging.Message(
+            notification = messaging.Notification(
+                title = title,
+                body = message,
             ),
-        ),
-    )
+            data = notif_data,
+            token = fcm_token,
 
-    # send
-    messaging.send(notif)
-    update_notifications_sent(1, 0, user_dict["email"])
-    update_badge_count(user_dict["email"])
+            apns=messaging.APNSConfig(
+                payload=messaging.APNSPayload(
+                    aps=messaging.Aps(badge=badge_count),
+                ),
+            ),
+        )
 
-    # except Exception as e:
-    #     print("Could not send push notification")
-    #     body = user_dict["email"] + " " + notif_info[0] + " Could not send push notification: " + str(e)
-    #     send_email_error("Err sending notif", body)
-    #     return
+        # send
+        messaging.send(notif)
+        update_notifications_sent(1, 0, user_dict["email"])
+        update_badge_count(user_dict["email"])
+
+    except Exception as e:
+        print("Could not send push notification")
+        body = user_dict["email"] + " " + notif_info[0] + " Could not send push notification: " + str(e)
+        send_email_error("Err sending notif", body)
+        return
 
     # body = user_dict["email"] + " " + title + " " + message
     # send_email_error("Notif Sent:)", body)
@@ -873,7 +880,7 @@ def get_month():
     return month
 
 def get_pst_day_and_date():
-    date_format="%a %m/%d"
+    date_format="%m/%d %a"
     date = datetime.datetime.now(tz=pytz.utc)
     date = date.astimezone(timezone('US/Pacific'))
     pstDateTime=date.strftime(date_format)
@@ -904,15 +911,17 @@ def format_school(school):
 
 if __name__ == "__main__":
 
-    year = "2020"
-    quarter = "fall"
-    code = "187003200" # open seminar
+    print(get_class_url('34070','winter','2021'))
+    print(get_class_url('35610','winter','2021'))
+    # year = "2020"
+    # quarter = "fall"
+    # code = "187003200" # open seminar
     # code = "529025200"
     # code = "187003201"
-    code = "259330200"
+    # code = "259330200"
 
-    for code in ["187003200", "529025200", "187003201", "259330200"]:
-        get_full_class_info_ucla(code, quarter, year)
+    # for code in ["187003200", "529025200", "187003201", "259330200"]:
+    #     get_ucla_full_class_info(code, quarter, year)
     # print(get_full_class_info_ucla(code, quarter, year))
     # print(get_full_class_info_uci("https://www.reg.uci.edu/perl/WebSoc?YearTerm=2020-92&ShowFinals=0&ShowComments=0&CourseCodes=34630"))
     # pass

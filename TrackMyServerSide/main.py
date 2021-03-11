@@ -12,6 +12,7 @@ def main():
 
     classes5.main()
     time.sleep(5)
+    
     print()
     while True:
         schedule.run_pending()

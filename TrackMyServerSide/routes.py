@@ -7,7 +7,7 @@ app = Flask(__name__)
 # the function index is getting called anytime somone accesses this path
 @app.route("/")
 def index():
-    return "Yo I'm D"
+    return "No page available"
 
 @app.route("/UCI/class_info")
 def  uci_class_info():
@@ -18,6 +18,17 @@ def  uci_class_info():
     quarter = request.args.get('quarter')
 
     return helpers.get_class_status_for_ios(code, quarter, year, school)
+
+@app.route("/UCLA/class_info")
+def  ucla_class_info():
+    # get the value paried with the school arg passed into the url
+    school = request.args.get("school")
+    code = request.args.get('code')
+    year = request.args.get('year')
+    quarter = request.args.get('quarter')
+
+    return helpers.get_class_status_for_ios(code, quarter, year, school)
+
 
 @app.route("/send_email_route")
 def send_email_route():

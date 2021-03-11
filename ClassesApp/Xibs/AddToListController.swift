@@ -159,7 +159,9 @@ class AddToListController: UIViewController {
         }, completion: {_ in
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
-                self.dismiss(animated: true, completion: nil)
+                UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                    self.addClassVC.handle_dismiss()
+                })
                 
             }, completion: nil)
         })

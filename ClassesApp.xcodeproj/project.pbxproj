@@ -988,7 +988,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
 				PRODUCT_NAME = TrackMy;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1014,7 +1014,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.darrelmuonekwu.ClassesApp;
 				PRODUCT_NAME = TrackMy;
 				PROVISIONING_PROFILE_SPECIFIER = "";

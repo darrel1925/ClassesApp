@@ -4,7 +4,8 @@ from selenium.webdriver.chrome.options import Options
 from collections import defaultdict
 from constants import Constants
 from time import sleep
-import time, helpers, send_email
+import time, send_email
+# import helpers
 start_time = time.time()
 
 # CHROME_DRIVER_PATH = "/home/ubuntu/desktop/chromedriver"
@@ -77,7 +78,7 @@ def log_into_web_reg(email, pswd):
     # set options for window size
     chrome_options = Options()
     chrome_options.add_argument("user-agent=Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1")
-    chrome_options.add_argument("--headless")  # <--------- change for aws
+    # chrome_options.add_argument("--headless")  # <--------- change for aws
 
     # open chrome
     driver = webdriver.Chrome(executable_path = CHROME_DRIVER_PATH, options=chrome_options)
@@ -85,7 +86,6 @@ def log_into_web_reg(email, pswd):
     driver.implicitly_wait(IMPLICIT_WAIT) # wait up to n sec to find an element
     driver.get("https://www.reg.uci.edu/cgi-bin/webreg-redirect.sh")
     net_id = email.split("@")[0]
-    
     ### try to find username and password input field ###
     try:
         # input credentials
@@ -94,7 +94,7 @@ def log_into_web_reg(email, pswd):
         
         p_word_btn = driver.find_element_by_id("password")
         p_word_btn.send_keys(pswd)
-
+        # sleep(50)
         get_login_message(driver)
         driver.find_element_by_name("login_button").click()
     except Exception as e:
@@ -274,7 +274,7 @@ def send_success_notifications(user_doc_dict, class_dict, message):
         #send success
         notif_info = send_email.construct_enrollment_success_email(user_doc_dict, class_dict, message)
     
-    helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.enroll)
+    # helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.enroll)
     
     # send email
     if user_doc_dict["receive_emails"]:
@@ -282,17 +282,17 @@ def send_success_notifications(user_doc_dict, class_dict, message):
         send_email.send_email_with_msg(email, full_msg)
 
     # update users notification list
-    helpers.update_user_notification_list(email, "", class_dict, notif_info, Constants.enroll)
+    # helpers.update_user_notification_list(email, "", class_dict, notif_info, Constants.enroll)
 
 def send_error_notifications(user_doc_dict, class_dict, message):
     email = user_doc_dict["email"]
-    new_name = helpers.get_full_class_name(class_dict)
+    # new_name = helpers.get_full_class_name(class_dict)
 
     # send notification to phone
     title = "Could not register for " + new_name 
     body = "Error message: \n\n" + message + "\n\nLet us know how we did! While working to perfect this product, the more feedback the better - good or bad."
     notif_info = (title, body)
-    helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.enroll)
+    # helpers.send_push_notification_to_user(user_doc_dict, notif_info, Constants.enroll)
     
     # send email
     email_title = "Could not register for " + new_name 
@@ -302,7 +302,7 @@ def send_error_notifications(user_doc_dict, class_dict, message):
         send_email.send_email_with_msg(email, full_msg)
 
     # update users notification list
-    helpers.update_user_notification_list(email, "", class_dict, notif_info, Constants.enroll)
+    # helpers.update_user_notification_list(email, "", class_dict, notif_info, Constants.enroll)
 
 def handle_retry(driver, user_doc_dict, class_dict, num_retries, message):
     logout_of_webreg(driver)
@@ -331,8 +331,8 @@ def main(user_doc_dict, class_dict, num_retries = 0):
             return
 
         #  --> Go to Enrollment Menu <--
-        print("class_dict[status] ==", helpers.Status.OPEN, "is", class_dict["status"] == helpers.Status.OPEN)
-        if class_dict["status"] == helpers.Status.OPEN:
+        # print("class_dict[status] ==", helpers.Status.OPEN, "is", class_dict["status"] == helpers.Status.OPEN)
+        if class_dict["status"] == "OPEN":#helpers.Status.OPEN:
             
             # click on enrollment button
             driver, message, success = click_enroll_btn(driver)
@@ -370,7 +370,7 @@ def main(user_doc_dict, class_dict, num_retries = 0):
         print("Error occured ->", e)
         subject = "ERR with auto-enroll!!!"
         message = "error: " + str(e) 
-        helpers.send_email_error(subject, message)
+        # helpers.send_email_error(subject, message)
     
 
 
@@ -395,5 +395,5 @@ class_dict = {
     "type": "Lec"
 }
 if __name__ == "__main__":
-    helpers.initialize_firebase()
+    # helpers.initialize_firebase()
     main(user_doc_dict, class_dict, num_retries = 0)

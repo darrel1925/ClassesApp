@@ -1,6 +1,6 @@
 import smtplib
 from constants import Restrictions
-from helpers import get_full_class_name
+# from helpers import get_full_class_name
 
 WEB_REG_URL = "https://www.reg.uci.edu/cgi-bin/webreg-redirect.sh"
 

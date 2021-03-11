@@ -4,7 +4,8 @@
 //
 //  Created by Darrel Muonekwu on 4/10/20.
 //  Copyright © 2020 Darrel Muonekwu. All rights reserved.
-//
+//  python3 -m pip install firebase-admin
+// #!/System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python
 
 import Foundation
 import FirebaseFirestore

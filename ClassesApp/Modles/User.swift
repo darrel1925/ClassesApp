@@ -175,23 +175,23 @@ class User {
         return data
     }
     
-    private func setFCMTokenAndUpdateDB() {
-        if UserService.fcm_token_has_set { print("fcm_token_has_set = \(UserService.fcm_token_has_set) "); return }
-        
-        print("fcm_token_has_set = \(UserService.fcm_token_has_set) ")
-        UserService.fcm_token_has_set = true
-        
-        let new_fcm = Messaging.messaging().fcmToken ?? "couldnt get fcm token"
-        if new_fcm == self.fcm_token { print("fcm Token is the same as last login!"); return }
-        
-        let db = Firestore.firestore()
-        db.collection(DataBase.User).document(self.email).setData([DataBase.fcm_token: new_fcm, DataBase.is_logged_in: true], merge: true) { err in
-            if let err = err {
-                print("COULD NOT UPDATE FCM TOKEN: \(err.localizedDescription)")
-            }
-            else {
-                print("Customer fcm Token was updated!")
-            }
-        }
-    }
+//    private func setFCMTokenAndUpdateDB() {
+//        if UserService.fcm_token_has_set { print("fcm_token_has_set = \(UserService.fcm_token_has_set) "); return }
+//        
+//        print("fcm_token_has_set = \(UserService.fcm_token_has_set) ")
+//        UserService.fcm_token_has_set = true
+//        
+//        let new_fcm = Messaging.messaging().fcmToken ?? "couldnt get fcm token"
+//        if new_fcm == self.fcm_token { print("fcm Token is the same as last login!"); return }
+//        
+//        let db = Firestore.firestore()
+//        db.collection(DataBase.User).document(self.email).setData([DataBase.fcm_token: new_fcm, DataBase.is_logged_in: true], merge: true) { err in
+//            if let err = err {
+//                print("COULD NOT UPDATE FCM TOKEN: \(err.localizedDescription)")
+//            }
+//            else {
+//                print("Customer fcm Token was updated!")
+//            }
+//        }
+//    }
 }

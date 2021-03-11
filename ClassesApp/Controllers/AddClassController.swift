@@ -59,12 +59,16 @@ class AddClassController: UIViewController {
     }
     
     func presentClassDetailController() {
-        let url_str = AppConstants.class_look_up_pages[UserService.user.school] 
+        let url_str = AppConstants.class_look_up_pages[UserService.user.school]
         if let url = URL(string: url_str!) {
           UIApplication.shared.open(url)
         }
     }
 
+    func handle_dismiss() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     func makeConnection() {
         let code = courseCodeField.text!
         ServerService.getClassInfo(course_code: code) { (json, notFound,error) in

@@ -226,10 +226,10 @@ def main():
             classes_to_search_for = helpers.get_classes_to_search_for()
 
         for class_dict in classes_to_search_for:
-            if count < 110:
-                count += 1
-                continue
-            time.sleep(0.4)
+            # if count < 110:
+            #     count += 1
+            #     continue
+            time.sleep(2.1)
             # get html
             status_row = get_course_html(class_dict)
             # use html to check if class is open
